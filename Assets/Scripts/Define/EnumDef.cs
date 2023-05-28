@@ -4,23 +4,23 @@ using UnityEngine;
 
 namespace EnumDef
 {
-    public enum Unit
+    public enum GameResUnit
     {
-        microgram = 1,
-        milligram = 2,
-        gram = 3,
-        kilogram = 4
+        Microgram = 1,
+        Milligram = 2,
+        Gram = 3,
+        Kilogram = 4
     }
 
-    public enum Resource
+    public enum GameResType
     {
-        empty = -1,
-        honey = 0,
-        nectar = 1,
-        pollen = 2,
-        wax = 3,
-        egg = 4,
-        larvae = 5
+        Empty = -1,
+        Honey = 0,
+        Nectar = 1,
+        Pollen = 2,
+        Wax = 3,
+        Egg = 4,
+        Larvae = 5
     }
 
     public enum FlowerType

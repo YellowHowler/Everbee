@@ -7,16 +7,34 @@ using UnityEngine;
 public class Manager : MonoBehaviour
 {
     static public Manager Instance;
-    
+
     [Header("플레이 매니저")]
     public PlayManager kPlayManager;
     [Header("사운드 매니저")]
     public SoundManager kSoundManager;
-    
-    
+
+
     private void Awake()
     {
         Instance = this;
+
+        Test();
+    }
+
+    void Test()
+    {
+        Min();
+    }
+
+    void Min()
+    {
+        int i = 0;
+        i++;
+
+        int n = 10;
+        n++;
+
+        int c = i + n;
     }
 
     // Start is called before the first frame update

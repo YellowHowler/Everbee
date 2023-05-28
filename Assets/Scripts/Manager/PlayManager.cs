@@ -11,15 +11,15 @@ public class PlayManager : MonoBehaviour
 {
     public static PlayManager Instance;
 
-    public Hive mHive;
-    public Garden mGarden;
+    public Hive kHive;
+    public Garden kGarden;
 
     void Awake()
     {
         Instance = this;
 
-        mHive = GameObject.Find("Stage/Hive").GetComponent<Hive>();
-        mGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
+        kHive = GameObject.Find("Stage/Hive").GetComponent<Hive>();
+        kGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
 
         EasyTouch.On_TouchStart += OnTouch;
     }

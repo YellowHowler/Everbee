@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EnumDef;
 using StructDef;
+using ClassDef;
 
 public class Garden : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class Garden : MonoBehaviour
             if(!s.occupied) return s;
         }
 
-        return new FlowerSpot(-1, Vector3.zero, FlowerType.cosmos);
+        return null;
     }
 
     void Awake()
