@@ -59,6 +59,10 @@ public class Bee : MonoBehaviour
                 StartCoroutine(CollectFromFlower());
             }
         }
+        if(mCurrentJob == Job.idle)
+        {
+            
+        }
     }
 
     private void AddResource(float _pollenAmount, GameResUnit _pollenUnit, float _nectarAmount, GameResUnit _nectarUnit) //벌 저장공간에 이만큼 더하기
