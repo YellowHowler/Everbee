@@ -5,5 +5,15 @@ using EnumDef;
 
 namespace StructDef
 {
+    public struct GameResAmount
+    {
+        public float amount;
+        public GameResUnit unit;
 
+        public GameResAmount(float _amount, GameResUnit _unit)
+        {
+            amount = _amount;
+            unit = _unit;
+        }
+    }
 }

@@ -9,11 +9,11 @@ public class Garden : MonoBehaviour
 {
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
 
-    public FlowerSpot GetEmptyFlowerSpot()
+    public FlowerSpot GetUsableFlowerSpot()
     {
         foreach(FlowerSpot s in mFlowerSpotList)
         {
-            if(!s.occupied) return s;
+            if(s.occupied == false && s.isTarget == false) return s;
         }
 
         return null;

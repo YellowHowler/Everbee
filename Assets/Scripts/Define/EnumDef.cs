@@ -25,15 +25,15 @@ namespace EnumDef
 
     public enum FlowerType
     {
-        cosmos = 1,
-        oxeye_daisy,
-        lavender,
-        california_poppy
+        Cosmos = 1,
+        OxeyeDaisy,
+        Lavender,
+        CaliforniaPoppy
     }
 
     public enum Job
     {
-        idle = 0,
-        collect = 1, //꽃에서 자원 수집
+        Idle = 0,
+        Collect = 1, //꽃에서 자원 수집
     }
 }

@@ -4,8 +4,8 @@ using HedgehogTeam.EasyTouch;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using EnumDef;
 using StructDef;
+using static UnityEngine.UI.CanvasScaler;
 
 public class PlayManager : MonoBehaviour
 {
@@ -48,6 +48,79 @@ public class PlayManager : MonoBehaviour
         */
         
         Debug.Log(gesture.pickedObject.name);
+    }
+
+    public GameResAmount AddResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
+    {
+        int aUnit = (int)_resAmountA.unit;
+        int bUnit = (int)_resAmountB.unit;
+
+        if (Mathf.Abs(aUnit - bUnit) >= 2)
+        {
+            if(aUnit > bUnit) 
+            {
+                return _resAmountA;
+            }
+            else
+            {
+                return _resAmountB;
+            }
+        }
+
+        float retAmount = 0;
+        GameResUnit retUnit = GameResUnit.Microgram;
+
+        if (aUnit == bUnit)
+        {
+            retAmount = _resAmountA.amount + _resAmountB.amount;
+            retUnit = _resAmountA.unit;
+        }
+        else
+        {
+            if(aUnit > bUnit)
+            {
+                retAmount = _resAmountA.amount + _resAmountB.amount * 0.001f;
+                retUnit = _resAmountA.unit;
+            }
+            else
+            {
+                retAmount = _resAmountB.amount + _resAmountA.amount * 0.001f;
+                retUnit = _resAmountB.unit;
+            }
+        }
+
+        return UpdateUnit(new GameResAmount(retAmount, retUnit));
+    }
+
+    public GameResAmount UpdateUnit(GameResAmount _amount)
+    {
+        if(_amount.amount >= 1000f)
+        {
+            _amount.amount /= 1000;
+            _amount.unit = (GameResUnit)((int)_amount.unit + 1);
+        }
+        else if (_amount.amount < 1)
+        {
+            if (_amount.unit == GameResUnit.Microgram)
+            {
+                return new GameResAmount(0f, GameResUnit.Microgram);
+            }
+            _amount.amount *= 1000;
+            _amount.unit = (GameResUnit)((int)_amount.unit - 1);
+        }
+
+        return _amount;
+    }
+
+    /// <summary> 첫번째가 더 크면 false, 두번째가 더 크면 true </summary>
+    public bool CompareResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
+    {
+        if((int)_resAmountA.unit != (int) _resAmountB.unit)
+        {
+            return (int)_resAmountA.unit < (int)_resAmountB.unit;
+        }
+
+        return _resAmountA.amount < _resAmountB.amount;
     }
 }
 

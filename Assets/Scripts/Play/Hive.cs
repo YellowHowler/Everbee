@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using EnumDef;
 using ClassDef;
+using StructDef;
 
 public class Hive : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class Hive : MonoBehaviour
     {
         foreach (Honeycomb h in mHoneycombList)
         {
-            if (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false))
+            if ((h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
             {
                 return h;
             }
@@ -35,13 +36,13 @@ public class Hive : MonoBehaviour
         for (int i = 0; i < honeycombTransforms.Length; i++)
         {
             Transform child = honeycombTransforms[i];
-            mHoneycombList.Add(new Honeycomb(i, child.position, 5f, GameResUnit.Milligram)); //임시
+            mHoneycombList.Add(new Honeycomb(i, child.position, new GameResAmount(0f, GameResUnit.Milligram))); //임시
         }
     }
 
-    public void AddNewHoneycomb(Vector3 _pos, float _maxAmount, GameResUnit _maxUnit)
+    public void AddNewHoneycomb(Vector3 _pos, GameResAmount _amount)
     {
-        mHoneycombList.Add(new Honeycomb(mHoneycombList.Count, _pos, _maxAmount, _maxUnit));
+        mHoneycombList.Add(new Honeycomb(mHoneycombList.Count, _pos, _amount));
     }
 
     private void Start()
