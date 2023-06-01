@@ -14,6 +14,8 @@ public class PlayManager : MonoBehaviour
     public Hive kHive;
     public Garden kGarden;
 
+    public GameResAmount mHoneycombMaxAmount = new GameResAmount(3f, GameResUnit.Microgram);
+
     void Awake()
     {
         Instance = this;
@@ -90,6 +92,12 @@ public class PlayManager : MonoBehaviour
         }
 
         return UpdateUnit(new GameResAmount(retAmount, retUnit));
+    }
+
+    public GameResAmount SubtractResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
+    {
+        _resAmountB.amount = -1 * _resAmountB.amount;
+        return AddResourceAmounts(_resAmountA, _resAmountB);
     }
 
     public GameResAmount UpdateUnit(GameResAmount _amount)

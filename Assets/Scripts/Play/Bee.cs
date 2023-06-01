@@ -25,7 +25,7 @@ public class Bee : MonoBehaviour
 
     void Start()
     {
-        
+        DoJob();
     }
 
     void Update()
@@ -58,23 +58,62 @@ public class Bee : MonoBehaviour
             }
             else if(mCurrentPollen.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
             {
-                mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableHoneycomb(GameResType.Pollen);
-
-                if (mTargetHoneycomb == null)
-                {
-                    mCurrentJob = Job.Idle;
-                    DoJob();
-                    return;
-                }
-
-                mTargetHoneycomb.isTarget = true;
-                StartCoroutine(GoToPos(mTargetHoneycomb.pos));
+                StorePollen();
+            }
+            else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
+            {
+                mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
+                mAtTarget = false;
+                DoJob();
+            }
+            else if (mCurrentNectar.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
+            {
+                StorePollen();
+            }
+            else if (mCurrentNectar.amount != 0 && mAtTarget == true)
+            {
+                mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
+                mAtTarget = false;
+                DoJob();
             }
         }
         if(mCurrentJob == Job.Idle)
         {
             
         }
+    }
+
+    private void StorePollen()
+    {
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableHoneycomb(GameResType.Pollen);
+
+        if (mTargetHoneycomb == null)
+        {
+            StoreNectar();
+            return;
+        }
+
+        mTargetHoneycomb.isTarget = true;
+        StartCoroutine(GoToPos(mTargetHoneycomb.pos));
+
+        mTargetHoneycomb = null;
+    }
+
+    private void StoreNectar()
+    {
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableHoneycomb(GameResType.Nectar);
+
+        if (mTargetHoneycomb == null)
+        {
+            mCurrentJob = Job.Idle;
+            DoJob();
+            return;
+        }
+
+        mTargetHoneycomb.isTarget = true;
+        StartCoroutine(GoToPos(mTargetHoneycomb.pos));
+
+        mTargetHoneycomb = null;
     }
 
     private void AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
@@ -97,6 +136,8 @@ public class Bee : MonoBehaviour
 
     private IEnumerator GoToPos(Vector3 _targetPos)
     {
+        mAtTarget = false;
+
         float waitSec = 0.1f;
 
         WaitForSeconds sec = new WaitForSeconds(waitSec);

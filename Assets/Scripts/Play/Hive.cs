@@ -7,6 +7,8 @@ using StructDef;
 
 public class Hive : MonoBehaviour
 {
+    public GameObject kHoneycombObj;
+
     public QueenBee kQueenBee;
 
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
@@ -36,13 +38,14 @@ public class Hive : MonoBehaviour
         for (int i = 0; i < honeycombTransforms.Length; i++)
         {
             Transform child = honeycombTransforms[i];
-            mHoneycombList.Add(new Honeycomb(i, child.position, new GameResAmount(0f, GameResUnit.Milligram))); //임시
+            mHoneycombList.Add(child.gameObject.GetComponent<Honeycomb>()); //임시
         }
     }
 
     public void AddNewHoneycomb(Vector3 _pos, GameResAmount _amount)
     {
-        mHoneycombList.Add(new Honeycomb(mHoneycombList.Count, _pos, _amount));
+        GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform);
+        mHoneycombList.Add(newHoneycomb.GetComponent<Honeycomb>());
     }
 
     private void Start()
