@@ -13,8 +13,12 @@ public class PlayManager : MonoBehaviour
 
     public Hive kHive;
     public Garden kGarden;
+    public MainCanvas kMainCanvas;
 
-    public GameResAmount mHoneycombMaxAmount = new GameResAmount(3f, GameResUnit.Microgram);
+    public GameResAmount kStorageHoneyAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStorageNectarAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStoragePollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStorageWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
     void Awake()
     {
@@ -22,6 +26,7 @@ public class PlayManager : MonoBehaviour
 
         kHive = GameObject.Find("Stage/Hive").GetComponent<Hive>();
         kGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
+        kMainCanvas = GameObject.Find("Canvas").GetComponent<MainCanvas>();
 
         EasyTouch.On_TouchStart += OnTouch;
     }
@@ -33,6 +38,28 @@ public class PlayManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
+    {
+        if(_type == GameResType.Honey)
+        {
+            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageHoneyAmount);
+        }
+        else if (_type == GameResType.Nectar)
+        {
+            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageNectarAmount);
+        }
+        else if (_type == GameResType.Pollen)
+        {
+            kStorageHoneyAmount = AddResourceAmounts(_amount, kStoragePollenAmount);
+        }
+        else if (_type == GameResType.Wax)
+        {
+            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageWaxAmount);
+        }
+
+        kMainCanvas.kResource.UpdateText(_type, _amount);
     }
 
     private void OnTouch(Gesture gesture)
@@ -57,6 +84,16 @@ public class PlayManager : MonoBehaviour
         int aUnit = (int)_resAmountA.unit;
         int bUnit = (int)_resAmountB.unit;
 
+        if (_resAmountA.amount == 0)
+        {
+            return _resAmountB;
+        }
+        if(_resAmountB.amount == 0)
+        {
+            return _resAmountA;
+        }
+
+        
         if (Mathf.Abs(aUnit - bUnit) >= 2)
         {
             if(aUnit > bUnit) 

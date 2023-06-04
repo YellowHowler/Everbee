@@ -32,4 +32,24 @@ public class MainCanvas : MonoBehaviour
         kResult.gameObject.SetActive(false);
         */
     }
+
+    public string GetUnitText(GameResUnit _unit)
+    {
+        if(_unit == GameResUnit.Microgram)
+        {
+            return "ug";
+        }
+        else if (_unit == GameResUnit.Milligram)
+        {
+            return "mg";
+        }
+        else if (_unit == GameResUnit.Gram)
+        {
+            return "g";
+        }
+        else
+        {
+            return "kg";
+        }
+    }
 }

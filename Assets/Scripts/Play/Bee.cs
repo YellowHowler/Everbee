@@ -7,15 +7,15 @@ using ClassDef;
 
 public class Bee : MonoBehaviour
 {
-    private Job mCurrentJob;
+    private Job mCurrentJob = Job.Collect;
 
     private GameResAmount mCurrentPollen;
     private GameResAmount mCurrentNectar;
 
-    private GameResAmount mMaxPollen;
-    private GameResAmount mMaxNectar;
+    private GameResAmount mMaxPollen = new GameResAmount(20, GameResUnit.Milligram);
+    private GameResAmount mMaxNectar = new GameResAmount(20, GameResUnit.Milligram);
 
-    private float mSpeed = 2f;
+    private float mSpeed = 3f;
     private float mFlowerCollectTime = 2f; // 꽃에서 자원 모으는데 걸리는 시간
     
     private bool mAtTarget = false;
@@ -25,12 +25,15 @@ public class Bee : MonoBehaviour
 
     void Start()
     {
-        DoJob();
+        //DoJob();
     }
 
     void Update()
     {
-        
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            DoJob();
+        }
     }
 
     private void DoJob()
@@ -54,32 +57,42 @@ public class Bee : MonoBehaviour
             }
             else if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && mAtTarget) //꽃에 도착
             {
+                print("start collect");
                 StartCoroutine(CollectFromFlower());
+                return;
             }
             else if(mCurrentPollen.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
             {
                 StorePollen();
+                return;
             }
             else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
             {
                 mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
+                print(mCurrentPollen.amount);
                 mAtTarget = false;
+                mTargetHoneycomb = null;
                 DoJob();
+                return;
             }
             else if (mCurrentNectar.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
             {
-                StorePollen();
+                StoreNectar();
+                return;
             }
             else if (mCurrentNectar.amount != 0 && mAtTarget == true)
             {
                 mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
                 mAtTarget = false;
+                mTargetHoneycomb = null;
                 DoJob();
+                return;
             }
         }
         if(mCurrentJob == Job.Idle)
         {
-            
+            print("idle");
+            StartCoroutine(GoToPos(new Vector3(0, 15, 0)));
         }
     }
 
@@ -95,8 +108,6 @@ public class Bee : MonoBehaviour
 
         mTargetHoneycomb.isTarget = true;
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
-
-        mTargetHoneycomb = null;
     }
 
     private void StoreNectar()
@@ -112,8 +123,6 @@ public class Bee : MonoBehaviour
 
         mTargetHoneycomb.isTarget = true;
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
-
-        mTargetHoneycomb = null;
     }
 
     private void AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
@@ -132,17 +141,19 @@ public class Bee : MonoBehaviour
 
         mCurrentPollen = newPollenAmount;
         mCurrentNectar = newNectarAmount;
+
+        print("current pollen: " + mCurrentPollen.amount);
     }
 
     private IEnumerator GoToPos(Vector3 _targetPos)
     {
         mAtTarget = false;
 
-        float waitSec = 0.1f;
+        float waitSec = 0.05f;
 
         WaitForSeconds sec = new WaitForSeconds(waitSec);
 
-        while(Vector3.Distance(transform.position, _targetPos) > 0.01f)
+        while(Vector3.Distance(transform.position, _targetPos) > 0.005f)
         {
             transform.position = Vector3.MoveTowards(transform.position, _targetPos, waitSec * mSpeed);
             yield return sec;

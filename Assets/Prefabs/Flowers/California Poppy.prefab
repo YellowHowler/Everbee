@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1434350828547772511
+--- !u!1 &4798003415936360937
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,78 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1434350828547772510}
-  - component: {fileID: 2377433211401587110}
-  - component: {fileID: 1434350828547772509}
+  - component: {fileID: 4798003415936360942}
+  - component: {fileID: 4798003415936360943}
   m_Layer: 0
-  m_Name: Honeycomb
+  m_Name: Flower Spot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1434350828547772510
+--- !u!4 &4798003415936360942
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1434350828547772511}
+  m_GameObject: {fileID: 4798003415936360937}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 7088710701068216611}
-  m_Father: {fileID: 0}
+  m_Children: []
+  m_Father: {fileID: 4798003417154445323}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2377433211401587110
+--- !u!114 &4798003415936360943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1434350828547772511}
+  m_GameObject: {fileID: 4798003415936360937}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfbcd6c7809aa864cb5ee7555aae9d5e, type: 3}
+  m_Script: {fileID: 11500000, guid: aa8cb25720c07464fac4e5fe9f68a5fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kSprieRenderer: {fileID: 1110107676891750011}
   isTarget: 0
-  type: -1
---- !u!60 &1434350828547772509
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1434350828547772511}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 3.75, y: 3.3125}
-    newSize: {x: 3.75, y: 3.3125}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.028877378, y: 0.8445544}
-      - {x: -0.75726056, y: 0.43804958}
-      - {x: -0.75192976, y: -0.45743996}
-      - {x: -0.03077066, y: -0.82667565}
-      - {x: 0.6859914, y: -0.45644107}
-      - {x: 0.67701626, y: 0.4860898}
---- !u!1 &8710284677955194920
+  type: 4
+  occupied: 0
+  nectar: 20
+  nectarUnit: 1
+  pollen: 11.8
+  pollenUnit: 2
+--- !u!1 &4798003417154445322
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,36 +58,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7088710701068216611}
-  - component: {fileID: 1110107676891750011}
+  - component: {fileID: 4798003417154445323}
+  - component: {fileID: 4798003417154445320}
   m_Layer: 0
-  m_Name: Sprite
+  m_Name: California Poppy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7088710701068216611
+--- !u!4 &4798003417154445323
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8710284677955194920}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_GameObject: {fileID: 4798003417154445322}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1434350828547772510}
+  m_Children:
+  - {fileID: 4798003415936360942}
+  m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1110107676891750011
+--- !u!212 &4798003417154445320
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8710284677955194920}
+  m_GameObject: {fileID: 4798003417154445322}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -150,14 +122,14 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c8ff6151933c74a5197ddadfb0c2a7c2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.75, y: 3.3125}
+  m_Size: {x: 2, y: 9.375}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1

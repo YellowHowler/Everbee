@@ -11,6 +11,11 @@ public class Hive : MonoBehaviour
 
     public QueenBee kQueenBee;
 
+    public Sprite[] kHoneycombNectarSprites;
+    public Sprite[] kHoneycombPollenSprites;
+    public Sprite[] kHoneycombHoneySprites;
+    public Sprite[] kHoneycombWaxSprites;
+
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
     private List<Bee> mBeeList = new List<Bee>();
 
@@ -32,13 +37,12 @@ public class Hive : MonoBehaviour
     {
         mHoneycombList.Clear();
 
-        Transform ch = transform.GetChild(0);
-        Transform[] honeycombTransforms = ch.GetComponentsInChildren<Transform>();
+        GameObject[] honeycombs = GameObject.FindGameObjectsWithTag("Honeycomb");
 
-        for (int i = 0; i < honeycombTransforms.Length; i++)
+        foreach (GameObject h in honeycombs)
         {
-            Transform child = honeycombTransforms[i];
-            mHoneycombList.Add(child.gameObject.GetComponent<Honeycomb>()); //임시
+            mHoneycombList.Add(h.GetComponent<Honeycomb>()); //임시
+            h.GetComponent<Honeycomb>().mHive = this;
         }
     }
 
@@ -49,6 +53,11 @@ public class Hive : MonoBehaviour
     }
 
     private void Start()
+    {
+        
+    }
+
+    private void Awake()
     {
         GetAllHoneycombs();
     }
