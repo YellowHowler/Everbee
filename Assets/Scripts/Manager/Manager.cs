@@ -59,5 +59,7 @@ public class Manager : MonoBehaviour
 
         while (PlayManager.Instance == null)
             yield return null;
+                
+        //PlayManager.Instance.GameStart();
     }
 }

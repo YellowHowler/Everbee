@@ -48,15 +48,15 @@ public class PlayManager : MonoBehaviour
         }
         else if (_type == GameResType.Nectar)
         {
-            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageNectarAmount);
+            kStorageNectarAmount = AddResourceAmounts(_amount, kStorageNectarAmount);
         }
         else if (_type == GameResType.Pollen)
         {
-            kStorageHoneyAmount = AddResourceAmounts(_amount, kStoragePollenAmount);
+            kStoragePollenAmount = AddResourceAmounts(_amount, kStoragePollenAmount);
         }
         else if (_type == GameResType.Wax)
         {
-            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageWaxAmount);
+            kStorageWaxAmount = AddResourceAmounts(_amount, kStorageWaxAmount);
         }
 
         kMainCanvas.kResource.UpdateText(_type, _amount);

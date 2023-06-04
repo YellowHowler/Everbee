@@ -23,16 +23,19 @@ public class Bee : MonoBehaviour
     FlowerSpot mTargetFlowerSpot;
     Honeycomb mTargetHoneycomb;
 
-    void Start()
+    IEnumerator Start()
     {
-        //DoJob();
+        while (PlayManager.Instance == null)
+            yield return null;
+
+        DoJob();
     }
 
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            DoJob();
+            //DoJob();
         }
     }
 
@@ -83,7 +86,7 @@ public class Bee : MonoBehaviour
             else if (mCurrentNectar.amount != 0 && mAtTarget == true)
             {
                 mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
-                mAtTarget = false;
+                mAtTarget = false; 
                 mTargetHoneycomb = null;
                 DoJob();
                 return;
@@ -166,7 +169,10 @@ public class Bee : MonoBehaviour
             mTargetHoneycomb.isTarget = false;
         }
 
-        DoJob();
+        if (mCurrentJob == Job.Collect)
+        {
+            DoJob();
+        }
     }
 
     private IEnumerator CollectFromFlower()

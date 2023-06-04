@@ -75,6 +75,7 @@ public class Honeycomb : MonoBehaviour
         }
         else
         {
+            UpdateSprite();
             return new GameResAmount(0f, GameResUnit.Microgram);
         }
 
@@ -84,6 +85,8 @@ public class Honeycomb : MonoBehaviour
         {
             amount = retAmount;
             PlayManager.Instance.AddResourceToStorage(_type, _amount);
+            UpdateSprite();
+
             return new GameResAmount(0f, GameResUnit.Microgram);
         }
 
@@ -106,6 +109,7 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
+        
         int spriteNum = (int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1));
 
         if (type == GameResType.Nectar)
