@@ -36,4 +36,13 @@ namespace EnumDef
         Idle = 0,
         Collect = 1, //꽃에서 자원 수집
     }
+
+    public enum StructureType
+    {
+        None = 0,
+        Storage,
+        Dry,
+        Coalgulate,
+        Hatchtery,
+    }
 }

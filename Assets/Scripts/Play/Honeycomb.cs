@@ -2,6 +2,7 @@ using EnumDef;
 using StructDef;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Honeycomb : MonoBehaviour
@@ -21,6 +22,8 @@ public class Honeycomb : MonoBehaviour
 
     public Hive mHive { get; set; }
 
+    StructureType mStructType = StructureType.None;
+
     private void Start()
     {
         kSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -38,6 +41,19 @@ public class Honeycomb : MonoBehaviour
         {
             return (int)amount.amount >= (int)maxAmount.amount;
         }
+    }
+
+    public void SetStructure(StructureType _type)
+    {
+        switch (_type)
+        {
+            case StructureType.None:
+                break;
+            case StructureType.Dry:
+                break;
+        }
+
+        mStructType = _type;
     }
 
     private GameResAmount GetMaxAmount(GameResType _type)
@@ -132,5 +148,34 @@ public class Honeycomb : MonoBehaviour
         {
             kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[0];
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        /*
+        Vector3 top = transform.position + Vector3.up * 0.825f;
+        Vector3 topleft = transform.position + Vector3.up * 0.4125f + Vector3.left * 0.825f;
+        Vector3 bottomleft = transform.position + Vector3.down* 0.4125f + Vector3.left * 0.825f;
+        
+        Vector3 bottom = transform.position + Vector3.down * 0.825f;
+        Vector3 bottomright = transform.position + Vector3.down * 0.4125f + Vector3.right * 0.825f;
+        Vector3 topright = transform.position + Vector3.up * 0.4125f + Vector3.right * 0.825f;
+
+        Gizmos.DrawLine(top, topleft);
+        Gizmos.DrawLine(topleft, bottomleft);
+        Gizmos.DrawLine(bottomleft, bottom);
+
+        Gizmos.DrawLine(bottom, bottomright);
+        Gizmos.DrawLine(bottomright, topright);
+        Gizmos.DrawLine(topright, top);
+        */
+
+        //Gizmos.DrawSphere(transform.position, 0.825f);
+
+        if (transform.parent.parent.GetComponent<Hive>().kIsDrawHoneycombName == true)
+            Handles.Label(transform.position, name);
+
+        if (transform.parent.parent.GetComponent<Hive>().kIsDrawHoneycombShape == true)
+            Gizmos.DrawWireSphere(transform.position, 0.825f);
     }
 }

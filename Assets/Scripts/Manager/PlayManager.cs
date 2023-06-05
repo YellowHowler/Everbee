@@ -20,6 +20,9 @@ public class PlayManager : MonoBehaviour
     public GameResAmount kStoragePollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResAmount kStorageWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
+    public VectorBound kHiveXBound = new VectorBound(10000, -10000);
+    public VectorBound kHiveYBound = new VectorBound(10000, -10000);
+
     void Awake()
     {
         Instance = this;

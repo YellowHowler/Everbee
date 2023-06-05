@@ -16,4 +16,16 @@ namespace StructDef
             unit = _unit;
         }
     }
+
+    public struct VectorBound
+    {
+        public float start;
+        public float end;
+
+        public VectorBound(float _start, float _end)
+        {
+            start = _start;
+            end = _end;
+        }
+    }
 }
