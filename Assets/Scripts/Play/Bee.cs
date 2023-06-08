@@ -7,7 +7,7 @@ using ClassDef;
 
 public class Bee : MonoBehaviour
 {
-    private Job mCurrentJob = Job.Collect;
+    public Job kCurrentJob = Job.Collect;
 
     private GameResAmount mCurrentPollen;
     private GameResAmount mCurrentNectar;
@@ -23,25 +23,19 @@ public class Bee : MonoBehaviour
     FlowerSpot mTargetFlowerSpot;
     Honeycomb mTargetHoneycomb;
 
-    IEnumerator Start()
+    private void Start()
     {
-        while (PlayManager.Instance == null)
-            yield return null;
-
         DoJob();
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            //DoJob();
-        }
+      
     }
 
     private void DoJob()
     {
-        if(mCurrentJob == Job.Collect)
+        if(kCurrentJob == Job.Collect)
         {
             if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && !mAtTarget) //없으면 꽃 찾아서 가기
             {
@@ -49,7 +43,7 @@ public class Bee : MonoBehaviour
 
                 if(mTargetFlowerSpot == null) 
                 {
-                    mCurrentJob = Job.Idle;
+                    kCurrentJob = Job.Idle;
                     DoJob();
                     return;
                 }
@@ -92,7 +86,7 @@ public class Bee : MonoBehaviour
                 return;
             }
         }
-        if(mCurrentJob == Job.Idle)
+        if(kCurrentJob == Job.Idle)
         {
             print("idle");
             StartCoroutine(GoToPos(new Vector3(0, 15, 0)));
@@ -119,7 +113,7 @@ public class Bee : MonoBehaviour
 
         if (mTargetHoneycomb == null)
         {
-            mCurrentJob = Job.Idle;
+            kCurrentJob = Job.Idle;
             DoJob();
             return;
         }
@@ -169,7 +163,7 @@ public class Bee : MonoBehaviour
             mTargetHoneycomb.isTarget = false;
         }
 
-        if (mCurrentJob == Job.Collect)
+        if (kCurrentJob == Job.Collect)
         {
             DoJob();
         }

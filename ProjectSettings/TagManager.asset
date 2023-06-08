@@ -52,3 +52,6 @@ TagManager:
   - name: Bee
     uniqueID: 2177007449
     locked: 0
+  - name: Hover
+    uniqueID: 442783851
+    locked: 0

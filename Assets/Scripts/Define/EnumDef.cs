@@ -35,6 +35,7 @@ namespace EnumDef
     {
         Idle = 0,
         Collect = 1, //꽃에서 자원 수집
+        Build = 2,
     }
 
     public enum StructureType

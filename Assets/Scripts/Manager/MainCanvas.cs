@@ -9,6 +9,8 @@ public class MainCanvas : MonoBehaviour
     static public MainCanvas Instance;
 
     public UIResourceInfoPanel kResource;
+    public BuildMenuPanel kBuild;
+    public JobMenuPanel kJob;
 
     /*
     public UIIntroPanel kIntro;
@@ -21,6 +23,8 @@ public class MainCanvas : MonoBehaviour
         Instance = this;
 
         kResource = GetComponentInChildren<UIResourceInfoPanel>(true);
+        kBuild = GetComponentInChildren<BuildMenuPanel>(true);
+        kJob = GetComponentInChildren<JobMenuPanel>(true);
         /*
         kIntro = GetComponentInChildren<UIIntroPanel>(true);
         kPlayInfo = GetComponentInChildren<UIPlayInfoPanel>(true);

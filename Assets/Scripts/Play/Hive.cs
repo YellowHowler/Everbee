@@ -5,10 +5,15 @@ using EnumDef;
 using ClassDef;
 using StructDef;
 using HedgehogTeam.EasyTouch;
+using UnityEditor.PackageManager;
 
 public class Hive : MonoBehaviour
 {
+    public static Hive Instance;
+
     public GameObject kHoneycombObj;
+
+    public GameObject kHoverObj;
 
     public QueenBee kQueenBee;
 
@@ -30,7 +35,7 @@ public class Hive : MonoBehaviour
     {
         foreach (Honeycomb h in mHoneycombList)
         {
-            if ((h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
+            if (h.kStructType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
             {
                 return h;
             }
@@ -51,20 +56,19 @@ public class Hive : MonoBehaviour
             mHoneycombList.Add(honeycomb); //임시
             honeycomb.mHive = this;
 
-            /*
             PlayManager.Instance.kHiveXBound.start = Mathf.Min(honeycomb.pos.x - 0.5f, PlayManager.Instance.kHiveXBound.start);
             PlayManager.Instance.kHiveXBound.end = Mathf.Max(honeycomb.pos.x + 0.5f, PlayManager.Instance.kHiveXBound.end);
 
             PlayManager.Instance.kHiveYBound.start = Mathf.Min(honeycomb.pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
             PlayManager.Instance.kHiveYBound.end = Mathf.Max(honeycomb.pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
-            */
         }
     }
 
     public void AddNewHoneycomb(Vector3 _pos, GameResAmount _amount)
     {
-        GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform);
+        GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform.GetChild(0));
         Honeycomb honeycomb = newHoneycomb.GetComponent<Honeycomb>();
+        honeycomb.mHive = this;
 
         mHoneycombList.Add(honeycomb);
 
@@ -91,16 +95,59 @@ public class Hive : MonoBehaviour
 
     private void Start()
     {
+        kHoverObj.SetActive(false);
+
         EasyTouch.On_TouchStart += OnTouch;
+
+        AddNewHoneycomb(transform.position, new GameResAmount(0f, GameResUnit.Microgram));
     }
 
     private void Awake()
     {
+        Instance = this;
+
         GetAllHoneycombs();
     }
 
     private void Update()
     {
         
+    }
+
+    public void SetDrawBuild(StructureType _type)
+    {
+        kHoverObj.SetActive(true);
+
+        StartCoroutine(SetBuildCor());
+    }
+
+    public IEnumerator SetBuildCor()
+    {
+        while (true)
+        {
+            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            Vector2 touchPos = new Vector2(pos.x, pos.y);
+            Ray2D ray = new Ray2D(touchPos, Vector2.zero);
+
+            RaycastHit2D rayHit = Physics2D.Raycast(ray.origin, ray.origin);
+
+            if (rayHit.collider == null)
+            {
+                kHoverObj.transform.position = new Vector3(pos.x, pos.y, 0);                
+            }
+            else
+            {
+                kHoverObj.transform.position = new Vector3(rayHit.point.x, rayHit.point.y, 0);
+            }            
+
+            if(Input.GetMouseButtonDown(1))
+            {
+                kHoverObj.SetActive(false);
+                yield break;
+            }
+
+            yield return null;
+        }
     }
 }

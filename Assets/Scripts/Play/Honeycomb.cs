@@ -22,11 +22,10 @@ public class Honeycomb : MonoBehaviour
 
     public Hive mHive { get; set; }
 
-    StructureType mStructType = StructureType.None;
-
+    public StructureType kStructType = StructureType.None;
     private void Start()
     {
-        kSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        SetStructure(StructureType.Storage);
     }
 
     public bool IsFull() //그 셀이 꽉 차있는지 확인
@@ -43,17 +42,33 @@ public class Honeycomb : MonoBehaviour
         }
     }
 
+    private void SetAllChildrenActive(bool _setActive)
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(_setActive);
+        }
+
+        transform.GetChild(0).gameObject.SetActive(true);
+    }
+
     public void SetStructure(StructureType _type)
     {
         switch (_type)
         {
             case StructureType.None:
+                SetAllChildrenActive(false);
+                break;
+            case StructureType.Storage:
+                SetAllChildrenActive(false);
+                transform.GetChild(1).gameObject.SetActive(true);
                 break;
             case StructureType.Dry:
+                SetAllChildrenActive(false);
                 break;
         }
 
-        mStructType = _type;
+        kStructType = _type;
     }
 
     private GameResAmount GetMaxAmount(GameResType _type)
@@ -172,10 +187,10 @@ public class Honeycomb : MonoBehaviour
 
         //Gizmos.DrawSphere(transform.position, 0.825f);
 
-        if (transform.parent.parent.GetComponent<Hive>().kIsDrawHoneycombName == true)
+        if (mHive.kIsDrawHoneycombName == true)
             Handles.Label(transform.position, name);
 
-        if (transform.parent.parent.GetComponent<Hive>().kIsDrawHoneycombShape == true)
+        if (mHive.kIsDrawHoneycombShape == true)
             Gizmos.DrawWireSphere(transform.position, 0.825f);
     }
 }
