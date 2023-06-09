@@ -7,6 +7,8 @@ using ClassDef;
 
 public class Garden : MonoBehaviour
 {
+    public static Garden Instance;
+
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
 
     public FlowerSpot GetUsableFlowerSpot()
@@ -34,6 +36,8 @@ public class Garden : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
+
         //Flower Create, List Insert
         GetAllFlowerSpots();
         print(mFlowerSpotList.Count);
