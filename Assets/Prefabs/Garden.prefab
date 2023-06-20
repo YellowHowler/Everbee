@@ -411,6 +411,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75f5bb7a9f75f41be8dc018c04fbbec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flowerObjs:
+  - {fileID: 7293368093327922361, guid: ba55f2247be35214485cca6aa9e049b3, type: 3}
+  - {fileID: 8291692626080167656, guid: 53500e0976b3c894eaca8fb0b0feb19a, type: 3}
+  - {fileID: 7605470441391527501, guid: 7fecbd49096950741ab940321873c094, type: 3}
+  - {fileID: 4798003417154445322, guid: 21a5b35c1a46d8148b514fe5f4ec9417, type: 3}
 --- !u!1 &3359108210112716158
 GameObject:
   m_ObjectHideFlags: 0

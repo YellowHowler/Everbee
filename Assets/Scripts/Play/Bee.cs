@@ -89,7 +89,10 @@ public class Bee : MonoBehaviour
         if(kCurrentJob == Job.Idle)
         {
             print("idle");
-            StartCoroutine(GoToPos(new Vector3(0, 15, 0)));
+
+            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
+            print(randomPos);
+            StartCoroutine(GoToPos(randomPos));
         }
     }
 
@@ -163,10 +166,7 @@ public class Bee : MonoBehaviour
             mTargetHoneycomb.isTarget = false;
         }
 
-        if (kCurrentJob == Job.Collect)
-        {
-            DoJob();
-        }
+        DoJob();
     }
 
     private IEnumerator CollectFromFlower()

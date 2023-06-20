@@ -6,24 +6,39 @@ public class PlayerCamera : MonoBehaviour
 {
     public static PlayerCamera Instance;
 
-    Transform mTarget;
-    // Start is called before the first frame update
+    private Camera mCamera;
+    private float mScrollSpeed = 2.5f;
+    private float mScrollBound = 0.98f;
+
     void Awake()
     {
         Instance = this;
+        mCamera = gameObject.GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(mTarget != null)
+        if (Input.mousePosition.x >= Screen.width * mScrollBound)
         {
-            //Follow Code
-        }        
+            mCamera.transform.Translate(Vector3.right * Time.deltaTime * mScrollSpeed, Space.World);
+        }
+        else if (Input.mousePosition.x <= Screen.width * (1 - mScrollBound))
+        {
+            mCamera.transform.Translate(Vector3.left * Time.deltaTime * mScrollSpeed, Space.World);
+        }
+        if (Input.mousePosition.y >= Screen.height * mScrollBound)
+        {
+            mCamera.transform.Translate(Vector3.up * Time.deltaTime * mScrollSpeed, Space.World);
+        }
+        else if (Input.mousePosition.y <= Screen.height * (1 - mScrollBound))
+        {
+            mCamera.transform.Translate(Vector3.down * Time.deltaTime * mScrollSpeed, Space.World);
+        }
     }
 
     public void SetFollow(Transform _target)
     {
-        mTarget = _target;
+        
     }
 }

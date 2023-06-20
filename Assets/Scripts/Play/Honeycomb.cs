@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 public class Honeycomb : MonoBehaviour
-{
+{ 
     public SpriteRenderer kSpriteRenderer;
 
     public Vector3 pos { get { return transform.position; } set { pos = value; } }
@@ -187,10 +187,13 @@ public class Honeycomb : MonoBehaviour
 
         //Gizmos.DrawSphere(transform.position, 0.825f);
 
-        if (mHive.kIsDrawHoneycombName == true)
-            Handles.Label(transform.position, name);
+        if (mHive != null)
+        {
+            if (mHive.kIsDrawHoneycombName == true)
+                Handles.Label(transform.position, name);
 
-        if (mHive.kIsDrawHoneycombShape == true)
-            Gizmos.DrawWireSphere(transform.position, 0.825f);
+            if (mHive.kIsDrawHoneycombShape == true)
+                Gizmos.DrawWireSphere(transform.position, Mng.play.kHive.mHonecombRadius);
+        }
     }
 }

@@ -11,6 +11,9 @@ public class Hive : MonoBehaviour
 {
     public static Hive Instance;
 
+    [HideInInspector] public float mHonecombRadius = 0.8f;
+    private Vector3 mHoneycombOrigin;
+
     public GameObject kHoneycombObj;
 
     public GameObject kHoverObj;
@@ -72,8 +75,11 @@ public class Hive : MonoBehaviour
 
         mHoneycombList.Add(honeycomb);
 
-        PlayManager.Instance.kHiveXBound.start = Mathf.Min(honeycomb.pos.x - 0.5f, PlayManager.Instance.kHiveXBound.start);
-        PlayManager.Instance.kHiveXBound.end = Mathf.Max(honeycomb.pos.x + 0.5f, PlayManager.Instance.kHiveXBound.end);
+        PlayManager.Instance.kHiveXBound.start = Mathf.Min(_pos.x - 0.5f, PlayManager.Instance.kHiveXBound.start);
+        PlayManager.Instance.kHiveXBound.end = Mathf.Max(_pos.x + 0.5f, PlayManager.Instance.kHiveXBound.end);
+
+        PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
+        PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
     }
 
     private void OnTouch(Gesture gesture)
@@ -105,13 +111,17 @@ public class Hive : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
-        GetAllHoneycombs();
+        mHoneycombOrigin = transform.position;
     }
 
     private void Update()
     {
         
+    }
+
+    public void HexToWorldPos(Vector2 _hex)
+    {
+
     }
 
     public void SetDrawBuild(StructureType _type)
@@ -125,6 +135,7 @@ public class Hive : MonoBehaviour
     {
         while (true)
         {
+            /*
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Vector2 touchPos = new Vector2(pos.x, pos.y);
@@ -145,6 +156,18 @@ public class Hive : MonoBehaviour
             {
                 kHoverObj.SetActive(false);
                 yield break;
+            }
+            */
+
+            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 touchPos = new Vector2(pos.x, pos.y);
+
+            int xPos = Mathf.RoundToInt((touchPos.x - mHoneycombOrigin.x) / (mHonecombRadius));
+            int yPos = Mathf.RoundToInt((touchPos.y - mHoneycombOrigin.y) / (mHonecombRadius * 2));
+
+            if (yPos % 2 == 0)
+            {
+                //xPos = xPos
             }
 
             yield return null;

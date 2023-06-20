@@ -6,8 +6,10 @@ using UnityEngine;
 
 public class FlowerSpot : MonoBehaviour
 {
-    public bool isTarget = false;
-    public Vector3 pos { get { return transform.position; } set { pos = value; } }
+    [HideInInspector] public Garden mGarden;
+
+    [HideInInspector] public bool isTarget = false;
+    public Vector3 pos;
 
     public FlowerType type;
 
@@ -25,5 +27,7 @@ public class FlowerSpot : MonoBehaviour
     {
         nectarAmount = new GameResAmount(nectar, nectarUnit);
         pollenAmount = new GameResAmount(pollen, pollenUnit);
+
+        pos = transform.position;
     }
 }

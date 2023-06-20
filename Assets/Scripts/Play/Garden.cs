@@ -7,9 +7,13 @@ using ClassDef;
 
 public class Garden : MonoBehaviour
 {
-    public static Garden Instance;
+    [HideInInspector] public static Garden Instance;
+
+    public GameObject[] flowerObjs;
 
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
+
+    private float flowerY = 0.4f; // ²ÉµéÀÇ y ÁÂÇ¥°ª
 
     public FlowerSpot GetUsableFlowerSpot()
     {
@@ -34,16 +38,36 @@ public class Garden : MonoBehaviour
         }
     }
 
-    void Awake()
+    public void AddNewFlower(FlowerType _flower, Vector3 _pos)
+    {
+        GameObject newFlower = Instantiate(flowerObjs[(int)_flower], _pos, Quaternion.identity, transform.GetChild(0));
+
+        for (int i = 0; i < newFlower.transform.childCount; i++)
+        {
+            FlowerSpot flowerSpot = newFlower.transform.GetChild(i).GetComponent<FlowerSpot>();
+            flowerSpot.mGarden = this;
+
+            mFlowerSpotList.Add(flowerSpot);
+        }
+    }
+
+    private void Awake()
     {
         Instance = this;
 
         //Flower Create, List Insert
-        GetAllFlowerSpots();
+        //GetAllFlowerSpots();
         print(mFlowerSpotList.Count);
     }
 
-    void Update()
+    private void Start()
+    {
+        AddNewFlower(FlowerType.Cosmos, new Vector3(0, 0.4f, 0));
+        AddNewFlower(FlowerType.Lavender, new Vector3(2f, 0.4f, 0));
+        AddNewFlower(FlowerType.OxeyeDaisy, new Vector3(3.7f, 0.4f, 0));
+    }
+
+    private void Update()
     {
         
     }
