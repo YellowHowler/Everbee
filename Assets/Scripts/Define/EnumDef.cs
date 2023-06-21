@@ -38,6 +38,16 @@ namespace EnumDef
         Build = 2,
     }
 
+    public enum CollectState
+    {
+        GoToFlower = 0,
+        CollectResource,
+        GoToPollen,
+        StorePollen,
+        GoToNectar,
+        StoreNectar,
+    }
+
     public enum StructureType
     {
         None = 0,
