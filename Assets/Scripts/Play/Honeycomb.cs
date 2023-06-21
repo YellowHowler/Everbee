@@ -25,7 +25,7 @@ public class Honeycomb : MonoBehaviour
     public StructureType kStructType = StructureType.None;
     private void Start()
     {
-        SetStructure(StructureType.Storage);
+        SetStructure(StructureType.None);
     }
 
     public bool IsFull() //�� ���� �� ���ִ��� Ȯ��
@@ -203,7 +203,8 @@ public class Honeycomb : MonoBehaviour
 
         if(hive.mIsBuilding == true)
         {
-            
+            SetStructure(hive.mStructureType);
+            hive.mIsBuilding = false;
         }
     }
 }

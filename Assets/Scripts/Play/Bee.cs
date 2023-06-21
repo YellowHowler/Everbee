@@ -7,12 +7,7 @@ using ClassDef;
 
 public class Bee : MonoBehaviour
 {
-    private bool isWorking = false;
-
-    private bool mCanStorePollen = true;
-
     public Job kCurrentJob = Job.Collect;
-    private CollectState mCurrentCollectState = CollectState.GoToFlower;
 
     private GameResAmount mCurrentPollen;
     private GameResAmount mCurrentNectar;
@@ -28,94 +23,76 @@ public class Bee : MonoBehaviour
     FlowerSpot mTargetFlowerSpot;
     Honeycomb mTargetHoneycomb;
 
-    private void Update()
-    {
-        StartCoroutine(ChangeJob());
-    }
-
-    private IEnumerator ChangeJob()
+    private void Start()
     {
         DoJob();
+    }
 
-        while(isWorking == true)
-        {
-            yield return new WaitForSeconds(0.3f);
-        }
+    void Update()
+    {
+      
+    }
 
-        if(kCurrentJob == Job.Collect)
-        {
-            if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && !mAtTarget) //없으면 꽃 찾아서 가기
-            {
-                mCurrentCollectState = CollectState.GoToFlower;
-            }
-            else if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && mAtTarget) //꽃에 도착
-            {
-                mCanStorePollen = true;
-                mCurrentCollectState = CollectState.CollectResource;
-            }
-            else if(mCurrentPollen.amount != 0 && mAtTarget == false && mCanStorePollen) // 자원이 생겼으니 저장하러 가기
-            {
-                mCurrentCollectState = CollectState.GoToPollen;
-            }
-            else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
-            {
-                mCurrentCollectState = CollectState.StorePollen;
-            }
-            else if (mCurrentNectar.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
-            {
-                mCurrentCollectState = CollectState.GoToNectar;
-            }
-            else if (mCurrentNectar.amount != 0 && mAtTarget == true)
-            {
-                mCurrentCollectState = CollectState.StorePollen;
-            }
-        }
+    private IEnumerator CallDoJob()
+    {
+        yield return new WaitForSeconds(0.3f);
+        DoJob();
     }
 
     private void DoJob()
     {
-        isWorking = true;
-
         if(kCurrentJob == Job.Collect)
         {
-            switch(mCurrentCollectState)
+            if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && !mAtTarget) //없으면 꽃 찾아서 가기
             {
-                case CollectState.GoToFlower:
-                    mTargetFlowerSpot = PlayManager.Instance.kGarden.GetUsableFlowerSpot();
+                mTargetFlowerSpot = PlayManager.Instance.kGarden.GetUsableFlowerSpot();
 
-                    if(mTargetFlowerSpot == null) 
-                    {
-                        kCurrentJob = Job.Idle;
-                        isWorking = false;
-                        break;
-                    }
+                if(mTargetFlowerSpot == null) 
+                {
+                    kCurrentJob = Job.Idle;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
 
-                    mTargetFlowerSpot.isTarget = true;
-                    StartCoroutine(GoToPos(mTargetFlowerSpot.pos));
-                    isWorking = false;
-                    break;
-                case CollectState.CollectResource:
-                    StartCoroutine(CollectFromFlower());
-                    isWorking = false;
-                    break;
-                case CollectState.GoToPollen:
-                    StorePollen();
-                    break;
-                case CollectState.StorePollen:
-                    mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
-                    mAtTarget = false;
-                    mTargetHoneycomb = null;
-                    isWorking = false;
-                    break;
-                case CollectState.GoToNectar:
-                    StoreNectar();
-                    break;
-                case CollectState.StoreNectar:
-                    mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
-                    mAtTarget = false; 
-                    mTargetHoneycomb = null;
-                    break;
+                mTargetFlowerSpot.isTarget = true;
+                StartCoroutine(GoToPos(mTargetFlowerSpot.pos));
+                return;
             }
+            else if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && mAtTarget) //꽃에 도착
+            {
+                StartCoroutine(CollectFromFlower());
+                return;
+            }
+            else if(mCurrentPollen.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
+            {
+                StorePollen();
+                return;
+            }
+            else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
+            {
+                mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
+                mAtTarget = false;
+                mTargetHoneycomb = null;
+                StartCoroutine(CallDoJob());
+                return;
+            }
+            else if (mCurrentNectar.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
+            {
+                StoreNectar();
+                return;
+            }
+            else if (mCurrentNectar.amount != 0 && mAtTarget == true)
+            {
+                mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
+                mAtTarget = false; 
+                mTargetHoneycomb = null;
+                StartCoroutine(CallDoJob());
+                return;
+            }
+        }
+        if(kCurrentJob == Job.Build)
+        {
+            kCurrentJob = Job.Idle;
         }
         if(kCurrentJob == Job.Idle)
         {
@@ -132,7 +109,7 @@ public class Bee : MonoBehaviour
 
         if (mTargetHoneycomb == null)
         {
-            mCanStorePollen = false;
+            StoreNectar();
             return;
         }
 
@@ -147,7 +124,7 @@ public class Bee : MonoBehaviour
         if (mTargetHoneycomb == null)
         {
             kCurrentJob = Job.Idle;
-            DoJob();
+            StartCoroutine(CallDoJob());
             return;
         }
 
@@ -201,7 +178,7 @@ public class Bee : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(3, 6));
         }
 
-        isWorking = false;
+        StartCoroutine(CallDoJob());
     }
 
     private IEnumerator CollectFromFlower()
@@ -212,6 +189,6 @@ public class Bee : MonoBehaviour
 
         mTargetFlowerSpot.isTarget = false;
 
-        DoJob();
+        StartCoroutine(CallDoJob());
     }
 }

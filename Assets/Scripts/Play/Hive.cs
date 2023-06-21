@@ -11,8 +11,8 @@ public class Hive : MonoBehaviour
 {
     public static Hive Instance;
 
-    [HideInInspector] public float mHoneycombRadiusX = 0.75f;
-    [HideInInspector] public float mHoneycombRadiusY = 0.7f;
+    [HideInInspector] public float mHoneycombRadiusX = 0.5f;
+    [HideInInspector] public float mHoneycombRadiusY = 0.8f;
     private Vector3 mHoneycombOrigin;
 
     public GameObject kHoneycombObj;
@@ -109,17 +109,17 @@ public class Hive : MonoBehaviour
             case HoneycombDirection.None:
                 return _pos;
             case HoneycombDirection.TopLeft:
-                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.up * Mathf.Sqrt(3) * mHoneycombRadiusY;
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.up * 1.5f * mHoneycombRadiusY;
             case HoneycombDirection.TopRight:
-                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.up * Mathf.Sqrt(3) * mHoneycombRadiusY;
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.up * 1.5f * mHoneycombRadiusY;
             case HoneycombDirection.Left:
                 return _pos + Vector3.left * mHoneycombRadiusX * 2;
             case HoneycombDirection.Right:
                 return _pos + Vector3.right * mHoneycombRadiusX * 2;
             case HoneycombDirection.BottomLeft:
-                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.down * Mathf.Sqrt(3) * mHoneycombRadiusY;
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.down * 1.5f * mHoneycombRadiusY;
             case HoneycombDirection.BottomRight:
-                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.down * Mathf.Sqrt(3) * mHoneycombRadiusY;
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.down * 1.5f * mHoneycombRadiusY;
         }
 
         return _pos;
@@ -182,7 +182,7 @@ public class Hive : MonoBehaviour
             Vector2 touchPos = new Vector2(pos.x, pos.y);
 
             int xPos = 0;
-            int yPos = Mng.play.RoundFloat((touchPos.y - mHoneycombOrigin.y) / (mHoneycombRadiusY * 2));
+            int yPos = Mng.play.RoundFloat((touchPos.y - mHoneycombOrigin.y) / (mHoneycombRadiusY * 1.5f));
 
             if (Mng.play.GetMod(yPos, 2) == 1)
             {
@@ -193,9 +193,11 @@ public class Hive : MonoBehaviour
                 xPos = Mng.play.RoundFloat((touchPos.x - mHoneycombOrigin.x) / (mHoneycombRadiusX) / 2) * 2;
             }
 
-            kHoverObj.transform.localPosition = new Vector3(xPos * mHoneycombRadiusX, yPos * mHoneycombRadiusY * 2, transform.position.z);
+            kHoverObj.transform.localPosition = new Vector3(xPos * mHoneycombRadiusX, yPos * mHoneycombRadiusY * 1.5f, transform.position.z);
 
             yield return null;
         }
+
+        kHoverObj.SetActive(false);
     }
 }
