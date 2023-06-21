@@ -25,7 +25,7 @@ public class Honeycomb : MonoBehaviour
     public StructureType kStructType = StructureType.None;
     private void Start()
     {
-        SetStructure(StructureType.Empty);
+        SetStructure(StructureType.None);
     }
 
     public bool IsFull() //�� ���� �� ���ִ��� Ȯ��

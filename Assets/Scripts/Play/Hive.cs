@@ -34,7 +34,7 @@ public class Hive : MonoBehaviour
     public bool kIsDrawHoneycombShape = true;
 
     [HideInInspector] public bool mIsBuilding = false;
-    [HideInInspector] public BuildType mBuildType = BuildType.None;
+    [HideInInspector] public StructureType mStructureType = StructureType.None;
 
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
@@ -167,7 +167,7 @@ public class Hive : MonoBehaviour
     public void SetDrawBuild(StructureType _type)
     {
         mIsBuilding = true;
-        mBuildType = _type;
+        mStructureType = _type;
 
         kHoverObj.SetActive(true);
 
