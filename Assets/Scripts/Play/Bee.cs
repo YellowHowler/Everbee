@@ -54,7 +54,6 @@ public class Bee : MonoBehaviour
             }
             else if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && mAtTarget) //꽃에 도착
             {
-                print("start collect");
                 StartCoroutine(CollectFromFlower());
                 return;
             }
@@ -66,7 +65,6 @@ public class Bee : MonoBehaviour
             else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
             {
                 mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
-                print(mCurrentPollen.amount);
                 mAtTarget = false;
                 mTargetHoneycomb = null;
                 DoJob();
@@ -91,7 +89,6 @@ public class Bee : MonoBehaviour
             print("idle");
 
             Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
-            print(randomPos);
             StartCoroutine(GoToPos(randomPos));
         }
     }
@@ -164,6 +161,11 @@ public class Bee : MonoBehaviour
         if(mTargetHoneycomb != null)
         {
             mTargetHoneycomb.isTarget = false;
+        }
+
+        if(kCurrentJob == Job.Idle)
+        {
+            yield return new WaitForSeconds(Random.Range(3, 6));
         }
 
         DoJob();

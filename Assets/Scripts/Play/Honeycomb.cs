@@ -13,7 +13,7 @@ public class Honeycomb : MonoBehaviour
 
     public bool isTarget;
 
-    public GameResType type; //¹«½¼ ÀÚ¿øÀ» ÀúÀåÇÏ°í ÀÖ´ÂÁö
+    public GameResType type; //ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResAmount kMaxNectarAmount = new GameResAmount(40, GameResUnit.Microgram);
     public GameResAmount kMaxPollenAmount = new GameResAmount(20, GameResUnit.Milligram);
@@ -25,10 +25,10 @@ public class Honeycomb : MonoBehaviour
     public StructureType kStructType = StructureType.None;
     private void Start()
     {
-        SetStructure(StructureType.Storage);
+        SetStructure(StructureType.Empty);
     }
 
-    public bool IsFull() //±× ¼¿ÀÌ ²Ë Â÷ÀÖ´ÂÁö È®ÀÎ
+    public bool IsFull() //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
     {
         GameResAmount maxAmount = GetMaxAmount(type);
 
@@ -95,7 +95,7 @@ public class Honeycomb : MonoBehaviour
         return maxAmount;
     }
 
-    /// <summary> ÆÄ¶ó¹ÌÅÍ °ª¸¸Å­ ÀúÀå, ÀúÀå°ø°£ÀÌ ºÎÁ·ÇÑ´Ù¸é ºÎÁ·ÇÑ¸¸Å­ ¹ÝÈ¯ </summary>
+    /// <summary> ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¸ï¿½Å­ ï¿½ï¿½È¯ </summary>
     public GameResAmount StoreResource(GameResType _type, GameResAmount _amount)
     {
         GameResAmount maxAmount = GetMaxAmount(_type);
@@ -112,7 +112,7 @@ public class Honeycomb : MonoBehaviour
 
         GameResAmount retAmount = PlayManager.Instance.AddResourceAmounts(_amount, amount);
 
-        if (PlayManager.Instance.CompareResourceAmounts(retAmount, maxAmount) == true) //ÀúÀå°ø°£ ¾ÈºÎÁ·ÇÏ¸é ±×´ë·Î ÀúÀå
+        if (PlayManager.Instance.CompareResourceAmounts(retAmount, maxAmount) == true) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Èºï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½×´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         {
             amount = retAmount;
             PlayManager.Instance.AddResourceToStorage(_type, _amount);
@@ -193,7 +193,17 @@ public class Honeycomb : MonoBehaviour
                 Handles.Label(transform.position, name);
 
             if (mHive.kIsDrawHoneycombShape == true)
-                Gizmos.DrawWireSphere(transform.position, Mng.play.kHive.mHonecombRadius);
+                Gizmos.DrawWireSphere(transform.position, Mng.play.kHive.mHoneycombRadiusY);
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        Hive hive = Mng.play.kHive;
+
+        if(hive.mIsBuilding == true)
+        {
+            
         }
     }
 }

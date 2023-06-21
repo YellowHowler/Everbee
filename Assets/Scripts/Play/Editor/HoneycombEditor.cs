@@ -10,7 +10,8 @@ public class HoneycombEditor : Editor
 {
     Honeycomb _this = null;
 
-    private float mRadius = Mng.play.kHive.mHonecombRadius;
+    private float mRadiusX = Mng.play.kHive.mHoneycombRadiusX;
+    private float mRadiusY = Mng.play.kHive.mHoneycombRadiusY;
 
     private void OnEnable()
     {
@@ -27,7 +28,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
 
             go.transform.parent = _this.transform.parent;            
-            go.transform.position = _this.transform.position + Vector3.left * mRadius + Vector3.up * Mathf.Sqrt(3) * mRadius;
+            go.transform.position = _this.transform.position + Vector3.left * mRadiusX + Vector3.up * Mathf.Sqrt(3) * mRadiusY;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
 
@@ -36,7 +37,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
             
             go.transform.parent = _this.transform.parent;
-            go.transform.position = _this.transform.position + Vector3.right * mRadius + Vector3.up * Mathf.Sqrt(3) * mRadius;
+            go.transform.position = _this.transform.position + Vector3.right * mRadiusX + Vector3.up * Mathf.Sqrt(3) * mRadiusY;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
         GUILayout.EndHorizontal();
@@ -47,7 +48,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
 
             go.transform.parent = _this.transform.parent;
-            go.transform.position = _this.transform.position + Vector3.left * mRadius * 2;
+            go.transform.position = _this.transform.position + Vector3.left * mRadiusX * 2;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
 
@@ -56,7 +57,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
 
             go.transform.parent = _this.transform.parent;
-            go.transform.position = _this.transform.position + Vector3.right * mRadius * 2;
+            go.transform.position = _this.transform.position + Vector3.right * mRadiusX * 2;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
         GUILayout.EndHorizontal();
@@ -67,7 +68,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
 
             go.transform.parent = _this.transform.parent;
-            go.transform.position = _this.transform.position + Vector3.left * mRadius + Vector3.down * Mathf.Sqrt(3) * mRadius;
+            go.transform.position = _this.transform.position + Vector3.left * mRadiusX + Vector3.down * Mathf.Sqrt(3) * mRadiusY;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
         
@@ -76,7 +77,7 @@ public class HoneycombEditor : Editor
             GameObject go = Instantiate(_this.gameObject) as GameObject;
 
             go.transform.parent = _this.transform.parent;
-            go.transform.position = _this.transform.position + Vector3.right * mRadius + Vector3.down * Mathf.Sqrt(3) * mRadius;
+            go.transform.position = _this.transform.position + Vector3.right * mRadiusX + Vector3.down * Mathf.Sqrt(3) * mRadiusY;
             go.transform.name = "Honeycomb" + _this.transform.parent.childCount.ToString();
         }
         GUILayout.EndHorizontal();

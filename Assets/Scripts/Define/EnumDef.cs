@@ -46,4 +46,15 @@ namespace EnumDef
         Coalgulate,
         Hatchtery,
     }
+
+    public enum HoneycombDirection
+    {
+        None = 0,
+        TopLeft,
+        TopRight,
+        Left,
+        Right,
+        BottomLeft,
+        BottomRight,
+    }
 }

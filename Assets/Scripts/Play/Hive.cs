@@ -11,11 +11,11 @@ public class Hive : MonoBehaviour
 {
     public static Hive Instance;
 
-    [HideInInspector] public float mHonecombRadius = 0.8f;
+    [HideInInspector] public float mHoneycombRadiusX = 0.75f;
+    [HideInInspector] public float mHoneycombRadiusY = 0.7f;
     private Vector3 mHoneycombOrigin;
 
     public GameObject kHoneycombObj;
-
     public GameObject kHoverObj;
 
     public QueenBee kQueenBee;
@@ -32,6 +32,9 @@ public class Hive : MonoBehaviour
     public bool kIsDrawHoneycombName = true;
     [Header("Honeycomb 모양 보기")]
     public bool kIsDrawHoneycombShape = true;
+
+    [HideInInspector] public bool mIsBuilding = false;
+    [HideInInspector] public BuildType mBuildType = BuildType.None;
 
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
@@ -99,13 +102,55 @@ public class Hive : MonoBehaviour
         Debug.Log(gesture.pickedObject.name);
     }
 
+    private Vector3 GetHexagonPos(Vector3 _pos, HoneycombDirection _dir)
+    {
+        switch(_dir)
+        {
+            case HoneycombDirection.None:
+                return _pos;
+            case HoneycombDirection.TopLeft:
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.up * Mathf.Sqrt(3) * mHoneycombRadiusY;
+            case HoneycombDirection.TopRight:
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.up * Mathf.Sqrt(3) * mHoneycombRadiusY;
+            case HoneycombDirection.Left:
+                return _pos + Vector3.left * mHoneycombRadiusX * 2;
+            case HoneycombDirection.Right:
+                return _pos + Vector3.right * mHoneycombRadiusX * 2;
+            case HoneycombDirection.BottomLeft:
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.down * Mathf.Sqrt(3) * mHoneycombRadiusY;
+            case HoneycombDirection.BottomRight:
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.down * Mathf.Sqrt(3) * mHoneycombRadiusY;
+        }
+
+        return _pos;
+    }
+
     private void Start()
     {
         kHoverObj.SetActive(false);
 
         EasyTouch.On_TouchStart += OnTouch;
 
-        AddNewHoneycomb(transform.position, new GameResAmount(0f, GameResUnit.Microgram));
+        Vector3 newPos = transform.position;
+
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 5; j++)
+            {
+                AddNewHoneycomb(newPos, new GameResAmount(0f, GameResUnit.Microgram));
+
+                if(i % 2 == 0)
+                {
+                    newPos = GetHexagonPos(newPos, HoneycombDirection.Right);
+                }
+                else if(i % 2 == 1)
+                {
+                    newPos = GetHexagonPos(newPos, HoneycombDirection.Left);
+                }
+            }
+
+            newPos = GetHexagonPos(newPos, HoneycombDirection.TopRight);
+        }
     }
 
     private void Awake()
@@ -119,13 +164,11 @@ public class Hive : MonoBehaviour
         
     }
 
-    public void HexToWorldPos(Vector2 _hex)
-    {
-
-    }
-
     public void SetDrawBuild(StructureType _type)
     {
+        mIsBuilding = true;
+        mBuildType = _type;
+
         kHoverObj.SetActive(true);
 
         StartCoroutine(SetBuildCor());
@@ -133,42 +176,24 @@ public class Hive : MonoBehaviour
 
     public IEnumerator SetBuildCor()
     {
-        while (true)
+        while (mIsBuilding == true)
         {
-            /*
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            Vector2 touchPos = new Vector2(pos.x, pos.y);
-            Ray2D ray = new Ray2D(touchPos, Vector2.zero);
-
-            RaycastHit2D rayHit = Physics2D.Raycast(ray.origin, ray.origin);
-
-            if (rayHit.collider == null)
-            {
-                kHoverObj.transform.position = new Vector3(pos.x, pos.y, 0);                
-            }
-            else
-            {
-                kHoverObj.transform.position = new Vector3(rayHit.point.x, rayHit.point.y, 0);
-            }            
-
-            if(Input.GetMouseButtonDown(1))
-            {
-                kHoverObj.SetActive(false);
-                yield break;
-            }
-            */
-
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 touchPos = new Vector2(pos.x, pos.y);
 
-            int xPos = Mathf.RoundToInt((touchPos.x - mHoneycombOrigin.x) / (mHonecombRadius));
-            int yPos = Mathf.RoundToInt((touchPos.y - mHoneycombOrigin.y) / (mHonecombRadius * 2));
+            int xPos = 0;
+            int yPos = Mng.play.RoundFloat((touchPos.y - mHoneycombOrigin.y) / (mHoneycombRadiusY * 2));
 
-            if (yPos % 2 == 0)
+            if (Mng.play.GetMod(yPos, 2) == 1)
             {
-                //xPos = xPos
+                xPos = Mng.play.RoundFloat((touchPos.x - mHoneycombOrigin.x) / (mHoneycombRadiusX) / 2 - 0.5f) * 2 + 1;
             }
+            else if (Mng.play.GetMod(yPos, 2) == 0)
+            {
+                xPos = Mng.play.RoundFloat((touchPos.x - mHoneycombOrigin.x) / (mHoneycombRadiusX) / 2) * 2;
+            }
+
+            kHoverObj.transform.localPosition = new Vector3(xPos * mHoneycombRadiusX, yPos * mHoneycombRadiusY * 2, transform.position.z);
 
             yield return null;
         }

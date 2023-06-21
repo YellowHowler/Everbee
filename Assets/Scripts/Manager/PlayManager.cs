@@ -48,6 +48,16 @@ public class PlayManager : MonoBehaviour
     {
     }
 
+    public int RoundFloat(float _num)
+    {
+        return (int)Mathf.Floor(_num + 0.5f);
+    }
+
+    public int GetMod(int _a, int _b)
+    {
+        return ( _a % _b + _b ) % _b;
+    }
+
     public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
     {
         if(_type == GameResType.Honey)
@@ -165,7 +175,7 @@ public class PlayManager : MonoBehaviour
         return _amount;
     }
 
-    /// <summary> Ã¹¹øÂ°°¡ ´õ Å©¸é false, µÎ¹øÂ°°¡ ´õ Å©¸é true </summary>
+    /// <summary> Ã¹ï¿½ï¿½Â°ï¿½ï¿½ ï¿½ï¿½ Å©ï¿½ï¿½ false, ï¿½Î¹ï¿½Â°ï¿½ï¿½ ï¿½ï¿½ Å©ï¿½ï¿½ true </summary>
     public bool CompareResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
         if((int)_resAmountA.unit != (int) _resAmountB.unit)
