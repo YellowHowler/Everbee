@@ -93,8 +93,6 @@ public class PlayManager : MonoBehaviour
             PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
         }
         */
-        
-        Debug.Log(gesture.pickedObject.name);
     }
 
     public GameResAmount AddResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
@@ -184,6 +182,11 @@ public class PlayManager : MonoBehaviour
         }
 
         return _resAmountA.amount < _resAmountB.amount;
+    }
+
+    public Vector3 SetZToZero(Vector3 _pos)
+    {
+        return new Vector3(_pos.x, _pos.y, 0);
     }
 }
 

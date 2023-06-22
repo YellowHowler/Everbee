@@ -17,13 +17,14 @@ public class BuildMenuPanel : MonoBehaviour
 
     public void OnBuildMenuBgClick()
     {
+        Mng.canvas.kIsViewingMenu = false;
+        
         gameObject.SetActive(false);
     }
 
-    public void OnBuildBtnClick()
+    public void OnBuildBtnClick(int _type)
     {
         gameObject.SetActive(false);
-        Mng.play.kHive.SetDrawBuild(StructureType.Storage);
-
+        Mng.play.kHive.SetDrawBuild((StructureType)_type);
     }
 }

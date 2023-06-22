@@ -22,7 +22,10 @@ public class Bees : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
-        CreateBee(Vector3.zero);
+        for(int i = 0; i < 4; i++)
+        {
+            CreateBee(Vector3.zero);
+        }
     }
 
     // Update is called once per frame

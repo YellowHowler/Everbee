@@ -15,6 +15,7 @@ public class JobMenuPanel : MonoBehaviour
 
     public void OnJobMenuBgClick()
     {
+        Mng.canvas.kIsViewingMenu = false;
         gameObject.SetActive(false);
     }
 

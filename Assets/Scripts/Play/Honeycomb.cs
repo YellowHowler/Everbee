@@ -15,14 +15,23 @@ public class Honeycomb : MonoBehaviour
 
     public GameResType type; //���� �ڿ��� �����ϰ� �ִ���
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
-    public GameResAmount kMaxNectarAmount = new GameResAmount(40, GameResUnit.Microgram);
-    public GameResAmount kMaxPollenAmount = new GameResAmount(20, GameResUnit.Milligram);
+    public GameResAmount kMaxNectarAmount = new GameResAmount(10, GameResUnit.Milligram);
+    public GameResAmount kMaxPollenAmount = new GameResAmount(200, GameResUnit.Milligram);
     public GameResAmount kMaxHoneyAmount = new GameResAmount(500, GameResUnit.Microgram);
     public GameResAmount kMaxWaxAmount = new GameResAmount(20, GameResUnit.Milligram);
 
     public Hive mHive { get; set; }
 
-    public StructureType kStructType = StructureType.None;
+    public StructureType kStructureType = StructureType.None;
+
+    public GameObject kEmptyObj;
+    public GameObject kStorageObj;
+    public GameObject kDryerObj;
+
+    private bool mIsOpen = false;
+
+    public Sprite[] kDryerSprites;
+
     private void Start()
     {
         SetStructure(StructureType.None);
@@ -42,6 +51,20 @@ public class Honeycomb : MonoBehaviour
         }
     }
 
+    public bool IsUsable(GameResType _type)
+    {
+        if(type == GameResType.Empty)
+        {
+            return true;
+        }
+        if(type == _type && !IsFull()) 
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private void SetAllChildrenActive(bool _setActive)
     {
         for (int i = 0; i < transform.childCount; i++)
@@ -49,10 +72,10 @@ public class Honeycomb : MonoBehaviour
             transform.GetChild(i).gameObject.SetActive(_setActive);
         }
 
-        transform.GetChild(0).gameObject.SetActive(true);
+        kEmptyObj.gameObject.SetActive(true);
     }
 
-    public void SetStructure(StructureType _type)
+    public bool SetStructure(StructureType _type) //true if build successful
     {
         switch (_type)
         {
@@ -60,15 +83,26 @@ public class Honeycomb : MonoBehaviour
                 SetAllChildrenActive(false);
                 break;
             case StructureType.Storage:
+                if(kStructureType != StructureType.None) 
+                {
+                    return false;
+                }
                 SetAllChildrenActive(false);
-                transform.GetChild(1).gameObject.SetActive(true);
+                kStorageObj.SetActive(true);
                 break;
-            case StructureType.Dry:
+            case StructureType.Dryer:
+                if(kStructureType != StructureType.Storage || (type != GameResType.Nectar && amount.amount != 0)) 
+                {
+                    return false;
+                }
                 SetAllChildrenActive(false);
+                kStorageObj.SetActive(true);
+                kDryerObj.SetActive(true);
                 break;
         }
 
-        kStructType = _type;
+        kStructureType = _type;
+        return true;
     }
 
     private GameResAmount GetMaxAmount(GameResType _type)
@@ -142,6 +176,7 @@ public class Honeycomb : MonoBehaviour
 
         
         int spriteNum = (int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1));
+        if(spriteNum == 0 && amount.amount > 0) spriteNum = 1;
 
         if (type == GameResType.Nectar)
         {
@@ -199,12 +234,74 @@ public class Honeycomb : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(Mng.canvas.kIsViewingMenu == true)
+        {
+            return;
+        }
+
         Hive hive = Mng.play.kHive;
 
         if(hive.mIsBuilding == true)
         {
-            SetStructure(hive.mStructureType);
-            hive.mIsBuilding = false;
+            if(SetStructure(hive.mStructureType) == true)
+            {
+                hive.mIsBuilding = false;
+            }
+        }
+        else
+        {
+            switch (kStructureType)
+            {
+                case StructureType.None:
+                    break;
+                case StructureType.Storage:
+                    break;
+                case StructureType.Dryer:
+                    mIsOpen = !mIsOpen;
+                    if(mIsOpen == false)
+                    {
+                        kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[0];
+                    }
+                    else
+                    {
+                        print("open");
+                        kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[1];
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void OnMouseUp()
+    {
+        if(Mng.canvas.kIsViewingMenu == true)
+        {
+            return;
+        }
+
+        if(Mng.play.kHive.mIsBuilding == true)
+        {
+
+        }
+        else
+        {
+            switch (kStructureType)
+            {
+                case StructureType.None:
+                    break;
+                case StructureType.Storage:
+                    if(amount.amount == 0) 
+                    {
+                        break;
+                    }
+                    Item item = Instantiate(Mng.play.kHive.kItemObj, transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
+                    item.UpdateType(type);
+                    amount = item.UpdateAmount(amount);
+                    UpdateSprite();
+                    break;
+                case StructureType.Dryer:
+                    break;
+            }
         }
     }
 }

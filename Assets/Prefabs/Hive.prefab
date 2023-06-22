@@ -31,6 +31,7 @@ Transform:
   - {fileID: 2762676343396866390}
   - {fileID: 2762676342523190796}
   - {fileID: 3763031303372253771}
+  - {fileID: 7201876907501535724}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -46,42 +47,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cdaa681a303d49a59762433a1a8b91a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mHoneycombRadiusX: 0.685
+  mHoneycombRadiusY: 0.833
   kHoneycombObj: {fileID: 1434350828547772511, guid: 10d6796d4ee74814fb5500e195c3189d, type: 3}
   kHoverObj: {fileID: 4275278816986291203}
+  kItemObj: {fileID: 7896737874811558139, guid: 77d39e68882d146e1a56dd16b0763605, type: 3}
   kQueenBee: {fileID: 2762676342523190798}
   kHoneycombNectarSprites:
-  - {fileID: 21300000, guid: d6ed13cf88f38304aa941a7b6b197621, type: 3}
-  - {fileID: 21300000, guid: d5f0aaa21b120484c9f9bd3cf448acf8, type: 3}
-  - {fileID: 21300000, guid: 77914b3edc50e5d4ab3a25e82150400e, type: 3}
-  - {fileID: 21300000, guid: 2e1ddb9ccd801bc4d9d74ea38d093c4a, type: 3}
-  - {fileID: 21300000, guid: 1397b6c3be7c6c1408c18e918ec03134, type: 3}
-  - {fileID: 21300000, guid: e1b7600f7229cdc4f9c00899b1f3e4a8, type: 3}
-  - {fileID: 21300000, guid: 34012120c0bf60e4cb7e23600d4866e4, type: 3}
-  - {fileID: 21300000, guid: ac31dfbd944629c46b86bf5319f284c2, type: 3}
-  - {fileID: 21300000, guid: a3b7269707a32fd4093a3c5bf1ac02de, type: 3}
+  - {fileID: 4876982305915138183, guid: d6ed13cf88f38304aa941a7b6b197621, type: 3}
+  - {fileID: 5310628908664702469, guid: d5f0aaa21b120484c9f9bd3cf448acf8, type: 3}
+  - {fileID: 6964127547900415607, guid: 77914b3edc50e5d4ab3a25e82150400e, type: 3}
+  - {fileID: -5701206816419515410, guid: 2e1ddb9ccd801bc4d9d74ea38d093c4a, type: 3}
+  - {fileID: 3391191068125547035, guid: 1397b6c3be7c6c1408c18e918ec03134, type: 3}
+  - {fileID: 6442046054075397864, guid: e1b7600f7229cdc4f9c00899b1f3e4a8, type: 3}
+  - {fileID: 805040405012990998, guid: 34012120c0bf60e4cb7e23600d4866e4, type: 3}
+  - {fileID: -8141057414571894837, guid: ac31dfbd944629c46b86bf5319f284c2, type: 3}
+  - {fileID: -877197935452247397, guid: a3b7269707a32fd4093a3c5bf1ac02de, type: 3}
   kHoneycombPollenSprites:
-  - {fileID: 21300000, guid: c66848635a10049d7ba7a2510c6f8414, type: 3}
-  - {fileID: 21300000, guid: 23b477128ad464892a9f110e58fb6afa, type: 3}
-  - {fileID: 21300000, guid: 08f735f88c1b04fd49447b2e74cf9d5b, type: 3}
-  - {fileID: 21300000, guid: c38b494ba1af54226889a2f459fa7776, type: 3}
-  - {fileID: 21300000, guid: 0bee5acc1b87245b9a63ae804165b089, type: 3}
-  - {fileID: 21300000, guid: c34e3ecc305714b9b9c6e8f48e1a0f9a, type: 3}
-  - {fileID: 21300000, guid: 5e9abbe182c3547e8b93bb6e210e5e0e, type: 3}
-  - {fileID: 21300000, guid: f9d21b10411c44e209a0cce519c0cee7, type: 3}
-  - {fileID: 21300000, guid: 7422e87175fc7441680dd0ca39518222, type: 3}
+  - {fileID: 1844658759558854955, guid: c66848635a10049d7ba7a2510c6f8414, type: 3}
+  - {fileID: 3355392551824195977, guid: 23b477128ad464892a9f110e58fb6afa, type: 3}
+  - {fileID: 725794129197551767, guid: 08f735f88c1b04fd49447b2e74cf9d5b, type: 3}
+  - {fileID: 8752362142372001356, guid: c38b494ba1af54226889a2f459fa7776, type: 3}
+  - {fileID: -4540755265048814923, guid: 0bee5acc1b87245b9a63ae804165b089, type: 3}
+  - {fileID: -1368349466581256797, guid: c34e3ecc305714b9b9c6e8f48e1a0f9a, type: 3}
+  - {fileID: -2214844006301813374, guid: 5e9abbe182c3547e8b93bb6e210e5e0e, type: 3}
+  - {fileID: 3730477761132602560, guid: f9d21b10411c44e209a0cce519c0cee7, type: 3}
+  - {fileID: 2901246121742698867, guid: 7422e87175fc7441680dd0ca39518222, type: 3}
   kHoneycombHoneySprites:
-  - {fileID: 21300000, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
-  - {fileID: 21300000, guid: 18da082c994694a45b1ef5d7c3f58176, type: 3}
-  - {fileID: 21300000, guid: ae2e6e8744ba649bdb8360b892c552aa, type: 3}
-  - {fileID: 21300000, guid: 8a37cbcf5d20245ae9d2a48025aa060e, type: 3}
-  - {fileID: 21300000, guid: 4e719cd39c2e242abafe82ad44a51293, type: 3}
-  - {fileID: 21300000, guid: 1c53e34be1da64de495d78a3a618c28b, type: 3}
-  - {fileID: 21300000, guid: f6f411957dfd04ffe889f72cffa1487d, type: 3}
-  - {fileID: 21300000, guid: 90eb397eff7544fb4b711645bee25f0c, type: 3}
-  - {fileID: 21300000, guid: 7734974f67a9c4374a1986bde239bcde, type: 3}
+  - {fileID: -4867428694687306895, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
+  - {fileID: 4765526737575558344, guid: 18da082c994694a45b1ef5d7c3f58176, type: 3}
+  - {fileID: 1296132038212329057, guid: ae2e6e8744ba649bdb8360b892c552aa, type: 3}
+  - {fileID: 2644057673014340104, guid: 8a37cbcf5d20245ae9d2a48025aa060e, type: 3}
+  - {fileID: 2456047961620595469, guid: 4e719cd39c2e242abafe82ad44a51293, type: 3}
+  - {fileID: -2000192713510526902, guid: 1c53e34be1da64de495d78a3a618c28b, type: 3}
+  - {fileID: -8939641801828256496, guid: f6f411957dfd04ffe889f72cffa1487d, type: 3}
+  - {fileID: -5650252858546511152, guid: 90eb397eff7544fb4b711645bee25f0c, type: 3}
+  - {fileID: 583425901705128420, guid: 7734974f67a9c4374a1986bde239bcde, type: 3}
   kHoneycombWaxSprites: []
+  kBuildSprites:
+  - {fileID: -4867428694687306895, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
+  - {fileID: 21300000, guid: df0a30c74f2a24e4aaa529e8a5700fb8, type: 3}
   kIsDrawHoneycombName: 1
   kIsDrawHoneycombShape: 0
+  mIsBuilding: 0
+  mStructureType: 0
+  kItems: {fileID: 7201876907501535724}
 --- !u!1 &2762676342523190797
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +371,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 442783851
-  m_SortingLayer: 4
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -371,6 +381,36 @@ SpriteRenderer:
   m_Size: {x: 3.75, y: 3.3125}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &6552909186318552707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7201876907501535724}
+  m_Layer: 0
+  m_Name: Items
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7201876907501535724
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6552909186318552707}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2762676342460929573}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

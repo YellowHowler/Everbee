@@ -7,7 +7,7 @@ public class PlayerCamera : MonoBehaviour
     public static PlayerCamera Instance;
 
     private Camera mCamera;
-    private float mScrollSpeed = 2.5f;
+    private float mScrollSpeed = 3.5f;
     private float mScrollBound = 0.98f;
 
     void Awake()

@@ -11,12 +11,13 @@ public class Hive : MonoBehaviour
 {
     public static Hive Instance;
 
-    [HideInInspector] public float mHoneycombRadiusX = 0.5f;
-    [HideInInspector] public float mHoneycombRadiusY = 0.8f;
+    public float mHoneycombRadiusX = 0.5f;
+    public float mHoneycombRadiusY = 0.8f;
     private Vector3 mHoneycombOrigin;
 
     public GameObject kHoneycombObj;
     public GameObject kHoverObj;
+    public GameObject kItemObj;
 
     public QueenBee kQueenBee;
 
@@ -24,6 +25,8 @@ public class Hive : MonoBehaviour
     public Sprite[] kHoneycombPollenSprites;
     public Sprite[] kHoneycombHoneySprites;
     public Sprite[] kHoneycombWaxSprites;
+
+    public Sprite[] kBuildSprites;
 
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
     private List<Bee> mBeeList = new List<Bee>();
@@ -36,12 +39,14 @@ public class Hive : MonoBehaviour
     [HideInInspector] public bool mIsBuilding = false;
     [HideInInspector] public StructureType mStructureType = StructureType.None;
 
+    public Transform kItems;
+
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
     {
         foreach (Honeycomb h in mHoneycombList)
         {
-            if (h.kStructType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
+            if (h.kStructureType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
             {
                 return h;
             }
@@ -133,9 +138,9 @@ public class Hive : MonoBehaviour
 
         Vector3 newPos = transform.position;
 
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < 6; i++)
         {
-            for(int j = 0; j < 5; j++)
+            for(int j = 0; j < 10; j++)
             {
                 AddNewHoneycomb(newPos, new GameResAmount(0f, GameResUnit.Microgram));
 
@@ -164,11 +169,46 @@ public class Hive : MonoBehaviour
         
     }
 
+    public Honeycomb GetHoneycombFromPos(Vector3 _pos)
+    {
+        print(_pos);
+        float minDistance = mHoneycombRadiusY;
+        Honeycomb retHoneycomb = null;
+
+        foreach(Honeycomb honeycomb in mHoneycombList)
+        {
+            float distance = Mathf.Sqrt(Mathf.Pow((honeycomb.pos.x - _pos.x),2) + Mathf.Pow((honeycomb.pos.y - _pos.y),2));
+
+            if(distance < minDistance)
+            {
+                minDistance = distance;
+                retHoneycomb = honeycomb;
+            }
+        }
+
+        print(retHoneycomb.gameObject.name);
+        return retHoneycomb;
+    }
+
+    public void EndBuild()
+    {
+        mIsBuilding = false;
+
+        Mng.canvas.EnableToggleButtons();
+        kHoverObj.SetActive(false);
+        Mng.canvas.HideBuildCancel();
+    }
+
     public void SetDrawBuild(StructureType _type)
     {
+        Mng.canvas.kIsViewingMenu = false;
         mIsBuilding = true;
         mStructureType = _type;
 
+        Mng.canvas.DisableToggleButtons();
+        Mng.canvas.ShowBuildCancel();
+
+        kHoverObj.GetComponent<SpriteRenderer>().sprite = kBuildSprites[(int)_type - 1];
         kHoverObj.SetActive(true);
 
         StartCoroutine(SetBuildCor());
@@ -197,7 +237,7 @@ public class Hive : MonoBehaviour
 
             yield return null;
         }
-
-        kHoverObj.SetActive(false);
+        
+        EndBuild();
     }
 }

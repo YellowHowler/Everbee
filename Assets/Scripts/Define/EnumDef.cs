@@ -51,10 +51,10 @@ namespace EnumDef
     public enum StructureType
     {
         None = 0,
-        Storage,
-        Dry,
-        Coalgulate,
-        Hatchtery,
+        Storage = 1,
+        Dryer = 2,
+        Coalgulate = 3,
+        Hatchtery = 4,
     }
 
     public enum HoneycombDirection

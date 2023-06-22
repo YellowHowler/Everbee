@@ -23,6 +23,8 @@ public class Bee : MonoBehaviour
     FlowerSpot mTargetFlowerSpot;
     Honeycomb mTargetHoneycomb;
 
+    private bool mCanWork = true;
+
     private void Start()
     {
         DoJob();
@@ -41,7 +43,15 @@ public class Bee : MonoBehaviour
 
     private void DoJob()
     {
-        if(kCurrentJob == Job.Collect)
+        if(mCanWork == false)
+        {
+            //mCanWork = true;
+            print("idle");
+
+            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
+            StartCoroutine(GoToPos(randomPos));
+        }
+        else if(kCurrentJob == Job.Collect)
         {
             if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && !mAtTarget) //없으면 꽃 찾아서 가기
             {
@@ -49,7 +59,7 @@ public class Bee : MonoBehaviour
 
                 if(mTargetFlowerSpot == null) 
                 {
-                    kCurrentJob = Job.Idle;
+                    mCanWork = false;
                     StartCoroutine(CallDoJob());
                     return;
                 }
@@ -68,8 +78,15 @@ public class Bee : MonoBehaviour
                 StorePollen();
                 return;
             }
-            else if (mCurrentPollen.amount != 0 && mAtTarget == true) 
+            else if (mCurrentPollen.amount != 0 && mAtTarget == true && mTargetHoneycomb != null) 
             {
+                if(!(mTargetHoneycomb.IsFull() == false &&  mTargetHoneycomb.type == GameResType.Pollen || mTargetHoneycomb.type == GameResType.Empty))
+                {   
+                    mAtTarget = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
                 mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
                 mAtTarget = false;
                 mTargetHoneycomb = null;
@@ -81,25 +98,31 @@ public class Bee : MonoBehaviour
                 StoreNectar();
                 return;
             }
-            else if (mCurrentNectar.amount != 0 && mAtTarget == true)
+            else if (mCurrentNectar.amount != 0 && mAtTarget == true && mTargetHoneycomb != null)
             {
+                if(!(mTargetHoneycomb.IsFull() == false &&  mTargetHoneycomb.type == GameResType.Nectar || mTargetHoneycomb.type == GameResType.Empty))
+                {   
+                    mAtTarget = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
                 mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
                 mAtTarget = false; 
                 mTargetHoneycomb = null;
                 StartCoroutine(CallDoJob());
                 return;
             }
+            else
+            {
+                mCanWork = false;
+                StartCoroutine(CallDoJob());
+            }
         }
-        if(kCurrentJob == Job.Build)
+        else if(kCurrentJob == Job.Build)
         {
-            kCurrentJob = Job.Idle;
-        }
-        if(kCurrentJob == Job.Idle)
-        {
-            print("idle");
-
-            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
-            StartCoroutine(GoToPos(randomPos));
+            mCanWork = false;
+            StartCoroutine(CallDoJob());
         }
     }
 
@@ -123,7 +146,7 @@ public class Bee : MonoBehaviour
 
         if (mTargetHoneycomb == null)
         {
-            kCurrentJob = Job.Idle;
+            mCanWork = false;
             StartCoroutine(CallDoJob());
             return;
         }
@@ -148,8 +171,6 @@ public class Bee : MonoBehaviour
 
         mCurrentPollen = newPollenAmount;
         mCurrentNectar = newNectarAmount;
-
-        print("current pollen: " + mCurrentPollen.amount);
     }
 
     private IEnumerator GoToPos(Vector3 _targetPos)
@@ -166,18 +187,22 @@ public class Bee : MonoBehaviour
             yield return sec;
         }
 
-        mAtTarget = true;
+        if(mCanWork == true)
+        {
+            mAtTarget = true;
+        }
 
         if(mTargetHoneycomb != null)
         {
             mTargetHoneycomb.isTarget = false;
         }
 
-        if(kCurrentJob == Job.Idle)
+        if(mCanWork == false)
         {
             yield return new WaitForSeconds(Random.Range(3, 6));
         }
 
+        mCanWork = true;
         StartCoroutine(CallDoJob());
     }
 

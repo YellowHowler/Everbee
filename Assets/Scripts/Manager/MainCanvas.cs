@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainCanvas : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class MainCanvas : MonoBehaviour
     public UIResourceInfoPanel kResource;
     public BuildMenuPanel kBuild;
     public JobMenuPanel kJob;
+
+    public Button[] kToggleButtons;
+
+    [HideInInspector] public bool kIsViewingMenu = false;
+
+    public GameObject kCancelBuildObj;  
 
     /*
     public UIIntroPanel kIntro;
@@ -25,16 +32,24 @@ public class MainCanvas : MonoBehaviour
         kResource = GetComponentInChildren<UIResourceInfoPanel>(true);
         kBuild = GetComponentInChildren<BuildMenuPanel>(true);
         kJob = GetComponentInChildren<JobMenuPanel>(true);
-        /*
-        kIntro = GetComponentInChildren<UIIntroPanel>(true);
-        kPlayInfo = GetComponentInChildren<UIPlayInfoPanel>(true);
-        kMenu = GetComponentInChildren<UIMenuPanel>(true);
-        kResult = GetComponentInChildren<UIResultPanel>(true);
+        
+        EnableToggleButtons();
+        kCancelBuildObj.SetActive(false);
+    }
 
-        kPlayInfo.gameObject.SetActive(false);
-        kMenu.gameObject.SetActive(false);
-        kResult.gameObject.SetActive(false);
-        */
+    public void DisableToggleButtons() 
+    {
+        for(int i = 0; i < kToggleButtons.Length; i++)
+        {
+            kToggleButtons[i].interactable = false;
+        }
+    }
+    public void EnableToggleButtons() 
+    {
+        for(int i = 0; i < kToggleButtons.Length; i++)
+        {
+            kToggleButtons[i].interactable = true;
+        }
     }
 
     public string GetUnitText(GameResUnit _unit)
@@ -55,5 +70,20 @@ public class MainCanvas : MonoBehaviour
         {
             return "kg";
         }
+    }
+
+    public void ShowBuildCancel()
+    {
+        kCancelBuildObj.SetActive(true);
+    }
+
+    public void HideBuildCancel()
+    {
+        kCancelBuildObj.SetActive(false);
+    }
+
+    public void CancelBuild()
+    {
+        Mng.play.kHive.EndBuild();
     }
 }
