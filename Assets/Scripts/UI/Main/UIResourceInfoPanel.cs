@@ -29,25 +29,11 @@ public class UIResourceInfoPanel : MonoBehaviour
         
     }
 
-    public void UpdateText(GameResType _type, GameResAmount _amount)
+    public void UpdateText()
     {
-        string newText = _amount.amount.ToString("#.00") + kMainCanvas.GetUnitText(_amount.unit);
-
-        if(_type == GameResType.Pollen)
-        {
-            kPollenText.text = newText;
-        }
-        else if (_type == GameResType.Nectar)
-        {
-            kNectarText.text = newText;
-        }
-        else if (_type == GameResType.Wax)
-        {
-            kWaxText.text = newText;
-        }
-        else if (_type == GameResType.Honey)
-        {
-            kHoneyText.text = newText;
-        }
+        kPollenText.text = Mng.play.kStoragePollenAmount.amount.ToString("#.00") + kMainCanvas.GetUnitText(Mng.play.kStoragePollenAmount.unit);
+        kNectarText.text = Mng.play.kStorageNectarAmount.amount.ToString("#.00") + kMainCanvas.GetUnitText(Mng.play.kStorageNectarAmount.unit);
+        kHoneyText.text = Mng.play.kStorageHoneyAmount.amount.ToString("#.00") + kMainCanvas.GetUnitText(Mng.play.kStorageHoneyAmount.unit);
+        kWaxText.text = Mng.play.kStorageWaxAmount.amount.ToString("#.00") + kMainCanvas.GetUnitText(Mng.play.kStorageWaxAmount.unit);
     }
 }

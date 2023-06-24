@@ -17,32 +17,42 @@ public class Item : MonoBehaviour
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResType type;
 
-    public GameResAmount kMaxNectarAmount = new GameResAmount(10, GameResUnit.Milligram);
-    public GameResAmount kMaxPollenAmount = new GameResAmount(200, GameResUnit.Milligram);
-    public GameResAmount kMaxHoneyAmount = new GameResAmount(500, GameResUnit.Microgram);
-    public GameResAmount kMaxWaxAmount = new GameResAmount(20, GameResUnit.Milligram);
+    public GameResAmount kMaxNectarAmount;
+    public GameResAmount kMaxPollenAmount;
+    public GameResAmount kMaxHoneyAmount;
+    public GameResAmount kMaxWaxAmount;
 
     private bool mIsDropped = false;
+
+    [HideInInspector] public bool mCanMerge = true;
+
+    private void Awake()
+    {
+        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[0];
+        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[1];
+        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[2];
+        kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
+    }
 
     private IEnumerator Start()
     {
         yield return new WaitForSeconds(1);
         mIsDropped = true;
+
+        StartCoroutine(DestroyCor());
     }
 
-    public GameResAmount UpdateAmount(GameResAmount _amount)
+    private IEnumerator DestroyCor()
     {
-        amount = _amount;
-        valueText.text = amount.amount + Mng.canvas.GetUnitText(_amount.unit);
+        yield return new WaitForSeconds(300);
+        Destroy(gameObject);
+    }
 
-        if(amount.amount == 0)
-        {
-            Destroy(gameObject);
-        }
-        
+    public GameResAmount GetMaxAmount(GameResType _type)
+    {
         GameResAmount maxAmount = new GameResAmount(0, GameResUnit.Microgram);
 
-        switch(type)
+        switch(_type)
         {
             case GameResType.Nectar:
                 maxAmount = kMaxNectarAmount;
@@ -57,6 +67,21 @@ public class Item : MonoBehaviour
                 maxAmount = kMaxWaxAmount;
                 break;
         }
+
+        return maxAmount;
+    }
+
+    public GameResAmount UpdateAmount(GameResAmount _amount)
+    {
+        amount = _amount;
+        valueText.text = Mng.canvas.GetAmountText(amount);
+
+        if(amount.amount == 0)
+        {
+            Destroy(gameObject);
+        }
+        
+        GameResAmount maxAmount = GetMaxAmount(type);
 
         if(Mng.play.CompareResourceAmounts(maxAmount, _amount) == true)
         {
@@ -107,14 +132,56 @@ public class Item : MonoBehaviour
                 UpdateAmount(storeHoneycomb.StoreResource(type, amount));
                 break;
             case StructureType.Dryer:
-                
+                if(storeHoneycomb.IsUsable(type) == false)
+                {
+                    return;
+                }
+                UpdateAmount(storeHoneycomb.StoreResource(type, amount));
                 break;
-
         }
     }
 
     private void OnMouseDrag()
     {
         rb.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZToZero(Input.mousePosition));
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if(col.gameObject.tag != "Item" || mIsDropped == false)
+        {
+            return;
+        }
+
+        print("item collide");
+
+        Item colItem = col.gameObject.GetComponent<Item>();
+
+        if(colItem.type != type)
+        {
+            return;
+        }    
+
+        if(mCanMerge == true)
+        {
+            colItem.mCanMerge = false;
+
+            GameResAmount sumAmount = Mng.play.AddResourceAmounts(colItem.amount, amount);
+            
+            GameResAmount maxAmount = GetMaxAmount(type);
+            if(Mng.play.CompareResourceAmounts(maxAmount, sumAmount))
+            {
+                Item item = Instantiate(Mng.play.kHive.kItemObj, transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
+                item.UpdateType(type);
+                item.UpdateAmount(Mng.play.SubtractResourceAmounts(sumAmount, maxAmount));
+                amount = maxAmount;
+                return;
+            }
+
+            UpdateAmount(sumAmount);
+            return;
+        }
+
+        Destroy(gameObject);
     }
 }

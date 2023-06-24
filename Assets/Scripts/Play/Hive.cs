@@ -41,6 +41,8 @@ public class Hive : MonoBehaviour
 
     public Transform kItems;
 
+    [HideInInspector] public GameResAmount[] mMaxItemAmounts;
+
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
     {
@@ -156,6 +158,13 @@ public class Hive : MonoBehaviour
 
             newPos = GetHexagonPos(newPos, HoneycombDirection.TopRight);
         }
+
+        mMaxItemAmounts = new GameResAmount[4];
+
+        mMaxItemAmounts[0] = new GameResAmount(10, GameResUnit.Milligram);
+        mMaxItemAmounts[1] = new GameResAmount(200, GameResUnit.Milligram);
+        mMaxItemAmounts[2] = new GameResAmount(500, GameResUnit.Microgram);
+        mMaxItemAmounts[3] = new GameResAmount(20, GameResUnit.Milligram);
     }
 
     private void Awake()
@@ -186,7 +195,6 @@ public class Hive : MonoBehaviour
             }
         }
 
-        print(retHoneycomb.gameObject.name);
         return retHoneycomb;
     }
 

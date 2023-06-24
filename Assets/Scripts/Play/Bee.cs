@@ -80,7 +80,7 @@ public class Bee : MonoBehaviour
             }
             else if (mCurrentPollen.amount != 0 && mAtTarget == true && mTargetHoneycomb != null) 
             {
-                if(!(mTargetHoneycomb.IsFull() == false &&  mTargetHoneycomb.type == GameResType.Pollen || mTargetHoneycomb.type == GameResType.Empty))
+                if(!(mTargetHoneycomb.IsUsable(GameResType.Pollen) == true && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
@@ -100,7 +100,7 @@ public class Bee : MonoBehaviour
             }
             else if (mCurrentNectar.amount != 0 && mAtTarget == true && mTargetHoneycomb != null)
             {
-                if(!(mTargetHoneycomb.IsFull() == false &&  mTargetHoneycomb.type == GameResType.Nectar || mTargetHoneycomb.type == GameResType.Empty))
+                if(!(mTargetHoneycomb.IsUsable(GameResType.Nectar) == true && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());

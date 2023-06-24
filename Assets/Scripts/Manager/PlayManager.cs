@@ -58,6 +58,21 @@ public class PlayManager : MonoBehaviour
         return ( _a % _b + _b ) % _b;
     }
 
+    public string GetTimeText(int _seconds)
+    {
+        int min = _seconds / 60;
+        int sec = _seconds % 60;
+
+        if(sec >= 10)
+        {
+            return min + ":" + sec;
+        }
+        else
+        {
+            return min + ":0" + sec;
+        }
+    }
+
     public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
     {
         if(_type == GameResType.Honey)
@@ -77,7 +92,29 @@ public class PlayManager : MonoBehaviour
             kStorageWaxAmount = AddResourceAmounts(_amount, kStorageWaxAmount);
         }
 
-        kMainCanvas.kResource.UpdateText(_type, _amount);
+        kMainCanvas.kResource.UpdateText();
+    }
+
+    public void SubtractResourceFromStorage(GameResType _type, GameResAmount _amount)
+    {
+        if(_type == GameResType.Honey)
+        {
+            kStorageHoneyAmount = SubtractResourceAmounts(_amount, kStorageHoneyAmount);
+        }
+        else if (_type == GameResType.Nectar)
+        {
+            kStorageNectarAmount = SubtractResourceAmounts(_amount, kStorageNectarAmount);
+        }
+        else if (_type == GameResType.Pollen)
+        {
+            kStoragePollenAmount = SubtractResourceAmounts(_amount, kStoragePollenAmount);
+        }
+        else if (_type == GameResType.Wax)
+        {
+            kStorageWaxAmount = SubtractResourceAmounts(_amount, kStorageWaxAmount);
+        }
+
+        kMainCanvas.kResource.UpdateText();
     }
 
     private void OnTouch(Gesture gesture)

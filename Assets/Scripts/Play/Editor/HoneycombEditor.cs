@@ -10,6 +10,7 @@ public class HoneycombEditor : Editor
 {
     Honeycomb _this = null;
 
+    /*
     private float mRadiusX = Mng.play.kHive.mHoneycombRadiusX;
     private float mRadiusY = Mng.play.kHive.mHoneycombRadiusY;
 
@@ -82,4 +83,5 @@ public class HoneycombEditor : Editor
         }
         GUILayout.EndHorizontal();
     }
+    */
 }
