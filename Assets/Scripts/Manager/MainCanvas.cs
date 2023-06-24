@@ -1,4 +1,5 @@
 using EnumDef;
+using StructDef;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

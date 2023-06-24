@@ -1,4 +1,5 @@
 using EnumDef;
+using StructDef;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,13 +17,16 @@ public class InventoryBarPanel : MonoBehaviour
 
     public Sprite[] kResourceSprites;
 
-    GameResAmount[] mItemAmounts = new GameResAmount[mSlotCount];
-    GameResType[] mItemTypes = new GameResType[mSlotCount];
+    GameResAmount[] mItemAmounts;
+    GameResType[] mItemTypes;
 
     private int mSelectedNum = 1;
 
     void Start()
     {
+        mItemAmounts = new GameResAmount[mSlotCount];
+        mItemTypes = new GameResType[mSlotCount];
+
         SetSelected(1);
     }
     void Update()
@@ -34,7 +38,7 @@ public class InventoryBarPanel : MonoBehaviour
     {
         for(int i = 0; i < mSlotCount; i++)
         {
-            kItemSprites[i].sprite = kResourceSprites[(int)mItemTypes[i]];
+            kItemImages[i].sprite = kResourceSprites[(int)mItemTypes[i]];
             kItemTexts[i].text = Mng.canvas.GetAmountText(mItemAmounts[i]);
         }
     }
