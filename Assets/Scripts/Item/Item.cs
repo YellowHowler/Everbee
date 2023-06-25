@@ -15,7 +15,7 @@ public class Item : MonoBehaviour
     public Rigidbody2D rb;
 
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
-    public GameResType type;
+    public GameResType type = GameResType.Honey;
 
     public GameResAmount kMaxNectarAmount;
     public GameResAmount kMaxPollenAmount;
@@ -44,7 +44,7 @@ public class Item : MonoBehaviour
             transform.position = new Vector3(transform.position.x, Mng.play.kHive.mFloorY, 0);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
         mIsDropped = true;
 
         StartCoroutine(DestroyCor());
@@ -79,8 +79,10 @@ public class Item : MonoBehaviour
         return maxAmount;
     }
 
-    public GameResAmount UpdateAmount(GameResAmount _amount)
+    public GameResAmount UpdateAmount(GameResType _type, GameResAmount _amount)
     {
+        UpdateType(_type);
+
         amount = _amount;
         valueText.text = Mng.canvas.GetAmountText(amount);
 
@@ -129,12 +131,12 @@ public class Item : MonoBehaviour
             if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
             {
                 inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
-                UpdateAmount(new GameResAmount(0, GameResUnit.Microgram));
+                UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
             }
             else
             {
                 inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
-                UpdateAmount(sumAmount);
+                UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
             }
             
             return;
@@ -167,14 +169,14 @@ public class Item : MonoBehaviour
                 {
                     return;
                 }
-                UpdateAmount(storeHoneycomb.StoreResource(type, amount));
+                UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
                 break;
             case StructureType.Dryer:
                 if(storeHoneycomb.IsUsable(type) == false)
                 {
                     return;
                 }
-                UpdateAmount(storeHoneycomb.StoreResource(type, amount));
+                UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
                 break;
         }
     }
@@ -191,41 +193,41 @@ public class Item : MonoBehaviour
             return;
         }
 
-        print("item collide");
+        GameResAmount maxAmount = GetMaxAmount(type);
 
-        Item colItem = col.gameObject.GetComponent<Item>();
-
-        if(colItem.type != type)
+        if(Mng.play.IsSameAmount(amount, maxAmount) == true)
         {
             return;
-        }    
+        }
+    
+        Item colItem = col.gameObject.GetComponent<Item>();
 
         if(mCanMerge == true)
         {
             colItem.mCanMerge = false;
+            if(colItem.type != type)
+            {
+                return;
+            }    
+
+            colItem.mCanMerge = false;
 
             GameResAmount sumAmount = Mng.play.AddResourceAmounts(colItem.amount, amount);
             
-            GameResAmount maxAmount = GetMaxAmount(type);
             if(Mng.play.CompareResourceAmounts(maxAmount, sumAmount))
             {
-                if(mCanMerge == false) Destroy(gameObject);
-                
                 Item item = Instantiate(Mng.play.kHive.kItemObj, transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-                item.UpdateType(type);
-                item.UpdateAmount(Mng.play.SubtractResourceAmounts(sumAmount, maxAmount));
-                amount = maxAmount;
-
-                if(mCanMerge == false) Destroy(gameObject);
-                return;
+                item.UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, maxAmount));
+                UpdateAmount(type, maxAmount);
             }
-
-            UpdateAmount(sumAmount);
-            if(mCanMerge == false) Destroy(gameObject);
-            return;
+            else
+            {
+                UpdateAmount(type, sumAmount);
+            }
+            
+            col.gameObject.SetActive(false);
+            Destroy(col.gameObject);
         }
-
-        Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D col)

@@ -224,6 +224,11 @@ public class PlayManager : MonoBehaviour
         return _resAmountA.amount < _resAmountB.amount;
     }
 
+    public bool IsSameAmount(GameResAmount _resAmountA, GameResAmount _resAmountB)
+    {
+        return _resAmountA.amount == _resAmountB.amount && _resAmountA.unit == _resAmountB.unit;
+    }
+
     public Vector3 SetZToZero(Vector3 _pos)
     {
         return new Vector3(_pos.x, _pos.y, 0);

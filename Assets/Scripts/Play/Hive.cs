@@ -140,7 +140,7 @@ public class Hive : MonoBehaviour
 
         EasyTouch.On_TouchStart += OnTouch;
 
-        Vector3 newPos = transform.position;
+        Vector3 newPos = new Vector3(transform.position.x, transform.position.y, 0.05f);
 
         for(int i = 0; i < 6; i++)
         {
@@ -163,10 +163,10 @@ public class Hive : MonoBehaviour
 
         mMaxItemAmounts = new GameResAmount[4];
 
+        mMaxItemAmounts[0] = new GameResAmount(10, GameResUnit.Milligram);
         mMaxItemAmounts[1] = new GameResAmount(10, GameResUnit.Milligram);
         mMaxItemAmounts[2] = new GameResAmount(200, GameResUnit.Milligram);
-        mMaxItemAmounts[0] = new GameResAmount(500, GameResUnit.Microgram);
-        mMaxItemAmounts[3] = new GameResAmount(20, GameResUnit.Milligram);
+        mMaxItemAmounts[3] = new GameResAmount(10, GameResUnit.Milligram);
     }
 
     private void Awake()

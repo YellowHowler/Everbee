@@ -128,6 +128,8 @@ public class MainCanvas : MonoBehaviour
 
         kWarningTxt.color = new Color(1, 1, 1, 1);
 
+        yield return new WaitForSeconds(0.4f);
+
         while (kWarningTxt.color.a > 0.0f)
         {
             kWarningTxt.color = new Color(kWarningTxt.color.r, kWarningTxt.color.g, kWarningTxt.color.b, kWarningTxt.color.a - (Time.deltaTime / 1.2f));

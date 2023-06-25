@@ -140,8 +140,7 @@ public class InventoryBarPanel : MonoBehaviour
         spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
 
         Item item = Instantiate(Mng.play.kHive.kItemObj, spawnPos, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-        item.UpdateType(mItemTypes[_num]);
-        item.UpdateAmount(mItemAmounts[_num]);
+        item.UpdateAmount(mItemTypes[_num], mItemAmounts[_num]);
         mItemTypes[_num] = GameResType.Empty;
         mItemAmounts[_num] = new GameResAmount(0f, GameResUnit.Microgram);
 

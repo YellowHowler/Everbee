@@ -16,10 +16,11 @@ public class Honeycomb : MonoBehaviour
 
     public GameResType type; //���� �ڿ��� �����ϰ� �ִ���
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
-    public GameResAmount kMaxNectarAmount = new GameResAmount(10, GameResUnit.Milligram);
-    public GameResAmount kMaxPollenAmount = new GameResAmount(200, GameResUnit.Milligram);
-    public GameResAmount kMaxHoneyAmount = new GameResAmount(10, GameResUnit.Milligram);
-    public GameResAmount kMaxWaxAmount = new GameResAmount(10, GameResUnit.Milligram);
+
+    public GameResAmount kMaxHoneyAmount;
+    public GameResAmount kMaxNectarAmount;
+    public GameResAmount kMaxPollenAmount;
+    public GameResAmount kMaxWaxAmount;
 
     public Hive mHive { get; set; }
 
@@ -42,6 +43,11 @@ public class Honeycomb : MonoBehaviour
 
     private void Start()
     {
+        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
+        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[1];
+        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[2];
+        kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
+
         SetStructure(StructureType.None);
 
         kCanvas.SetActive(true);
@@ -341,8 +347,7 @@ public class Honeycomb : MonoBehaviour
         }
         
         Item item = Instantiate(Mng.play.kHive.kItemObj, gameObject.transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-        item.UpdateType(type);
-        UpdateAmount(item.UpdateAmount(amount));
+        UpdateAmount(item.UpdateAmount(type, amount));
 
         Mng.play.SubtractResourceFromStorage(item.type, item.amount);
         print(item.amount.amount);

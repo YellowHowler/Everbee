@@ -13,7 +13,7 @@ public class Bees : MonoBehaviour
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
-    IEnumerator Start()
+    IEnumerator Start()  
     {
         while (PlayManager.Instance.kHive == null)
             yield return null;
@@ -26,9 +26,8 @@ public class Bees : MonoBehaviour
         {
             CreateBee(Vector3.zero);
         }
-    }
+    }  
 
-    // Update is called once per frame
     void Update()
     {
         
