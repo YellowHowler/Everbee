@@ -142,7 +142,7 @@ public class Item : MonoBehaviour
             return;
         }
 
-        if(mIsTouchingQueen == true)
+        if(mIsTouchingQueen == true && (type == GameResType.Pollen || type == GameResType.Honey))
         {
             mQueen.GetComponent<QueenBee>().AddResource(type, amount);
             Destroy(gameObject);

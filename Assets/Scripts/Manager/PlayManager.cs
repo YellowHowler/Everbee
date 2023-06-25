@@ -190,6 +190,20 @@ public class PlayManager : MonoBehaviour
         return AddResourceAmounts(_resAmountA, _resAmountB);
     }
 
+    public float GetResourcePercent(GameResAmount _amount, GameResAmount _maxAmount)
+    {
+        if((int)_maxAmount.unit - (int)_amount.unit >= 2)
+        {
+            return 0;
+        }
+        if(CompareResourceAmounts(_maxAmount, _amount) == true)
+        {
+            return 100;
+        }
+
+        return Mathf.Clamp(_amount.amount / _maxAmount.amount * Mathf.Pow(1000, (int)_amount.unit - (int)_maxAmount.unit), 0, 100);
+    }
+
     public GameResAmount UpdateUnit(GameResAmount _amount)
     {
         while(_amount.amount >= 1000f || _amount.amount < 1f)

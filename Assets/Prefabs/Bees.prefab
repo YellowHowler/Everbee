@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kBeeObj: {fileID: 9008401333156620931, guid: 7651d07ed2827bc4c9ea5dee1ab1f46d, type: 3}
+  kQueenBeeObj: {fileID: 1466504203879725973, guid: 7f628b49d60554cf69d2bd16237e7af9, type: 3}

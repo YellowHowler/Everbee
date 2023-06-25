@@ -21,8 +21,6 @@ public class Hive : MonoBehaviour
     public GameObject kHoverObj;
     public GameObject kItemObj;
 
-    public QueenBee kQueenBee;
-
     public Sprite[] kHoneycombNectarSprites;
     public Sprite[] kHoneycombPollenSprites;
     public Sprite[] kHoneycombHoneySprites;
@@ -44,6 +42,9 @@ public class Hive : MonoBehaviour
     public Transform kItems;
 
     [HideInInspector] public GameResAmount[] mMaxItemAmounts;
+
+    public GameResAmount mQueenHoneyNeed{get; set;}
+    public GameResAmount mQueenPollenNeed{get; set;}
 
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
@@ -167,6 +168,9 @@ public class Hive : MonoBehaviour
         mMaxItemAmounts[1] = new GameResAmount(10, GameResUnit.Milligram);
         mMaxItemAmounts[2] = new GameResAmount(200, GameResUnit.Milligram);
         mMaxItemAmounts[3] = new GameResAmount(10, GameResUnit.Milligram);
+
+        mQueenHoneyNeed = new GameResAmount(100, GameResUnit.Milligram);
+        mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
     }
 
     private void Awake()

@@ -5,12 +5,19 @@ using UnityEngine;
 public class Bees : MonoBehaviour
 {
     public GameObject kBeeObj;
+    public GameObject kQueenBeeObj;
 
     public void CreateBee(Vector3 _pos)
     {
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
+    }
+
+    public void CreateQueenBee(Vector3 _pos)
+    {
+        GameObject newQueenBee = Instantiate(kQueenBeeObj, _pos, Quaternion.identity);
+        newQueenBee.transform.parent = transform;
     }
 
     IEnumerator Start()  
@@ -26,6 +33,8 @@ public class Bees : MonoBehaviour
         {
             CreateBee(Vector3.zero);
         }
+
+        CreateQueenBee(new Vector3(0, 15, 0));
     }  
 
     void Update()
