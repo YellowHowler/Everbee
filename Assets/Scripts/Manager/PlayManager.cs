@@ -192,21 +192,24 @@ public class PlayManager : MonoBehaviour
 
     public GameResAmount UpdateUnit(GameResAmount _amount)
     {
-        if(_amount.amount >= 1000f)
+        while(_amount.amount >= 1000f || _amount.amount < 1f)
         {
-            _amount.amount /= 1000;
-            _amount.unit = (GameResUnit)((int)_amount.unit + 1);
-        }
-        else if (_amount.amount < 1)
-        {
-            if (_amount.unit == GameResUnit.Microgram)
+            if(_amount.amount >= 1000f)
             {
-                return new GameResAmount(0f, GameResUnit.Microgram);
+                _amount.amount /= 1000;
+                _amount.unit = (GameResUnit)((int)_amount.unit + 1);
             }
-            _amount.amount *= 1000;
-            _amount.unit = (GameResUnit)((int)_amount.unit - 1);
+            else if (_amount.amount < 1)
+            {
+                if (_amount.unit == GameResUnit.Microgram)
+                {
+                    return new GameResAmount(0f, GameResUnit.Microgram);
+                }
+                _amount.amount *= 1000;
+                _amount.unit = (GameResUnit)((int)_amount.unit - 1);
+            }
         }
-
+        
         return _amount;
     }
 

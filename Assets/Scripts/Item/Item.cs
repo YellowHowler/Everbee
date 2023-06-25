@@ -24,18 +24,26 @@ public class Item : MonoBehaviour
 
     private bool mIsDropped = false;
 
+    private GameObject mQueen;
+    private bool mIsTouchingQueen = false;
+
     [HideInInspector] public bool mCanMerge = true;
 
     private void Awake()
     {
-        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[0];
-        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[1];
-        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[2];
+        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[1];
+        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[2];
+        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
         kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
     }
 
     private IEnumerator Start()
     {
+        if(transform.position.y < Mng.play.kHive.mFloorY)
+        {
+            transform.position = new Vector3(transform.position.x, Mng.play.kHive.mFloorY, 0);
+        }
+
         yield return new WaitForSeconds(1);
         mIsDropped = true;
 
@@ -114,6 +122,35 @@ public class Item : MonoBehaviour
             return;
         }
 
+        InventoryBarPanel inven = Mng.canvas.kInven;
+        if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
+        {
+            GameResAmount sumAmount = Mng.play.AddResourceAmounts(inven.mItemAmounts[inven.mHoveredNum], amount);
+            if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+            {
+                inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
+                UpdateAmount(new GameResAmount(0, GameResUnit.Microgram));
+            }
+            else
+            {
+                inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
+                UpdateAmount(sumAmount);
+            }
+            
+            return;
+        }
+
+        if(mIsTouchingQueen == true)
+        {
+            mQueen.GetComponent<QueenBee>().AddResource(type, amount);
+            Destroy(gameObject);
+        }
+
+        if(transform.position.y < Mng.play.kHive.mFloorY)
+        {
+            transform.position = new Vector3(transform.position.x, Mng.play.kHive.mFloorY, 0);
+        }
+
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZToZero(Input.mousePosition));
 
         Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
@@ -122,6 +159,7 @@ public class Item : MonoBehaviour
         {
             return;
         }
+
         switch(storeHoneycomb.kStructureType)
         {
             case StructureType.Storage:
@@ -171,17 +209,39 @@ public class Item : MonoBehaviour
             GameResAmount maxAmount = GetMaxAmount(type);
             if(Mng.play.CompareResourceAmounts(maxAmount, sumAmount))
             {
+                if(mCanMerge == false) Destroy(gameObject);
+                
                 Item item = Instantiate(Mng.play.kHive.kItemObj, transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
                 item.UpdateType(type);
                 item.UpdateAmount(Mng.play.SubtractResourceAmounts(sumAmount, maxAmount));
                 amount = maxAmount;
+
+                if(mCanMerge == false) Destroy(gameObject);
                 return;
             }
 
             UpdateAmount(sumAmount);
+            if(mCanMerge == false) Destroy(gameObject);
             return;
         }
 
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if(col.gameObject.tag == "QueenBee")
+        {
+            mQueen = col.gameObject;
+            mIsTouchingQueen = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D col)
+    {
+        if(col.gameObject.tag == "QueenBee")
+        {
+            mIsTouchingQueen = false;
+        }
     }
 }

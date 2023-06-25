@@ -16,6 +16,8 @@ public class MainCanvas : MonoBehaviour
     public UIResourceInfoPanel kResource;
     public BuildMenuPanel kBuild;
     public JobMenuPanel kJob;
+    public InventoryBarPanel kInven;
+    public QueenResourcePanel kQueen;
 
     public Button[] kToggleButtons;
 
@@ -38,6 +40,12 @@ public class MainCanvas : MonoBehaviour
         kResource = GetComponentInChildren<UIResourceInfoPanel>(true);
         kBuild = GetComponentInChildren<BuildMenuPanel>(true);
         kJob = GetComponentInChildren<JobMenuPanel>(true);
+        kInven = GetComponentInChildren<InventoryBarPanel>(true);
+        kQueen = GetComponentInChildren<QueenResourcePanel>(true);
+
+        kBuild.gameObject.SetActive(false);
+        kJob.gameObject.SetActive(false);
+        kQueen.gameObject.SetActive(false);
         
         EnableToggleButtons();
         kCancelBuildObj.SetActive(false);

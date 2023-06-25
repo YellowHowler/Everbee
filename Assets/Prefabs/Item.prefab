@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 6882386072774005134}
   - component: {fileID: 2671960127275137346}
   m_Layer: 0
-  m_Name: Square
+  m_Name: ItemSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -274191533
-  m_SortingLayer: 6
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 4381519237226992541, guid: f5c4649f32b6b4f849ed472aeaa1e13a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -238,6 +238,7 @@ MonoBehaviour:
   - {fileID: 2495519758794738906, guid: 8b1fdf7adeeff41ea8f404b5ed63598a, type: 3}
   rb: {fileID: 7168015292807264149}
   type: 0
+  mCanMerge: 1
 --- !u!50 &7168015292807264149
 Rigidbody2D:
   serializedVersion: 4

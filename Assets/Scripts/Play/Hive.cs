@@ -15,6 +15,8 @@ public class Hive : MonoBehaviour
     public float mHoneycombRadiusY = 0.8f;
     private Vector3 mHoneycombOrigin;
 
+    public float mFloorY = -19.2f;
+
     public GameObject kHoneycombObj;
     public GameObject kHoverObj;
     public GameObject kItemObj;
@@ -161,9 +163,9 @@ public class Hive : MonoBehaviour
 
         mMaxItemAmounts = new GameResAmount[4];
 
-        mMaxItemAmounts[0] = new GameResAmount(10, GameResUnit.Milligram);
-        mMaxItemAmounts[1] = new GameResAmount(200, GameResUnit.Milligram);
-        mMaxItemAmounts[2] = new GameResAmount(500, GameResUnit.Microgram);
+        mMaxItemAmounts[1] = new GameResAmount(10, GameResUnit.Milligram);
+        mMaxItemAmounts[2] = new GameResAmount(200, GameResUnit.Milligram);
+        mMaxItemAmounts[0] = new GameResAmount(500, GameResUnit.Microgram);
         mMaxItemAmounts[3] = new GameResAmount(20, GameResUnit.Milligram);
     }
 

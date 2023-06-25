@@ -345,6 +345,7 @@ public class Honeycomb : MonoBehaviour
         UpdateAmount(item.UpdateAmount(amount));
 
         Mng.play.SubtractResourceFromStorage(item.type, item.amount);
+        print(item.amount.amount);
     }
 
     private void OnMouseUp()
