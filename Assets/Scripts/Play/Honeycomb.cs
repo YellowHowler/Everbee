@@ -78,7 +78,7 @@ public class Honeycomb : MonoBehaviour
 
     public bool IsUsable(GameResType _type)
     {
-        if(type == GameResType.Empty)
+        if(type == GameResType.Empty || amount.amount == 0f)
         {
             return true;
         }
@@ -312,6 +312,16 @@ public class Honeycomb : MonoBehaviour
 
         Hive hive = Mng.play.kHive;
 
+        if(hive.mGuidingQueen == true)
+        {
+            if(kStructureType == StructureType.Storage && IsUsable(GameResType.Empty))
+            {
+                hive.mTargetQueen.SetTarget(this);
+                kStructureType = StructureType.Hatchtery;
+            }
+            return;
+        }
+
         if(hive.mIsBuilding == true)
         {
             if(SetStructure(hive.mStructureType) == true)
@@ -355,8 +365,20 @@ public class Honeycomb : MonoBehaviour
 
     private void OnMouseUp()
     {
+        Hive hive = Mng.play.kHive;
+
         if(Mng.canvas.kIsViewingMenu == true)
         {
+            return;
+        }
+
+        if(hive.mGuidingQueen == true )
+        {
+            if(hive.mTargetQueen.mCurState == QueenState.GoToTarget)
+            {
+                hive.mGuidingQueen  = false;
+                hive.mTargetQueen = null;
+            }
             return;
         }
 

@@ -46,6 +46,9 @@ public class Hive : MonoBehaviour
     public GameResAmount mQueenHoneyNeed{get; set;}
     public GameResAmount mQueenPollenNeed{get; set;}
 
+    [HideInInspector] public bool mGuidingQueen  = false;
+    [HideInInspector] public QueenBee mTargetQueen  = null;
+
     /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
     public Honeycomb GetUsableHoneycomb(GameResType _type)
     {
@@ -253,5 +256,12 @@ public class Hive : MonoBehaviour
         }
         
         EndBuild();
+    }
+
+    public void GuideQueen(QueenBee _queen)
+    {
+        mGuidingQueen = true;
+        mTargetQueen = _queen;
+        Mng.canvas.DisableToggleButtons();
     }
 }

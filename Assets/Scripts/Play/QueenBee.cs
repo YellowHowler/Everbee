@@ -8,10 +8,16 @@ using TMPro;
 
 public class QueenBee : MonoBehaviour
 {
+    private float mSpeed = 3f;
+
     private Animator mAnimator;
 
     [HideInInspector] public GameResAmount mCurHoney = new GameResAmount(0f, GameResUnit.Microgram);
     [HideInInspector] public GameResAmount mCurPollen = new GameResAmount(0f, GameResUnit.Microgram);
+
+    [HideInInspector] public QueenState mCurState = QueenState.Wander;
+
+    private float mEggTime = 5f;
 
     void Awake()
     {
@@ -21,11 +27,24 @@ public class QueenBee : MonoBehaviour
     private void Start()
     {
         Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
+        
+        StartCoroutine(Wander());
     }
 
     void Update()
     {
         
+    }
+
+    private IEnumerator CallDoJob()
+    {
+        yield return new WaitForSeconds(0.3f);
+        DoJob();
+    }
+
+    private void DoJob()
+    {
+
     }
 
     public void AddResource(GameResType _type, GameResAmount _amount)
@@ -48,10 +67,61 @@ public class QueenBee : MonoBehaviour
         print("hi");
         Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
         Mng.canvas.kQueen.gameObject.SetActive(true);
+        Mng.canvas.kQueen.mTargetQueen = this;
     }
 
-    public void LayEgg()
+    private IEnumerator Wander()
     {
-        
+        float waitSec = 0.05f;
+        WaitForSeconds sec = new WaitForSeconds(waitSec);
+
+        while (mCurState == QueenState.Wander)
+        {
+            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
+
+            while(Vector3.Distance(transform.position, randomPos) > 0.005f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
+                yield return sec;
+            }
+
+            yield return new WaitForSeconds(Random.Range(3f, 7f));
+        }
+    }
+
+    private IEnumerator GoToTarget(Honeycomb _target)
+    {
+        float waitSec = 0.05f;
+        WaitForSeconds sec = new WaitForSeconds(waitSec);
+
+        while(Vector3.Distance(transform.position, _target.pos) > 0.005f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, _target.pos, waitSec * mSpeed);
+            yield return sec;
+        }
+
+        StartCoroutine(LayEgg(_target));
+    }
+
+    public void WaitForTargetHoneycomb()
+    {
+        mCurState = QueenState.WaitForTarget;
+        StopCoroutine(Wander());
+
+        Mng.play.kHive.GuideQueen(this);
+    }
+
+    public void SetTarget(Honeycomb _target)
+    {
+        mCurState = QueenState.GoToTarget;
+        StartCoroutine(GoToTarget(_target));
+    }
+
+    private IEnumerator LayEgg(Honeycomb _target)
+    {
+        yield return new WaitForSeconds(mEggTime);
+
+
+        StartCoroutine(Wander());
     }
 }

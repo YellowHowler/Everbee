@@ -9,6 +9,8 @@ using TMPro;
 
 public class QueenResourcePanel : MonoBehaviour
 {
+    [HideInInspector] public QueenBee mTargetQueen;
+
     public Slider kHoneySlider;
     public Slider kPollenSlider;
 
@@ -24,6 +26,11 @@ public class QueenResourcePanel : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void QueenLayEgg()
+    {
+        mTargetQueen.WaitForTargetHoneycomb();
     }
 
     public void UpdateSliders(GameResAmount _honeyAmount, GameResAmount _pollenAmount)
@@ -51,5 +58,4 @@ public class QueenResourcePanel : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
 }

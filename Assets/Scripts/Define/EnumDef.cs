@@ -48,6 +48,14 @@ namespace EnumDef
         StoreNectar,
     }
 
+    public enum QueenState
+    {
+        Wander = 0,
+        WaitForTarget = 1,
+        GoToTarget = 2,
+        LayEgg = 3,
+    }
+
     public enum StructureType
     {
         None = 0,
