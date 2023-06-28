@@ -8,6 +8,7 @@ TagManager:
   - FlowerSpot
   - Item
   - QueenBee
+  - Bee
   layers:
   - Default
   - TransparentFX
@@ -56,6 +57,9 @@ TagManager:
     locked: 0
   - name: HoneycombDryer
     uniqueID: 2693784153
+    locked: 0
+  - name: Larvae
+    uniqueID: 2598367839
     locked: 0
   - name: CancelCanvas
     uniqueID: 1323653163

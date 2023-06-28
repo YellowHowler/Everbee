@@ -24,6 +24,8 @@ public class Item : MonoBehaviour
 
     private bool mIsDropped = false;
 
+    private GameObject mTouchingObj;
+
     private GameObject mQueen;
     private bool mIsTouchingQueen = false;
 
@@ -142,10 +144,21 @@ public class Item : MonoBehaviour
             return;
         }
 
-        if(mIsTouchingQueen == true && (type == GameResType.Pollen || type == GameResType.Honey))
+        if(mTouchingObj != null)
         {
-            mQueen.GetComponent<QueenBee>().AddResource(type, amount);
-            Destroy(gameObject);
+            switch(mTouchingObj.tag)
+            {
+                case "QueenBee":
+                    if(type == GameResType.Pollen || type == GameResType.Honey)
+                    {
+                        mTouchingObj.GetComponent<QueenBee>().AddResource(type, amount);
+                        Destroy(gameObject);
+                    }
+                    break;
+                case "WorkerBee":
+                    UpdateAmount(type, mTouchingObj.GetComponent<Bee>().AddResource(type, amount));
+                    break;
+            }
         }
 
         if(transform.position.y < Mng.play.kHive.mFloorY)
@@ -153,7 +166,7 @@ public class Item : MonoBehaviour
             transform.position = new Vector3(transform.position.x, Mng.play.kHive.mFloorY, 0);
         }
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZToZero(Input.mousePosition));
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
 
         Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
 
@@ -172,7 +185,7 @@ public class Item : MonoBehaviour
                 UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
                 break;
             case StructureType.Dryer:
-                if(storeHoneycomb.IsUsable(type) == false)
+                if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
                 {
                     return;
                 }
@@ -183,7 +196,7 @@ public class Item : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        rb.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZToZero(Input.mousePosition));
+        rb.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -232,18 +245,11 @@ public class Item : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if(col.gameObject.tag == "QueenBee")
-        {
-            mQueen = col.gameObject;
-            mIsTouchingQueen = true;
-        }
+        mTouchingObj = col.gameObject;
     }
 
     private void OnTriggerExit2D(Collider2D col)
     {
-        if(col.gameObject.tag == "QueenBee")
-        {
-            mIsTouchingQueen = false;
-        }
+        mTouchingObj = null;
     }
 }

@@ -4,11 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class QueenBee : MonoBehaviour
 {
-    private float mSpeed = 3f;
+    private float mSpeed = 2f;
 
     private Animator mAnimator;
 
@@ -17,6 +18,7 @@ public class QueenBee : MonoBehaviour
 
     [HideInInspector] public QueenState mCurState = QueenState.Wander;
 
+    public Slider kSlider;
     private float mEggTime = 5f;
 
     void Awake()
@@ -27,6 +29,8 @@ public class QueenBee : MonoBehaviour
     private void Start()
     {
         Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
+
+        //kSlider.gameObject.SetActive(false);
         
         StartCoroutine(Wander());
     }
@@ -64,10 +68,13 @@ public class QueenBee : MonoBehaviour
 
     private void OnMouseDown()
     {
-        print("hi");
-        Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
-        Mng.canvas.kQueen.gameObject.SetActive(true);
-        Mng.canvas.kQueen.mTargetQueen = this;
+        if(Mng.canvas.kIsViewingMenu == false && mCurState == QueenState.Wander && Mng.play.kHive.mIsBuilding == false)
+        {
+            Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
+            Mng.canvas.kQueen.gameObject.SetActive(true);
+            Mng.canvas.kQueen.mTargetQueen = this;
+            Mng.canvas.ShowMenu();
+        }
     }
 
     private IEnumerator Wander()
@@ -114,14 +121,22 @@ public class QueenBee : MonoBehaviour
     public void SetTarget(Honeycomb _target)
     {
         mCurState = QueenState.GoToTarget;
+        Mng.play.kHive.mGuidingQueen = false;
         StartCoroutine(GoToTarget(_target));
     }
 
     private IEnumerator LayEgg(Honeycomb _target)
     {
-        yield return new WaitForSeconds(mEggTime);
+        mCurHoney = Mng.play.SubtractResourceAmounts(mCurHoney, Mng.play.kHive.mQueenHoneyNeed);
+        mCurPollen = Mng.play.SubtractResourceAmounts(mCurPollen, Mng.play.kHive.mQueenPollenNeed);
+        Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
 
+        Mng.canvas.FillSlider(kSlider, mEggTime);
+        yield return new WaitForSeconds(mEggTime+1.5f);
 
+        _target.PlaceEgg();
+        
+        mCurState = QueenState.Wander;
         StartCoroutine(Wander());
     }
 }

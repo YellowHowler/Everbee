@@ -27,7 +27,6 @@ public class Manager : MonoBehaviour
         Instance = this;
     }
 
-    // Start is called before the first frame update
     IEnumerator Start()
     {
         GameObject go = Instantiate(kSoundManager.gameObject);
@@ -67,7 +66,5 @@ public class Manager : MonoBehaviour
         go = Instantiate(kBees.gameObject);
         go.transform.parent = kStage;
         go.name = "Bees";
-
-        //PlayManager.Instance.GameStart();
     }
 }

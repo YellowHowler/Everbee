@@ -29,6 +29,7 @@ public class Honeycomb : MonoBehaviour
     public GameObject kEmptyObj;
     public GameObject kStorageObj;
     public GameObject kDryerObj;
+    public GameObject kHatchteryObj;
     public GameObject kHoverObj;
 
     public GameObject kCanvas;
@@ -36,10 +37,12 @@ public class Honeycomb : MonoBehaviour
     public GameObject kTimerPanel;
     public GameObject kButtonPanel;
 
-    private bool mIsOpen = false;
+    [HideInInspector] public bool mIsOpen = false;
     private bool mIsConverting = false;
 
     public Sprite[] kDryerSprites;
+
+    private float mEggHatchTime = 5;
 
     private void Start()
     {
@@ -78,6 +81,11 @@ public class Honeycomb : MonoBehaviour
 
     public bool IsUsable(GameResType _type)
     {
+        if(amount.amount == 0f)
+        {
+            type = GameResType.Empty;
+        }
+
         if(type == GameResType.Empty || amount.amount == 0f)
         {
             return true;
@@ -92,7 +100,7 @@ public class Honeycomb : MonoBehaviour
 
     private void SetAllChildrenActive(bool _setActive)
     {
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < transform.childCount-1; i++)
         {
             transform.GetChild(i).gameObject.SetActive(_setActive);
         }
@@ -123,6 +131,10 @@ public class Honeycomb : MonoBehaviour
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
                 kDryerObj.SetActive(true);
+                break;
+            case StructureType.Hatchtery:
+                SetAllChildrenActive(false);
+                kHatchteryObj.SetActive(true);
                 break;
         }
 
@@ -215,25 +227,23 @@ public class Honeycomb : MonoBehaviour
         int spriteNum = (int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1));
         if(spriteNum == 0 && amount.amount > 0) spriteNum = 1;
 
-        if (type == GameResType.Nectar)
+        switch(type)
         {
-            kSpriteRenderer.sprite = mHive.kHoneycombNectarSprites[spriteNum];
-        }
-        else if (type == GameResType.Pollen)
-        {
-            kSpriteRenderer.sprite = mHive.kHoneycombPollenSprites[spriteNum];
-        }
-        else if (type == GameResType.Honey)
-        {
-            kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[spriteNum];
-        }
-        else if (type == GameResType.Wax)
-        {
-            kSpriteRenderer.sprite = mHive.kHoneycombWaxSprites[spriteNum];
-        }
-        else
-        {
-            kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[0];
+            case GameResType.Empty:
+                kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[0];
+                break;
+            case GameResType.Nectar:
+                kSpriteRenderer.sprite = mHive.kHoneycombNectarSprites[spriteNum];
+                break;
+            case GameResType.Pollen:
+                kSpriteRenderer.sprite = mHive.kHoneycombPollenSprites[spriteNum];
+                break;
+            case GameResType.Honey:
+                kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[spriteNum];
+                break;
+            case GameResType.Wax:
+                kSpriteRenderer.sprite = mHive.kHoneycombWaxSprites[spriteNum];
+                break;
         }
     }
 
@@ -326,6 +336,7 @@ public class Honeycomb : MonoBehaviour
         {
             if(SetStructure(hive.mStructureType) == true)
             {
+                Mng.canvas.kInven.gameObject.SetActive(true);
                 hive.mIsBuilding = false;
             }
         }
@@ -436,4 +447,23 @@ public class Honeycomb : MonoBehaviour
         UpdateType(_finType);
         mIsConverting = false;
     }   
+
+    public void PlaceEgg()
+    {
+        type = GameResType.Egg;
+        SetStructure(StructureType.Hatchtery);
+        StartCoroutine(EggHatchCor());
+    }
+
+    private IEnumerator EggHatchCor()
+    {
+        yield return new WaitForSeconds(mEggHatchTime);
+        EggHatch();
+    }
+
+    private void EggHatch()
+    {
+        type = GameResType.Larvae;
+        Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 1);
+    }
 }

@@ -4,16 +4,27 @@ using UnityEngine;
 using EnumDef;
 using StructDef;
 using ClassDef;
+using TMPro;
 
 public class Bee : MonoBehaviour
 {
-    public Job kCurrentJob = Job.Collect;
+    [HideInInspector] public int kLevel;
+    [HideInInspector] public float kExp = 0; // 0~1 
 
-    private GameResAmount mCurrentPollen;
-    private GameResAmount mCurrentNectar;
+    [HideInInspector] public GameResAmount mFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
+    private int mPupaLevel = 4;
 
-    private GameResAmount mMaxPollen = new GameResAmount(20, GameResUnit.Milligram);
-    private GameResAmount mMaxNectar = new GameResAmount(20, GameResUnit.Milligram);
+    [HideInInspector] public Job kCurrentJob = Job.Collect;
+
+    [HideInInspector] public GameResAmount mCurrentPollen = new GameResAmount(0, GameResUnit.Microgram);
+    [HideInInspector] public GameResAmount mCurrentNectar = new GameResAmount(0, GameResUnit.Microgram);
+    [HideInInspector] public GameResAmount mCurrentHoney = new GameResAmount(0, GameResUnit.Microgram);
+    [HideInInspector] public GameResAmount mCurrentWax = new GameResAmount(0, GameResUnit.Microgram);
+
+    [HideInInspector] public GameResAmount mMaxPollen = new GameResAmount(20, GameResUnit.Milligram);
+    [HideInInspector] public GameResAmount mMaxNectar = new GameResAmount(1, GameResUnit.Milligram);
+    [HideInInspector] public GameResAmount mMaxHoney = new GameResAmount(1, GameResUnit.Milligram);
+    [HideInInspector] public GameResAmount mMaxWax = new GameResAmount(1, GameResUnit.Milligram);
 
     private float mSpeed = 3f;
     private float mFlowerCollectTime = 2f; // 꽃에서 자원 모으는데 걸리는 시간
@@ -27,12 +38,54 @@ public class Bee : MonoBehaviour
 
     private void Start()
     {
+        UpdateLevel(8); // 나중에 수정예정
         DoJob();
     }
 
     void Update()
     {
       
+    }
+
+    public void UpdateLevel(int _level)
+    {
+        kLevel = _level;
+        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxNectar = Mng.play.UpdateUnit(new GameResAmount(2f*kLevel, GameResUnit.Milligram));
+        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+
+        mFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 0.15f*kLevel, GameResUnit.Milligram));
+        
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+    }
+
+    public void UpdateExp(float _exp)
+    {
+        kExp += _exp;
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+
+        while(kExp >= 1)
+        {
+            kExp -= 1;
+            UpdateLevel(kLevel + 1);
+        }
+    }
+
+    public void Feed()
+    {
+        mCurrentHoney = Mng.play.SubtractResourceAmounts(mCurrentHoney, mFeedAmount);
+        UpdateExp(0.25f);
+    }
+
+    private void OnMouseDown()
+    {
+        if(Mng.canvas.kIsViewingMenu == false)
+        {
+            Mng.canvas.kBeeInfo.gameObject.SetActive(true);
+            Mng.play.kCamera.SetFollow(transform);
+            Mng.canvas.kBeeInfo.SetObject(gameObject);
+        }
     }
 
     private IEnumerator CallDoJob()
@@ -43,6 +96,11 @@ public class Bee : MonoBehaviour
 
     private void DoJob()
     {
+        if(mLevel < mPupaLevel) 
+        {
+            return;
+        }
+
         if(mCanWork == false)
         {
             //mCanWork = true;
@@ -88,6 +146,8 @@ public class Bee : MonoBehaviour
                 }
 
                 mCurrentPollen = mTargetHoneycomb.StoreResource(GameResType.Pollen, mCurrentPollen);
+                
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
                 mAtTarget = false;
                 mTargetHoneycomb = null;
                 StartCoroutine(CallDoJob());
@@ -108,6 +168,7 @@ public class Bee : MonoBehaviour
                 }
 
                 mCurrentNectar = mTargetHoneycomb.StoreResource(GameResType.Nectar, mCurrentNectar);
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
                 mAtTarget = false; 
                 mTargetHoneycomb = null;
                 StartCoroutine(CallDoJob());
@@ -155,22 +216,80 @@ public class Bee : MonoBehaviour
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
     }
 
-    private void AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
+    public GameResAmount AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
     {
         GameResAmount newPollenAmount = PlayManager.Instance.AddResourceAmounts(mCurrentPollen, _pollenAmount);
         GameResAmount newNectarAmount = PlayManager.Instance.AddResourceAmounts(mCurrentNectar, _nectarAmount);
 
         if(PlayManager.Instance.CompareResourceAmounts(mMaxPollen, newPollenAmount) == true)
         {
-            newPollenAmount = mMaxPollen;
+            mCurrentPollen = mMaxPollen;
+            Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+            return Mng.play.SubtractResourceAmounts(newPollenAmount, mMaxPollen);
         }
         if (PlayManager.Instance.CompareResourceAmounts(mMaxNectar, newNectarAmount) == true)
         {
-            newNectarAmount = mMaxNectar;
+            mCurrentNectar = mMaxNectar;
+            Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+            return Mng.play.SubtractResourceAmounts(newNectarAmount, mMaxNectar);
         }
 
         mCurrentPollen = newPollenAmount;
         mCurrentNectar = newNectarAmount;
+
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+
+        return new GameResAmount(0f, GameResUnit.Microgram);
+    }
+
+    public GameResAmount AddResource(GameResType _type, GameResAmount _amount) 
+    {
+        switch(_type)
+        {
+            case GameResType.Pollen:
+                GameResAmount newPollenAmount = PlayManager.Instance.AddResourceAmounts(mCurrentPollen, _amount);
+                if(PlayManager.Instance.CompareResourceAmounts(mMaxPollen, newPollenAmount) == true)
+                {
+                    mCurrentPollen = mMaxPollen;
+                    Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+                    return Mng.play.SubtractResourceAmounts(newPollenAmount, mMaxPollen);
+                }
+                mCurrentPollen = newPollenAmount;
+                break;
+            case GameResType.Nectar:
+                GameResAmount newNectarAmount = PlayManager.Instance.AddResourceAmounts(mCurrentNectar, _amount);
+                if(PlayManager.Instance.CompareResourceAmounts(mMaxNectar, newNectarAmount) == true)
+                {
+                    mCurrentNectar = mMaxNectar;
+                    return Mng.play.SubtractResourceAmounts(newNectarAmount, mMaxNectar);
+                }
+                mCurrentNectar = newNectarAmount;
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+                break;
+            case GameResType.Honey:
+                GameResAmount newHoneyAmount = PlayManager.Instance.AddResourceAmounts(mCurrentHoney, _amount);
+                if(PlayManager.Instance.CompareResourceAmounts(mMaxHoney, newHoneyAmount) == true)
+                {
+                    mCurrentHoney = mMaxNectar;
+                    return Mng.play.SubtractResourceAmounts(newHoneyAmount, mMaxHoney);
+                }
+                mCurrentHoney = newHoneyAmount;
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+                break;
+            case GameResType.Wax:
+                GameResAmount newWaxAmount = PlayManager.Instance.AddResourceAmounts(mCurrentWax, _amount);
+                if(PlayManager.Instance.CompareResourceAmounts(mMaxHoney, newWaxAmount) == true)
+                {
+                    mCurrentWax = mMaxWax;
+                    return Mng.play.SubtractResourceAmounts(newWaxAmount, mMaxWax);
+                }
+                mCurrentWax = newWaxAmount;
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+                break;
+        }
+
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+        return new GameResAmount(0f, GameResUnit.Microgram);
     }
 
     private IEnumerator GoToPos(Vector3 _targetPos)
@@ -211,6 +330,7 @@ public class Bee : MonoBehaviour
         yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
         mAtTarget = false;
         AddResource(mTargetFlowerSpot.pollenAmount, mTargetFlowerSpot.nectarAmount);
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
 
         mTargetFlowerSpot.isTarget = false;
 

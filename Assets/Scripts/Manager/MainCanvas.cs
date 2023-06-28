@@ -18,6 +18,7 @@ public class MainCanvas : MonoBehaviour
     public JobMenuPanel kJob;
     public InventoryBarPanel kInven;
     public QueenResourcePanel kQueen;
+    public BeeInfoPanel kBeeInfo;
 
     public Button[] kToggleButtons;
 
@@ -42,10 +43,15 @@ public class MainCanvas : MonoBehaviour
         kJob = GetComponentInChildren<JobMenuPanel>(true);
         kInven = GetComponentInChildren<InventoryBarPanel>(true);
         kQueen = GetComponentInChildren<QueenResourcePanel>(true);
+        kBeeInfo = GetComponentInChildren<BeeInfoPanel>(true);
+
+        kResource.gameObject.SetActive(true);
+        kInven.gameObject.SetActive(true);
 
         kBuild.gameObject.SetActive(false);
         kJob.gameObject.SetActive(false);
         kQueen.gameObject.SetActive(false);
+        kBeeInfo.gameObject.SetActive(false);
         
         EnableToggleButtons();
         kCancelBuildObj.SetActive(false);
@@ -92,6 +98,11 @@ public class MainCanvas : MonoBehaviour
         return _amount.amount.ToString("#.00") + Mng.canvas.GetUnitText(_amount.unit);
     }
 
+    public string GetAmountRatioText(GameResAmount _amount, GameResAmount _maxAmount)
+    {
+        return GetAmountText(_amount) + " / " + GetAmountText(_maxAmount);
+    }
+
     public void ShowBuildCancel()
     {
         kCancelBuildObj.SetActive(true);
@@ -104,6 +115,7 @@ public class MainCanvas : MonoBehaviour
 
     public void CancelBuild()
     {
+        Mng.canvas.kInven.gameObject.SetActive(true);
         Mng.play.kHive.EndBuild();
     }
 
@@ -139,5 +151,37 @@ public class MainCanvas : MonoBehaviour
         kWarningTxt.gameObject.SetActive(false);
 
         mIsFading = false;
+    }
+
+    public void FillSlider(Slider _slider, float _time)
+    {   
+        StartCoroutine(FillSliderCor(_slider, _time));
+    }
+
+    private IEnumerator FillSliderCor(Slider _slider, float _time)
+    {
+        _slider.gameObject.SetActive(true);
+
+        float timeInterval = 0.1f;
+        WaitForSeconds sec = new WaitForSeconds(timeInterval);
+        
+        for(float i = 0; i < _time; i += timeInterval)
+        {
+            _slider.value = i/_time;
+            yield return sec;
+        }
+
+        _slider.gameObject.SetActive(false);
+    }
+
+    public void ShowMenu()
+    {
+        kIsViewingMenu = true;
+        kBeeInfo.gameObject.SetActive(false);
+    }
+
+    public void HideMenu()
+    {
+        kIsViewingMenu = false;
     }
 }

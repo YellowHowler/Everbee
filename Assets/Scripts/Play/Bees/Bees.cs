@@ -14,6 +14,14 @@ public class Bees : MonoBehaviour
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
+    public void CreateBee(Vector3 _pos, int _level)
+    {
+        GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
+        newBee.transform.parent = transform;
+        newBee.GetComponent<Bee>().UpdateLevel(_level);
+        Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
+    }
+
     public void CreateQueenBee(Vector3 _pos)
     {
         GameObject newQueenBee = Instantiate(kQueenBeeObj, _pos, Quaternion.identity);

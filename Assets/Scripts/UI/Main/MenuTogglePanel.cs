@@ -18,19 +18,25 @@ public class MenuTogglePanel : MonoBehaviour
 
     public void OnBuildMenuBtnClick()
     {
-        Mng.canvas.kIsViewingMenu = true;
+        Mng.canvas.ShowMenu();
 
         GameObject buildMenu = Mng.canvas.kBuild.gameObject;
+        GameObject jobMenu = Mng.canvas.kJob.gameObject;
 
+        Mng.canvas.kQueen.gameObject.SetActive(false);
+        jobMenu.SetActive(false);
         buildMenu.SetActive(true);
     }
 
     public void OnJobMenuBtnClick()
     {
-        Mng.canvas.kIsViewingMenu = true;
+        Mng.canvas.ShowMenu();
         
+        GameObject buildMenu = Mng.canvas.kBuild.gameObject;
         GameObject jobMenu = Mng.canvas.kJob.gameObject;
 
+        Mng.canvas.kQueen.gameObject.SetActive(false);
+        buildMenu.SetActive(false);
         jobMenu.SetActive(true);
     }
 }

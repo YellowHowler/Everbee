@@ -15,6 +15,8 @@ public class PlayManager : MonoBehaviour
     public Garden kGarden;
     public MainCanvas kMainCanvas;
 
+    public PlayerCamera kCamera;
+
     public GameResAmount kStorageHoneyAmount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResAmount kStorageNectarAmount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResAmount kStoragePollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
@@ -30,6 +32,8 @@ public class PlayManager : MonoBehaviour
         kHive = GameObject.Find("Stage/Hive").GetComponent<Hive>();
         kGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
         kMainCanvas = GameObject.Find("Canvas").GetComponent<MainCanvas>();
+
+        kCamera = Camera.main.GetComponent<PlayerCamera>();
 
         EasyTouch.On_TouchStart += OnTouch;
     }
@@ -192,16 +196,16 @@ public class PlayManager : MonoBehaviour
 
     public float GetResourcePercent(GameResAmount _amount, GameResAmount _maxAmount)
     {
-        if((int)_maxAmount.unit - (int)_amount.unit >= 2)
-        {
-            return 0;
-        }
         if(CompareResourceAmounts(_maxAmount, _amount) == true)
         {
             return 100;
         }
+        if((int)_maxAmount.unit != (int)_amount.unit)
+        {
+            return 0;
+        }
 
-        return Mathf.Clamp(_amount.amount / _maxAmount.amount * Mathf.Pow(1000, (int)_amount.unit - (int)_maxAmount.unit), 0, 100);
+        return Mathf.Clamp(_amount.amount / _maxAmount.amount, 0, 1) * 100;
     }
 
     public GameResAmount UpdateUnit(GameResAmount _amount)
@@ -243,9 +247,9 @@ public class PlayManager : MonoBehaviour
         return _resAmountA.amount == _resAmountB.amount && _resAmountA.unit == _resAmountB.unit;
     }
 
-    public Vector3 SetZToZero(Vector3 _pos)
+    public Vector3 SetZ(Vector3 _pos, float _z)
     {
-        return new Vector3(_pos.x, _pos.y, 0);
+        return new Vector3(_pos.x, _pos.y, _z);
     }
 }
 

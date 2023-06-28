@@ -31,6 +31,7 @@ public class QueenResourcePanel : MonoBehaviour
     public void QueenLayEgg()
     {
         mTargetQueen.WaitForTargetHoneycomb();
+        OnQueenResourceBgClick();
     }
 
     public void UpdateSliders(GameResAmount _honeyAmount, GameResAmount _pollenAmount)
@@ -38,8 +39,8 @@ public class QueenResourcePanel : MonoBehaviour
         GameResAmount honeyNeed = Mng.play.kHive.mQueenHoneyNeed;
         GameResAmount pollenNeed = Mng.play.kHive.mQueenPollenNeed;
 
-        kHoneySlider.value = Mng.play.GetResourcePercent(_honeyAmount, honeyNeed) / 100;
-        kPollenSlider.value = Mng.play.GetResourcePercent(_pollenAmount, pollenNeed) / 100;
+        kHoneySlider.value = Mng.play.GetResourcePercent(_honeyAmount, honeyNeed) / 100f;
+        kPollenSlider.value = Mng.play.GetResourcePercent(_pollenAmount, pollenNeed) / 100f;
 
         kHoneyText.text = Mng.canvas.GetAmountText(_honeyAmount) + "/" + Mng.canvas.GetAmountText(honeyNeed);
         kPollenText.text = Mng.canvas.GetAmountText(_pollenAmount) + "/" + Mng.canvas.GetAmountText(pollenNeed);
@@ -56,6 +57,7 @@ public class QueenResourcePanel : MonoBehaviour
 
     public void OnQueenResourceBgClick()
     {
+        Mng.canvas.HideMenu();
         gameObject.SetActive(false);
     }
 }

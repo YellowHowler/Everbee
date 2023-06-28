@@ -17,7 +17,7 @@ public class BuildMenuPanel : MonoBehaviour
 
     public void OnBuildMenuBgClick()
     {
-        Mng.canvas.kIsViewingMenu = false;
+        Mng.canvas.HideMenu();
         
         gameObject.SetActive(false);
     }
@@ -25,6 +25,7 @@ public class BuildMenuPanel : MonoBehaviour
     public void OnBuildBtnClick(int _type)
     {
         gameObject.SetActive(false);
+        Mng.canvas.kInven.gameObject.SetActive(false);
         Mng.play.kHive.SetDrawBuild((StructureType)_type);
     }
 }
