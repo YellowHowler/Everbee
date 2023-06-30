@@ -169,10 +169,10 @@ public class Hive : MonoBehaviour
 
         mMaxItemAmounts[0] = new GameResAmount(10, GameResUnit.Milligram);
         mMaxItemAmounts[1] = new GameResAmount(10, GameResUnit.Milligram);
-        mMaxItemAmounts[2] = new GameResAmount(200, GameResUnit.Milligram);
+        mMaxItemAmounts[2] = new GameResAmount(500, GameResUnit.Milligram);
         mMaxItemAmounts[3] = new GameResAmount(10, GameResUnit.Milligram);
 
-        mQueenHoneyNeed = new GameResAmount(5, GameResUnit.Milligram);
+        mQueenHoneyNeed = new GameResAmount(1, GameResUnit.Milligram);
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
     }
 

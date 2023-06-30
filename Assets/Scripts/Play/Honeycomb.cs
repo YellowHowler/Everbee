@@ -42,8 +42,6 @@ public class Honeycomb : MonoBehaviour
 
     public Sprite[] kDryerSprites;
 
-    private float mEggHatchTime = 5;
-
     private void Start()
     {
         kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
@@ -451,19 +449,6 @@ public class Honeycomb : MonoBehaviour
     public void PlaceEgg()
     {
         type = GameResType.Egg;
-        SetStructure(StructureType.Hatchtery);
-        StartCoroutine(EggHatchCor());
-    }
-
-    private IEnumerator EggHatchCor()
-    {
-        yield return new WaitForSeconds(mEggHatchTime);
-        EggHatch();
-    }
-
-    private void EggHatch()
-    {
-        type = GameResType.Larvae;
-        Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 1);
+        Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 0, BeeStage.Egg);
     }
 }

@@ -1,6 +1,10 @@
+using EnumDef;
+using StructDef;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using TMPro;
 
 public class Bees : MonoBehaviour
 {
@@ -14,11 +18,12 @@ public class Bees : MonoBehaviour
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
-    public void CreateBee(Vector3 _pos, int _level)
+    public void CreateBee(Vector3 _pos, int _level, BeeStage _stage)
     {
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
         newBee.GetComponent<Bee>().UpdateLevel(_level);
+        newBee.GetComponent<Bee>().UpdateStage(_stage);
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
@@ -26,6 +31,11 @@ public class Bees : MonoBehaviour
     {
         GameObject newQueenBee = Instantiate(kQueenBeeObj, _pos, Quaternion.identity);
         newQueenBee.transform.parent = transform;
+    }
+
+    private void Awake()
+    {
+        Mng.play.kBees = this;
     }
 
     IEnumerator Start()  
@@ -39,7 +49,7 @@ public class Bees : MonoBehaviour
 
         for(int i = 0; i < 4; i++)
         {
-            CreateBee(Vector3.zero);
+            CreateBee(Vector3.zero, 8, BeeStage.Bee);
         }
 
         CreateQueenBee(new Vector3(0, 15, 0));

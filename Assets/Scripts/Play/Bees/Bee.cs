@@ -11,8 +11,21 @@ public class Bee : MonoBehaviour
     [HideInInspector] public int kLevel;
     [HideInInspector] public float kExp = 0; // 0~1 
 
-    [HideInInspector] public GameResAmount mFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
-    private int mPupaLevel = 4;
+    [HideInInspector] public BeeStage mCurStage;
+
+    [HideInInspector] public GameResAmount mHoneyFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
+    [HideInInspector] public GameResAmount mPollenFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
+    private int mEggLevel = 1;
+    private int mPupaLevel = 5;
+
+    private int mEggHatchTime = 5;
+    private int mPupaConvertTime = 5;
+    [HideInInspector] public int mConvertTime;
+
+    public GameObject mEggObj;
+    public GameObject mLarvaeObj;
+    public GameObject mPupaObj;
+    public GameObject mBeeObj;
 
     [HideInInspector] public Job kCurrentJob = Job.Collect;
 
@@ -21,10 +34,10 @@ public class Bee : MonoBehaviour
     [HideInInspector] public GameResAmount mCurrentHoney = new GameResAmount(0, GameResUnit.Microgram);
     [HideInInspector] public GameResAmount mCurrentWax = new GameResAmount(0, GameResUnit.Microgram);
 
-    [HideInInspector] public GameResAmount mMaxPollen = new GameResAmount(20, GameResUnit.Milligram);
-    [HideInInspector] public GameResAmount mMaxNectar = new GameResAmount(1, GameResUnit.Milligram);
-    [HideInInspector] public GameResAmount mMaxHoney = new GameResAmount(1, GameResUnit.Milligram);
-    [HideInInspector] public GameResAmount mMaxWax = new GameResAmount(1, GameResUnit.Milligram);
+    [HideInInspector] public GameResAmount mMaxPollen;
+    [HideInInspector] public GameResAmount mMaxNectar;
+    [HideInInspector] public GameResAmount mMaxHoney;
+    [HideInInspector] public GameResAmount mMaxWax;
 
     private float mSpeed = 3f;
     private float mFlowerCollectTime = 2f; // 꽃에서 자원 모으는데 걸리는 시간
@@ -38,8 +51,6 @@ public class Bee : MonoBehaviour
 
     private void Start()
     {
-        UpdateLevel(8); // 나중에 수정예정
-        DoJob();
     }
 
     void Update()
@@ -47,17 +58,98 @@ public class Bee : MonoBehaviour
       
     }
 
+    public void UpdateStage(BeeStage _stage)
+    {
+        mCurStage = _stage;
+
+        switch (_stage)
+        {
+            case BeeStage.Egg:
+                StartCoroutine(EggHatchCor());
+                break;
+            case BeeStage.Larvae:
+                break;
+            case BeeStage.Pupa:
+                StartCoroutine(PupaConvertCor());
+                break;
+            case BeeStage.Bee:
+                DoJob();
+                break;
+        }
+
+        UpdateStageSprite(_stage);
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+    }
+
+    public void UpdateStageSprite(BeeStage _stage)
+    {
+        mEggObj.SetActive(false);
+        mLarvaeObj.SetActive(false);
+        mPupaObj.SetActive(false);
+        mBeeObj.SetActive(false);
+
+        switch(_stage)
+        {
+            case BeeStage.Egg:
+                mEggObj.SetActive(true);
+                break;
+            case BeeStage.Larvae:
+                mLarvaeObj.SetActive(true);
+                break;
+            case BeeStage.Pupa:
+                mPupaObj.SetActive(true);
+                break;
+            case BeeStage.Bee:
+                mBeeObj.SetActive(true);
+                break;
+        }
+    }
+
     public void UpdateLevel(int _level)
     {
         kLevel = _level;
         mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
-        mMaxNectar = Mng.play.UpdateUnit(new GameResAmount(2f*kLevel, GameResUnit.Milligram));
-        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
-        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxNectar = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxPollen = Mng.play.UpdateUnit(new GameResAmount(2f*kLevel, GameResUnit.Milligram));
+        mMaxWax = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
 
-        mFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 0.15f*kLevel, GameResUnit.Milligram));
-        
+        mHoneyFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 0.15f*kLevel, GameResUnit.Milligram));
+        mPollenFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 1.5f*kLevel, GameResUnit.Milligram));
+
+        if(_level == mPupaLevel)
+        {
+            UpdateStage(BeeStage.Pupa);
+        }
+
         Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+    }
+
+    private IEnumerator EggHatchCor()
+    {
+        WaitForSeconds sec = new WaitForSeconds(1);
+
+        mConvertTime = mEggHatchTime;
+        for(int i = 0; i < mEggHatchTime; i++)
+        {
+            mConvertTime--;
+            Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+            yield return sec;
+        }
+        UpdateStage(BeeStage.Larvae);
+    }
+
+    private IEnumerator PupaConvertCor()
+    {
+        WaitForSeconds sec = new WaitForSeconds(1);
+
+        mConvertTime = mPupaConvertTime;
+        for(int i = 0; i < mPupaConvertTime; i++)
+        {
+            mConvertTime--;
+            Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+            yield return sec;
+        }
+        UpdateStage(BeeStage.Bee);
     }
 
     public void UpdateExp(float _exp)
@@ -74,7 +166,8 @@ public class Bee : MonoBehaviour
 
     public void Feed()
     {
-        mCurrentHoney = Mng.play.SubtractResourceAmounts(mCurrentHoney, mFeedAmount);
+        mCurrentHoney = Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount);
+        mCurrentPollen = Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount);
         UpdateExp(0.25f);
     }
 
@@ -96,11 +189,6 @@ public class Bee : MonoBehaviour
 
     private void DoJob()
     {
-        if(mLevel < mPupaLevel) 
-        {
-            return;
-        }
-
         if(mCanWork == false)
         {
             //mCanWork = true;
@@ -216,6 +304,18 @@ public class Bee : MonoBehaviour
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
     }
 
+    private IEnumerator CollectFromFlower()
+    {
+        yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
+        mAtTarget = false;
+        AddResource(mTargetFlowerSpot.pollenAmount, mTargetFlowerSpot.nectarAmount);
+        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+
+        mTargetFlowerSpot.isTarget = false;
+
+        StartCoroutine(CallDoJob());
+    }
+
     public GameResAmount AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
     {
         GameResAmount newPollenAmount = PlayManager.Instance.AddResourceAmounts(mCurrentPollen, _pollenAmount);
@@ -322,18 +422,6 @@ public class Bee : MonoBehaviour
         }
 
         mCanWork = true;
-        StartCoroutine(CallDoJob());
-    }
-
-    private IEnumerator CollectFromFlower()
-    {
-        yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
-        mAtTarget = false;
-        AddResource(mTargetFlowerSpot.pollenAmount, mTargetFlowerSpot.nectarAmount);
-        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
-
-        mTargetFlowerSpot.isTarget = false;
-
         StartCoroutine(CallDoJob());
     }
 }

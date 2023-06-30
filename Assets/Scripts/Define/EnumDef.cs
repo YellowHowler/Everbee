@@ -31,6 +31,14 @@ namespace EnumDef
         CaliforniaPoppy
     }
 
+    public enum BeeStage
+    {
+        Egg = 0,
+        Larvae = 1,
+        Pupa = 2,
+        Bee = 3,
+    }
+
     public enum Job
     {
         Idle = 0,
