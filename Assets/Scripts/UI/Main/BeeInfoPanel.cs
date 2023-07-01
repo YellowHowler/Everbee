@@ -18,7 +18,10 @@ public class BeeInfoPanel : MonoBehaviour
     public Button kFeedButton;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 9ba245c (Revert "-")
     public TMP_Text kJobText;
 
     public TMP_Text kTimerText;

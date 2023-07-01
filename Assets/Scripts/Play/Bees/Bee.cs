@@ -51,7 +51,10 @@ public class Bee : MonoBehaviour
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 9ba245c (Revert "-")
     public void UpdateJob(Job _job)
     {
         kCurrentJob = _job;
@@ -388,7 +391,10 @@ public class Bee : MonoBehaviour
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 9ba245c (Revert "-")
     private void FetchPollen()
     {
         mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Pollen);
@@ -451,6 +457,9 @@ public class Bee : MonoBehaviour
         StartCoroutine(CallDoJob());
     }
 
+<<<<<<< HEAD
+>>>>>>> parent of 9ba245c (Revert "-")
+=======
 >>>>>>> parent of 9ba245c (Revert "-")
     public GameResAmount AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
     {

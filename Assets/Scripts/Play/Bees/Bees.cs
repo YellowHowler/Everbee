@@ -25,9 +25,12 @@ public class Bees : MonoBehaviour
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
 <<<<<<< HEAD
+<<<<<<< HEAD
         newBee.GetComponent<Bee>().UpdateLevel(_level);
         Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
 =======
+=======
+>>>>>>> parent of 9ba245c (Revert "-")
 
         Bee bee = newBee.GetComponent<Bee>();
 
@@ -35,6 +38,9 @@ public class Bees : MonoBehaviour
         bee.UpdateLevel(_level);
         bee.UpdateStage(_stage);
         Mng.canvas.kJob.AddBeeJobUI(bee);
+<<<<<<< HEAD
+>>>>>>> parent of 9ba245c (Revert "-")
+=======
 >>>>>>> parent of 9ba245c (Revert "-")
     }
 
@@ -45,7 +51,10 @@ public class Bees : MonoBehaviour
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 9ba245c (Revert "-")
     public Bee FindLarvae()
     {
         foreach(Bee b in mBeeList)
