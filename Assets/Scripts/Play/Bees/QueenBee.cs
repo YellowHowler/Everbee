@@ -122,7 +122,6 @@ public class QueenBee : MonoBehaviour
     {
         mCurState = QueenState.GoToTarget;
         Mng.play.kHive.mGuidingQueen = false;
-        Mng.canvas.DisableToggleButtons();
         StartCoroutine(GoToTarget(_target));
     }
 

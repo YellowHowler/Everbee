@@ -44,11 +44,8 @@ public class Bee : MonoBehaviour
     
     private bool mAtTarget = false;
 
-    [HideInInspector] public bool mIsTarget = false;
-
     FlowerSpot mTargetFlowerSpot;
     Honeycomb mTargetHoneycomb;
-    Bee mTargetBee;
 
     private bool mCanWork = true;
 
@@ -59,13 +56,6 @@ public class Bee : MonoBehaviour
     void Update()
     {
       
-    }
-
-    public void UpdateJob(Job _job)
-    {
-        kCurrentJob = _job;
-
-        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
     }
 
     public void UpdateStage(BeeStage _stage)
@@ -146,7 +136,6 @@ public class Bee : MonoBehaviour
             yield return sec;
         }
         UpdateStage(BeeStage.Larvae);
-        UpdateLevel(1);
     }
 
     private IEnumerator PupaConvertCor()
@@ -277,91 +266,12 @@ public class Bee : MonoBehaviour
             {
                 mCanWork = false;
                 StartCoroutine(CallDoJob());
-                return;
             }
         }
         else if(kCurrentJob == Job.Build)
         {
             mCanWork = false;
             StartCoroutine(CallDoJob());
-            return;
-        }
-        else if(kCurrentJob == Job.Feed)
-        {
-            if (mAtTarget == false && (mCurrentHoney.amount == 0 && mCurrentPollen.amount == 0))
-            {
-                FetchPollen();
-                return;
-            }
-            else if (mCurrentPollen.amount == 0 && mAtTarget == true && mTargetHoneycomb != null)
-            {
-                if(!((mTargetHoneycomb.type == GameResType.Pollen && mTargetHoneycomb.amount.amount > 0) && mTargetHoneycomb.kStructureType == StructureType.Storage))
-                {   
-                    mAtTarget = false;
-                    StartCoroutine(CallDoJob());
-                    return;
-                }
-
-                mCurrentPollen = mTargetHoneycomb.FetchResource(GameResType.Pollen, mCurrentPollen, mMaxPollen);
-                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
-                mAtTarget = false; 
-                mTargetHoneycomb = null;
-                StartCoroutine(CallDoJob());
-                return;
-            }
-            else if (mCurrentHoney.amount == 0 && mAtTarget == false)
-            {
-                FetchHoney();
-            }
-            else if (mCurrentHoney.amount == 0 && mAtTarget == true && mTargetHoneycomb != null)
-            {
-                if(!((mTargetHoneycomb.type == GameResType.Honey && mTargetHoneycomb.amount.amount > 0) && mTargetHoneycomb.kStructureType == StructureType.Storage))
-                {   
-                    mAtTarget = false;
-                    StartCoroutine(CallDoJob());
-                    return;
-                }
-
-                mCurrentHoney = mTargetHoneycomb.FetchResource(GameResType.Honey, mCurrentHoney, mMaxHoney);
-                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
-                mAtTarget = false; 
-                mTargetHoneycomb = null;
-                StartCoroutine(CallDoJob());
-                return;
-            }
-            else if(mCurrentHoney.amount > 0 && mCurrentPollen.amount > 0 && mAtTarget == false)
-            {
-                mTargetBee = PlayManager.Instance.kBees.FindLarvae();
-
-                if(mTargetBee == null) 
-                {
-                    mCanWork = false;
-                    StartCoroutine(CallDoJob());
-                    return;
-                }
-
-                mTargetBee.mIsTarget = true;
-                StartCoroutine(GoToPos(mTargetBee.gameObject.transform.position));
-                return;
-            }
-            else if(mCurrentHoney.amount > 0 && mCurrentPollen.amount > 0 && mAtTarget == true)
-            {
-                if(mTargetBee == null || mTargetBee.mCurStage == BeeStage.Larvae || Vector3.Distance(mTargetBee.gameObject.transform.position, transform.position) > 0.1f)
-                {
-                    mCanWork = false;
-                    StartCoroutine(CallDoJob());
-                    return;
-                }
-
-                StartCoroutine(FeedLarvae());
-                return;
-            }
-            else
-            {
-                mCanWork = false;
-                StartCoroutine(CallDoJob());
-                return;
-            }
         }
     }
 
@@ -394,35 +304,6 @@ public class Bee : MonoBehaviour
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
     }
 
-    private void FetchPollen()
-    {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Pollen);
-
-        if (mTargetHoneycomb == null)
-        {
-            FetchHoney();
-            return;
-        }
-
-        mTargetHoneycomb.isTarget = true;
-        StartCoroutine(GoToPos(mTargetHoneycomb.pos));
-    }
-
-    private void FetchHoney()
-    {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Honey);
-
-        if (mTargetHoneycomb == null)
-        {
-            mCanWork = false;
-            StartCoroutine(CallDoJob());
-            return;
-        }
-
-        mTargetHoneycomb.isTarget = true;
-        StartCoroutine(GoToPos(mTargetHoneycomb.pos));
-    }
-
     private IEnumerator CollectFromFlower()
     {
         yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
@@ -431,27 +312,6 @@ public class Bee : MonoBehaviour
         Mng.canvas.kBeeInfo.UpdateStat(gameObject);
 
         mTargetFlowerSpot.isTarget = false;
-
-        StartCoroutine(CallDoJob());
-    }
-
-    private IEnumerator FeedLarvae()
-    {
-        yield return new WaitForSeconds(0.5f); 
-
-        mCurrentHoney = mTargetBee.AddResource(GameResType.Honey, mCurrentHoney);
-        mCurrentPollen = mTargetBee.AddResource(GameResType.Pollen, mCurrentPollen);
-        Mng.canvas.kBeeInfo.UpdateStat(gameObject);
-
-        yield return new WaitForSeconds(0.5f); 
-
-        if(Mng.play.CompareResourceAmounts(mTargetBee.mPollenFeedAmount, mTargetBee.mCurrentPollen) == true && Mng.play.CompareResourceAmounts(mTargetBee.mHoneyFeedAmount, mTargetBee.mCurrentHoney) == true)
-        {
-            mTargetBee.Feed();
-        }
-
-        mTargetBee.mIsTarget = false;
-        mAtTarget = false;
 
         StartCoroutine(CallDoJob());
     }

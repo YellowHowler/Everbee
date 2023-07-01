@@ -11,49 +11,26 @@ public class Bees : MonoBehaviour
     public GameObject kBeeObj;
     public GameObject kQueenBeeObj;
 
-    private List<Bee> mBeeList = new List<Bee>();
-
     public void CreateBee(Vector3 _pos)
     {
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
-
-        Bee bee = newBee.GetComponent<Bee>();
-
-        mBeeList.Add(bee);
-        Mng.canvas.kJob.AddBeeJobUI(bee);
+        Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
     public void CreateBee(Vector3 _pos, int _level, BeeStage _stage)
     {
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
-
-        Bee bee = newBee.GetComponent<Bee>();
-
-        mBeeList.Add(bee);
-        bee.UpdateLevel(_level);
-        bee.UpdateStage(_stage);
-        Mng.canvas.kJob.AddBeeJobUI(bee);
+        newBee.GetComponent<Bee>().UpdateLevel(_level);
+        newBee.GetComponent<Bee>().UpdateStage(_stage);
+        Mng.canvas.kJob.AddBeeJobUI(newBee.GetComponent<Bee>());
     }
 
     public void CreateQueenBee(Vector3 _pos)
     {
         GameObject newQueenBee = Instantiate(kQueenBeeObj, _pos, Quaternion.identity);
         newQueenBee.transform.parent = transform;
-    }
-
-    public Bee FindLarvae()
-    {
-        foreach(Bee b in mBeeList)
-        {
-            if(b.mCurStage == BeeStage.Larvae && b.mIsTarget == false)
-            {
-                return b;
-            }
-        }
-
-        return null;
     }
 
     private void Awake()
