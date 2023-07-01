@@ -14,11 +14,13 @@ public class PlayManager : MonoBehaviour
     public Hive kHive;
     public Garden kGarden;
     public MainCanvas kMainCanvas;
-    public Bees kBees;
 
     public PlayerCamera kCamera;
 
-    public GameResAmount[] kStorageResourceAmounts;
+    public GameResAmount kStorageHoneyAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStorageNectarAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStoragePollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    public GameResAmount kStorageWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
     public VectorBound kHiveXBound = new VectorBound(10000, -10000);
     public VectorBound kHiveYBound = new VectorBound(10000, -10000);
@@ -32,14 +34,6 @@ public class PlayManager : MonoBehaviour
         kMainCanvas = GameObject.Find("Canvas").GetComponent<MainCanvas>();
 
         kCamera = Camera.main.GetComponent<PlayerCamera>();
-
-        kStorageResourceAmounts = new GameResAmount[]
-                                    {
-                                        new GameResAmount(0, GameResUnit.Microgram),
-                                        new GameResAmount(0, GameResUnit.Microgram),
-                                        new GameResAmount(0, GameResUnit.Microgram),
-                                        new GameResAmount(0, GameResUnit.Microgram)
-                                    };
 
         EasyTouch.On_TouchStart += OnTouch;
     }
@@ -85,14 +79,44 @@ public class PlayManager : MonoBehaviour
 
     public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
     {
-        kStorageResourceAmounts[(int)_type] = AddResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
+        if(_type == GameResType.Honey)
+        {
+            kStorageHoneyAmount = AddResourceAmounts(_amount, kStorageHoneyAmount);
+        }
+        else if (_type == GameResType.Nectar)
+        {
+            kStorageNectarAmount = AddResourceAmounts(_amount, kStorageNectarAmount);
+        }
+        else if (_type == GameResType.Pollen)
+        {
+            kStoragePollenAmount = AddResourceAmounts(_amount, kStoragePollenAmount);
+        }
+        else if (_type == GameResType.Wax)
+        {
+            kStorageWaxAmount = AddResourceAmounts(_amount, kStorageWaxAmount);
+        }
 
         kMainCanvas.kResource.UpdateText();
     }
 
     public void SubtractResourceFromStorage(GameResType _type, GameResAmount _amount)
     {
-        kStorageResourceAmounts[(int)_type] = SubtractResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
+        if(_type == GameResType.Honey)
+        {
+            kStorageHoneyAmount = SubtractResourceAmounts(_amount, kStorageHoneyAmount);
+        }
+        else if (_type == GameResType.Nectar)
+        {
+            kStorageNectarAmount = SubtractResourceAmounts(_amount, kStorageNectarAmount);
+        }
+        else if (_type == GameResType.Pollen)
+        {
+            kStoragePollenAmount = SubtractResourceAmounts(_amount, kStoragePollenAmount);
+        }
+        else if (_type == GameResType.Wax)
+        {
+            kStorageWaxAmount = SubtractResourceAmounts(_amount, kStorageWaxAmount);
+        }
 
         kMainCanvas.kResource.UpdateText();
     }

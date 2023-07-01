@@ -42,6 +42,8 @@ public class Honeycomb : MonoBehaviour
 
     public Sprite[] kDryerSprites;
 
+    private float mEggHatchTime = 5;
+
     private void Start()
     {
         kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
@@ -181,7 +183,7 @@ public class Honeycomb : MonoBehaviour
 
         GameResAmount retAmount = Mng.play.AddResourceAmounts(_amount, amount);
 
-        if (Mng.play.CompareResourceAmounts(retAmount, maxAmount) == true) //������� �Ⱥ����ϸ� �״�� ����
+        if (Mng.play.CompareResourceAmounts(retAmount, maxAmount) == true) 
         {
             amount = retAmount;
             Mng.play.AddResourceToStorage(_type, _amount);
@@ -197,6 +199,24 @@ public class Honeycomb : MonoBehaviour
         UpdateSprite();
 
         return retAmount;
+    }
+
+    public GameResAmount FetchResource(GameResType _type, GameResAmount _amount, GameResAmount _maxAmount)
+    {
+        if(Mng.play.CompareResourceAmounts(_maxAmount, amount) == true)
+        {
+            amount = Mng.play.SubtractResourceAmounts(amount, _maxAmount);
+            Mng.play.SubtractResourceFromStorage(_type, _maxAmount);
+            UpdateSprite();
+
+            return _maxAmount;
+        }
+
+        Mng.play.SubtractResourceFromStorage(_type, amount);
+        amount = new GameResAmount(0f, GameResUnit.Microgram);
+        UpdateSprite();
+
+        return amount;
     }
 
     public void UpdateAmount(GameResAmount _amount)
@@ -449,6 +469,19 @@ public class Honeycomb : MonoBehaviour
     public void PlaceEgg()
     {
         type = GameResType.Egg;
-        Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 0, BeeStage.Egg);
+        SetStructure(StructureType.Hatchtery);
+        StartCoroutine(EggHatchCor());
+    }
+
+    private IEnumerator EggHatchCor()
+    {
+        yield return new WaitForSeconds(mEggHatchTime);
+        EggHatch();
+    }
+
+    private void EggHatch()
+    {
+        type = GameResType.Larvae;
+        Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 1);
     }
 }

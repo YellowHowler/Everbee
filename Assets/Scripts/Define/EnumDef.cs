@@ -31,19 +31,12 @@ namespace EnumDef
         CaliforniaPoppy
     }
 
-    public enum BeeStage
-    {
-        Egg = 0,
-        Larvae = 1,
-        Pupa = 2,
-        Bee = 3,
-    }
-
     public enum Job
     {
         Idle = 0,
         Collect = 1, //꽃에서 자원 수집
         Build = 2,
+        Feed = 3, 
     }
 
     public enum CollectState

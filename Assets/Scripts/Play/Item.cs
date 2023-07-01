@@ -24,7 +24,7 @@ public class Item : MonoBehaviour
 
     private bool mIsDropped = false;
 
-    private List<GameObject> mTouchingObjs;
+    private GameObject mTouchingObj;
 
     private GameObject mQueen;
     private bool mIsTouchingQueen = false;
@@ -37,8 +37,6 @@ public class Item : MonoBehaviour
         kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[2];
         kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
         kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
-
-        mTouchingObjs = new List<GameObject>();
     }
 
     private IEnumerator Start()
@@ -118,37 +116,6 @@ public class Item : MonoBehaviour
         rb.gravityScale = 0;
     }
 
-    private GameObject GetTopTouchingObj()
-    {
-        int queenInd = -1;
-        int beeInd = -1;
-
-        foreach(GameObject obj in mTouchingObjs)
-        {
-            if(obj.GetComponent<QueenBee>() != null)
-            {
-                queenInd = mTouchingObjs.IndexOf(obj);
-            }
-            if(obj.GetComponent<Bee>()!= null)
-            {
-                beeInd = mTouchingObjs.IndexOf(obj);
-            }
-        }
-
-        if(queenInd!= -1)
-        {
-            return mTouchingObjs[queenInd];
-        }
-        else if(beeInd != -1)
-        {
-            return mTouchingObjs[beeInd];
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     private void OnMouseUp()
     {
         rb.velocity = Vector3.zero;
@@ -177,10 +144,8 @@ public class Item : MonoBehaviour
             return;
         }
 
-        if(GetTopTouchingObj() != null)
+        if(mTouchingObj != null)
         {
-            GameObject mTouchingObj = GetTopTouchingObj();
-
             switch(mTouchingObj.tag)
             {
                 case "QueenBee":
@@ -190,11 +155,7 @@ public class Item : MonoBehaviour
                         Destroy(gameObject);
                     }
                     break;
-                case "Bee":
-                    if(mTouchingObj.GetComponent<Bee>().mCurStage == BeeStage.Egg || mTouchingObj.GetComponent<Bee>().mCurStage == BeeStage.Pupa)
-                    {
-                        return;
-                    }
+                case "WorkerBee":
                     UpdateAmount(type, mTouchingObj.GetComponent<Bee>().AddResource(type, amount));
                     break;
             }
@@ -284,21 +245,11 @@ public class Item : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if(col.gameObject.tag == "Honeycomb")
-        {
-            return;
-        }
-
-        mTouchingObjs.Add(col.gameObject);
+        mTouchingObj = col.gameObject;
     }
 
     private void OnTriggerExit2D(Collider2D col)
     {
-        if(col.gameObject.tag == "Honeycomb")
-        {
-            return;
-        }
-
-        mTouchingObjs.Remove(col.gameObject);
+        mTouchingObj = null;
     }
 }

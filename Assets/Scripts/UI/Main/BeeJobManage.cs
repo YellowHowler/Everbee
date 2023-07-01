@@ -20,10 +20,14 @@ public class BeeJobManage : MonoBehaviour
 
     public void OnCollectJobBtnClick()
     {
-        kBee.kCurrentJob = Job.Collect;
+        kBee.UpdateJob(Job.Collect);
     }
     public void OnBuildJobBtnClick()
     {
-        kBee.kCurrentJob = Job.Build;
+        kBee.UpdateJob(Job.Build);
+    }
+    public void OnFeedJobBtnClick()
+    {
+        kBee.UpdateJob(Job.Feed);
     }
 }
