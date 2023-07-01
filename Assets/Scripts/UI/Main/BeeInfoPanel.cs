@@ -23,6 +23,8 @@ public class BeeInfoPanel : MonoBehaviour
     public TMP_Text kFeedTextPollen;
     public Button kFeedButton;
 
+    public TMP_Text kJobText;
+
     public TMP_Text kTimerText;
 
     [HideInInspector] public GameObject mTargetObj;
@@ -59,7 +61,7 @@ public class BeeInfoPanel : MonoBehaviour
         else if(targetBee.mCurStage == BeeStage.Bee || targetBee.mCurStage == BeeStage.Larvae)
         {
             kFeedButton.gameObject.SetActive(true);
-            kStoragePanel.SetActive(false);
+            kStoragePanel.SetActive(true);
             kTimerPanel.SetActive(false);
             kJobPanel.SetActive(false);
 
@@ -78,8 +80,20 @@ public class BeeInfoPanel : MonoBehaviour
 
         if(targetBee.mCurStage == BeeStage.Bee)
         {
-            kStoragePanel.SetActive(true);
             kJobPanel.SetActive(true);
+
+            switch(targetBee.kCurrentJob)
+            {
+                case Job.Collect:
+                    kJobText.text = "Collecting";
+                    break;
+                case Job.Build:
+                    kJobText.text = "Building";
+                    break;
+                case Job.Feed:
+                    kJobText.text = "Feeding";
+                    break;
+            }
 
             kStorageSliders[0].value = Mng.play.GetResourcePercent(targetBee.mCurrentHoney, targetBee.mMaxHoney)/100;
             kStorageTexts[0].text = Mng.canvas.GetAmountRatioText(targetBee.mCurrentHoney, targetBee.mMaxHoney);

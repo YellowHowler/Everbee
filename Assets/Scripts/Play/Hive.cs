@@ -29,7 +29,6 @@ public class Hive : MonoBehaviour
     public Sprite[] kBuildSprites;
 
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
-    private List<Bee> mBeeList = new List<Bee>();
 
     [Header("Honeycomb 이름 보기")]
     public bool kIsDrawHoneycombName = true;
@@ -55,6 +54,19 @@ public class Hive : MonoBehaviour
         foreach (Honeycomb h in mHoneycombList)
         {
             if (h.kStructureType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
+            {
+                return h;
+            }
+        }
+
+        return null;
+    }
+
+    public Honeycomb GetHoneycombOfType(GameResType _type)
+    {
+        foreach (Honeycomb h in mHoneycombList)
+        {
+            if (h.kStructureType == StructureType.Storage && (h.type == _type && h.amount.amount > 0) && h.isTarget == false)
             {
                 return h;
             }

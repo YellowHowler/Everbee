@@ -11197,7 +11197,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6f341bb82296a43688f31c241d50b262, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86d4bd0ecde1b4bf3be5fa4b9045ddcf, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12657,9 +12657,10 @@ MonoBehaviour:
   - {fileID: 1377633412}
   - {fileID: 2057139386}
   - {fileID: 1313468876}
-  kFeedTextHoney: {fileID: 0}
-  kFeedTextPollen: {fileID: 0}
+  kFeedTextHoney: {fileID: 1089703565}
+  kFeedTextPollen: {fileID: 639679528}
   kFeedButton: {fileID: 244238994}
+  kJobText: {fileID: 2122762735}
   kTimerText: {fileID: 1087611492}
   mTargetObj: {fileID: 0}
 --- !u!1 &1951064102
