@@ -225,6 +225,8 @@ public class Honeycomb : MonoBehaviour
 
     public void UpdateType(GameResType _type)
     {
+        Mng.play.SubtractResourceFromStorage(type, amount);
+        Mng.play.AddResourceToStorage(_type, amount);
         type = _type;
         UpdateSprite();
     }
