@@ -220,6 +220,11 @@ public class PlayManager : MonoBehaviour
 
     public bool IsSameAmount(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
+        if(_resAmountA.amount == 0 && _resAmountB.amount == 0) 
+        {
+            return true;
+        }
+
         return _resAmountA.amount == _resAmountB.amount && _resAmountA.unit == _resAmountB.unit;
     }
 

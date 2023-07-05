@@ -46,6 +46,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Flower
+    uniqueID: 2350648249
+    locked: 0
   - name: Ground
     uniqueID: 2252425679
     locked: 0
@@ -57,6 +60,9 @@ TagManager:
     locked: 0
   - name: HoneycombDryer
     uniqueID: 2693784153
+    locked: 0
+  - name: HoneycombBuild
+    uniqueID: 3678036499
     locked: 0
   - name: Larvae
     uniqueID: 2598367839
@@ -72,6 +78,9 @@ TagManager:
     locked: 0
   - name: QueenBee
     uniqueID: 1467922107
+    locked: 0
+  - name: BeeJob
+    uniqueID: 43190583
     locked: 0
   - name: Item
     uniqueID: 4020775763

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class Honeycomb : MonoBehaviour
@@ -25,17 +26,23 @@ public class Honeycomb : MonoBehaviour
     public Hive mHive { get; set; }
 
     public StructureType kStructureType = StructureType.None;
+    private StructureType mPreparedStructure = StructureType.None;
+    [HideInInspector] public GameResAmount mBuildNeedWax = new GameResAmount(0f, GameResUnit.Microgram);
+    [HideInInspector] public GameResAmount mBuildCurrentWax = new GameResAmount(0f, GameResUnit.Microgram);
 
     public GameObject kEmptyObj;
     public GameObject kStorageObj;
     public GameObject kDryerObj;
     public GameObject kHatchteryObj;
+
     public GameObject kHoverObj;
+    public GameObject kBuildingObj;
 
     public GameObject kCanvas;
 
     public GameObject kTimerPanel;
     public GameObject kButtonPanel;
+    public Slider kBuildSlider;
 
     [HideInInspector] public bool mIsOpen = false;
     private bool mIsConverting = false;
@@ -59,8 +66,10 @@ public class Honeycomb : MonoBehaviour
     private void HideObjects()
     {
         kHoverObj.SetActive(false);
+        kBuildingObj.SetActive(false);
         kTimerPanel.SetActive(false);
         kButtonPanel.SetActive(false);
+        kBuildSlider.gameObject.SetActive(false);
     }
 
     public bool IsFull() //�� ���� �� ���ִ��� Ȯ��
@@ -85,17 +94,17 @@ public class Honeycomb : MonoBehaviour
         }
 
         if(type == GameResType.Empty || amount.amount == 0f)
-        {
-            return true;
-        }
+        { 
+            return true; 
+        } 
         if(type == _type && !IsFull()) 
-        {
-            return true;
-        }
-
-        return false;
-    }
-
+        { 
+            return true; 
+        } 
+ 
+        return false; 
+    } 
+ 
     private void SetAllChildrenActive(bool _setActive)
     {
         for (int i = 0; i < transform.childCount-1; i++)
@@ -106,26 +115,62 @@ public class Honeycomb : MonoBehaviour
         kEmptyObj.gameObject.SetActive(true);
     }
 
-    public bool SetStructure(StructureType _type) //true if build successful
+    public bool PrepareStructure(StructureType _type, GameResAmount _waxAmount)
     {
         switch (_type)
         {
-            case StructureType.None:
-                SetAllChildrenActive(false);
-                break;
             case StructureType.Storage:
                 if(kStructureType != StructureType.None) 
                 {
                     return false;
                 }
-                SetAllChildrenActive(false);
-                kStorageObj.SetActive(true);
                 break;
             case StructureType.Dryer:
                 if(kStructureType != StructureType.Storage) 
                 {
                     return false;
                 }
+                break;
+            case StructureType.Hatchtery:
+                break;
+        }
+        kBuildSlider.gameObject.SetActive(true);
+        kBuildingObj.SetActive(true);
+        mBuildCurrentWax = new GameResAmount(0f, GameResUnit.Microgram);
+
+        mBuildNeedWax = _waxAmount;
+        kStructureType = StructureType.Building;
+        mPreparedStructure = _type;
+
+        UpdateBuildState();
+        return true;
+    }
+
+    public void UpdateBuildState()
+    {
+        kBuildSlider.value = Mng.play.GetResourcePercent(mBuildCurrentWax, mBuildNeedWax)/100;
+
+        if(Mng.play.IsSameAmount(mBuildNeedWax, mBuildCurrentWax) == true)
+        {
+            mBuildCurrentWax = new GameResAmount(0f, GameResUnit.Microgram);
+            SetStructure(mPreparedStructure);
+        }
+    }
+
+    public void SetStructure(StructureType _type)
+    {
+        kBuildSlider.gameObject.SetActive(false);
+
+        switch (_type)
+        {
+            case StructureType.None:
+                SetAllChildrenActive(false);
+                break;
+            case StructureType.Storage:
+                SetAllChildrenActive(false);
+                kStorageObj.SetActive(true);
+                break;
+            case StructureType.Dryer:
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
                 kDryerObj.SetActive(true);
@@ -137,7 +182,6 @@ public class Honeycomb : MonoBehaviour
         }
 
         kStructureType = _type;
-        return true;
     }
 
     private GameResAmount GetMaxAmount(GameResType _type)
@@ -297,8 +341,52 @@ public class Honeycomb : MonoBehaviour
         }
     }
 
+    private void RespondToClick()
+    {
+        if(Mng.play.kHive.mClickedHoneycomb != null)
+        {
+            Mng.play.kHive.mClickedHoneycomb.CancelClick();
+        }   
+
+        Mng.play.kHive.mClickedHoneycomb = this;
+
+        switch(kStructureType)
+        {
+            case StructureType.None:
+                break;
+            case StructureType.Storage:
+                kCanvas.SetActive(true);
+                kButtonPanel.SetActive(true);
+                break;
+            case StructureType.Dryer:
+                ToggleDoor();
+                break;
+        }
+    }
+
+    private void CancelClick()
+    {
+        switch(kStructureType)
+        {
+            case StructureType.Storage:
+                kButtonPanel.SetActive(false);
+                break;
+            case StructureType.Dryer:
+                if(mIsOpen == true)
+                {
+                    ToggleDoor();
+                }
+                break;
+        }
+    }
+
     private void ToggleDoor()
     {
+        if(mIsConverting == true)
+        {
+            return;
+        }
+
         mIsOpen = !mIsOpen;
 
         if(mIsOpen)
@@ -352,7 +440,8 @@ public class Honeycomb : MonoBehaviour
 
         if(hive.mIsBuilding == true)
         {
-            if(SetStructure(hive.mStructureType) == true)
+            //밀랍 양 바꾸기
+            if(PrepareStructure(hive.mStructureType, new GameResAmount(0, GameResUnit.Milligram)) == true)
             {
                 Mng.canvas.kInven.gameObject.SetActive(true);
                 hive.mIsBuilding = false;
@@ -360,21 +449,7 @@ public class Honeycomb : MonoBehaviour
         }
         else
         {
-            switch (kStructureType)
-            {
-                case StructureType.None:
-                    break;
-                case StructureType.Storage:
-
-                    break;
-                case StructureType.Dryer:
-                    if(mIsConverting == true)
-                    {
-                        return;
-                    }
-                    ToggleDoor();
-                    break;
-            }
+            RespondToClick();
         }
     }
 
@@ -389,7 +464,11 @@ public class Honeycomb : MonoBehaviour
         UpdateAmount(item.UpdateAmount(type, amount));
 
         Mng.play.SubtractResourceFromStorage(item.type, item.amount);
-        print(item.amount.amount);
+        
+        if(kStructureType == StructureType.Storage)
+        {
+            kButtonPanel.SetActive(false);
+        }
     }
 
     private void OnMouseUp()
@@ -422,11 +501,25 @@ public class Honeycomb : MonoBehaviour
                 case StructureType.None:
                     break;
                 case StructureType.Storage:
-                    CreateItem();
+                    //CreateItem();
                     break;
                 case StructureType.Dryer:
                     break;
             }
+        }
+    }
+
+    public void ConvertResource()
+    {
+        switch(kStructureType)
+        {
+            case StructureType.None:
+                break;
+            case StructureType.Storage:
+                break;
+            case StructureType.Dryer:
+                NectarToHoney();
+                break;
         }
     }
 

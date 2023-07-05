@@ -13,19 +13,19 @@ public class Garden : MonoBehaviour
 
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
 
-    private float flowerY = 0.4f; // ²ÉµéÀÇ y ÁÂÇ¥°ª
+    private float flowerY = 0.4f; // ï¿½Éµï¿½ï¿½ï¿½ y ï¿½ï¿½Ç¥ï¿½ï¿½
 
     public FlowerSpot GetUsableFlowerSpot()
     {
         foreach(FlowerSpot s in mFlowerSpotList)
         {
-            if(s.occupied == false && s.isTarget == false) return s;
+            if(s.isTarget == false) return s;
         }
 
         return null;
     }
 
-    /// <summary> ÇöÀç ¾À¿¡ ÀÖ´Â ¸ðµç Flower SpotµéÀ» °¡Á®¿Â´Ù </summary>
+    /// <summary> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ Flower Spotï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ </summary>
     public void GetAllFlowerSpots() 
     {
         mFlowerSpotList.Clear();
@@ -34,7 +34,7 @@ public class Garden : MonoBehaviour
 
         foreach(GameObject f in flowerSpots)
         {
-            mFlowerSpotList.Add(f.GetComponent<FlowerSpot>()); //ÀÓ½Ã
+            mFlowerSpotList.Add(f.GetComponent<FlowerSpot>()); //ï¿½Ó½ï¿½
         }
     }
 

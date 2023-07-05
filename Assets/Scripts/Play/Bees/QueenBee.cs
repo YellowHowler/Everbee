@@ -113,7 +113,7 @@ public class QueenBee : MonoBehaviour
     public void WaitForTargetHoneycomb()
     {
         mCurState = QueenState.WaitForTarget;
-        StopCoroutine(Wander());
+        StopAllCoroutines();
 
         Mng.play.kHive.GuideQueen(this);
     }

@@ -13,8 +13,6 @@ public class FlowerSpot : MonoBehaviour
 
     public FlowerType type;
 
-    public bool occupied;
-
     public float nectar;
     public GameResUnit nectarUnit;
     public float pollen;

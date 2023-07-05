@@ -38,6 +38,8 @@ public class Hive : MonoBehaviour
     [HideInInspector] public bool mIsBuilding = false;
     [HideInInspector] public StructureType mStructureType = StructureType.None;
 
+    [HideInInspector] public Honeycomb mClickedHoneycomb = null;
+
     public Transform kItems;
 
     [HideInInspector] public GameResAmount[] mMaxItemAmounts;
@@ -54,6 +56,19 @@ public class Hive : MonoBehaviour
         foreach (Honeycomb h in mHoneycombList)
         {
             if (h.kStructureType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
+            {
+                return h;
+            }
+        }
+
+        return null;
+    }
+
+    public Honeycomb GetBuildingHoneycomb()
+    {
+        foreach (Honeycomb h in mHoneycombList)
+        {
+            if (h.kStructureType == StructureType.Building && h.isTarget == false)
             {
                 return h;
             }
@@ -237,7 +252,7 @@ public class Hive : MonoBehaviour
         Mng.canvas.DisableToggleButtons();
         Mng.canvas.ShowBuildCancel();
 
-        kHoverObj.GetComponent<SpriteRenderer>().sprite = kBuildSprites[(int)_type - 1];
+        kHoverObj.GetComponent<SpriteRenderer>().sprite = kBuildSprites[(int)_type - 2];
         kHoverObj.SetActive(true);
 
         StartCoroutine(SetBuildCor());

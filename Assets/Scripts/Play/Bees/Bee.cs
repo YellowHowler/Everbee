@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using EnumDef;
 using StructDef;
 using ClassDef;
@@ -21,6 +22,9 @@ public class Bee : MonoBehaviour
     private int mEggHatchTime = 5;
     private int mPupaConvertTime = 5;
     [HideInInspector] public int mConvertTime;
+
+    public GameObject kJobObj;
+    public Slider kJobSlider;
 
     public GameObject mEggObj;
     public GameObject mLarvaeObj;
@@ -54,6 +58,7 @@ public class Bee : MonoBehaviour
 
     private void Start()
     {
+        kJobObj.SetActive(false);
     }
 
     void Update()
@@ -202,20 +207,23 @@ public class Bee : MonoBehaviour
     {
         if(mCanWork == false)
         {
-            //mCanWork = true;
-            print("idle");
-
+            kJobObj.SetActive(true);
             Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
             StartCoroutine(GoToPos(randomPos));
+            return;
         }
-        else if(kCurrentJob == Job.Collect)
+        
+        kJobObj.SetActive(false);
+
+        if(kCurrentJob == Job.Collect)
         {
-            if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && !mAtTarget) //없으면 꽃 찾아서 가기
+            if(mCurrentNectar.amount < 1 && mCurrentPollen.amount < 1 && mAtTarget == false) //없으면 꽃 찾아서 가기
             {
                 mTargetFlowerSpot = PlayManager.Instance.kGarden.GetUsableFlowerSpot();
 
                 if(mTargetFlowerSpot == null) 
                 {
+                    print("1");
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -225,20 +233,21 @@ public class Bee : MonoBehaviour
                 StartCoroutine(GoToPos(mTargetFlowerSpot.pos));
                 return;
             }
-            else if(mCurrentNectar.amount == 0 && mCurrentPollen.amount == 0 && mAtTarget) //꽃에 도착
+            else if(mCurrentNectar.amount < 1 && mCurrentPollen.amount < 1 && mAtTarget == true) //꽃에 도착
             {
                 StartCoroutine(CollectFromFlower());
                 return;
             }
-            else if(mCurrentPollen.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
+            else if(mCurrentPollen.amount >= 1 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
             {
                 StorePollen();
                 return;
             }
-            else if (mCurrentPollen.amount != 0 && mAtTarget == true && mTargetHoneycomb != null) 
+            else if (mCurrentPollen.amount >= 1 && mAtTarget == true && mTargetHoneycomb != null) 
             {
                 if(!(mTargetHoneycomb.IsUsable(GameResType.Pollen) == true && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
+                    print("3");
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -252,12 +261,12 @@ public class Bee : MonoBehaviour
                 StartCoroutine(CallDoJob());
                 return;
             }
-            else if (mCurrentNectar.amount != 0 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
+            else if (mCurrentNectar.amount >= 1 && mAtTarget == false) // 자원이 생겼으니 저장하러 가기
             {
                 StoreNectar();
                 return;
             }
-            else if (mCurrentNectar.amount != 0 && mAtTarget == true && mTargetHoneycomb != null)
+            else if (mCurrentNectar.amount >= 1 && mAtTarget == true && mTargetHoneycomb != null)
             {
                 if(!(mTargetHoneycomb.IsUsable(GameResType.Nectar) == true && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
@@ -275,6 +284,7 @@ public class Bee : MonoBehaviour
             }
             else
             {
+                print("4");
                 mCanWork = false;
                 StartCoroutine(CallDoJob());
                 return;
@@ -282,9 +292,61 @@ public class Bee : MonoBehaviour
         }
         else if(kCurrentJob == Job.Build)
         {
-            mCanWork = false;
-            StartCoroutine(CallDoJob());
-            return;
+            //나중에 밀랍으로 바꿀것
+            if (mAtTarget == false && mCurrentPollen.amount == 0)
+            {
+                FetchWax();
+                return;
+            }
+            else if (mCurrentPollen.amount == 0 && mAtTarget == true && mTargetHoneycomb != null)
+            {
+                if(!(mTargetHoneycomb.type == GameResType.Pollen && mTargetHoneycomb.amount.amount > 0 && mTargetHoneycomb.kStructureType == StructureType.Storage))
+                {   
+                    mAtTarget = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                mCurrentPollen = mTargetHoneycomb.FetchResource(GameResType.Pollen, mCurrentPollen, mMaxPollen);
+                Mng.canvas.kBeeInfo.UpdateStat(gameObject);
+                mAtTarget = false; 
+                mTargetHoneycomb = null;
+                StartCoroutine(CallDoJob());
+                return;
+            }
+            else if(mCurrentPollen.amount > 0 && mAtTarget == false)
+            {
+                mTargetHoneycomb = PlayManager.Instance.kHive.GetBuildingHoneycomb();
+
+                if(mTargetHoneycomb == null) 
+                {
+                    mCanWork = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                mTargetHoneycomb.isTarget = true;
+                StartCoroutine(GoToPos(mTargetHoneycomb.pos));
+                return;
+            }
+            else if(mCurrentPollen.amount > 0 && mAtTarget == true)
+            {
+                if(mTargetHoneycomb == null || mTargetHoneycomb.kStructureType != StructureType.Building)
+                {
+                    mCanWork = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                StartCoroutine(BuildStructure(mTargetHoneycomb));
+                return;
+            }
+            else
+            {
+                mCanWork = false;
+                StartCoroutine(CallDoJob());
+                return;
+            }
         }
         else if(kCurrentJob == Job.Feed)
         {
@@ -295,7 +357,7 @@ public class Bee : MonoBehaviour
             }
             else if (mCurrentPollen.amount == 0 && mAtTarget == true && mTargetHoneycomb != null)
             {
-                if(!((mTargetHoneycomb.type == GameResType.Pollen && mTargetHoneycomb.amount.amount > 0) && mTargetHoneycomb.kStructureType == StructureType.Storage))
+                if(!(mTargetHoneycomb.type == GameResType.Pollen && mTargetHoneycomb.amount.amount > 0 && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
@@ -312,10 +374,11 @@ public class Bee : MonoBehaviour
             else if (mCurrentHoney.amount == 0 && mAtTarget == false)
             {
                 FetchHoney();
+                return;
             }
             else if (mCurrentHoney.amount == 0 && mAtTarget == true && mTargetHoneycomb != null)
             {
-                if(!((mTargetHoneycomb.type == GameResType.Honey && mTargetHoneycomb.amount.amount > 0) && mTargetHoneycomb.kStructureType == StructureType.Storage))
+                if(!(mTargetHoneycomb.type == GameResType.Honey && mTargetHoneycomb.amount.amount > 0 && mTargetHoneycomb.kStructureType == StructureType.Storage))
                 {   
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
@@ -346,7 +409,7 @@ public class Bee : MonoBehaviour
             }
             else if(mCurrentHoney.amount > 0 && mCurrentPollen.amount > 0 && mAtTarget == true)
             {
-                if(mTargetBee == null || mTargetBee.mCurStage == BeeStage.Larvae || Vector3.Distance(mTargetBee.gameObject.transform.position, transform.position) > 0.1f)
+                if(mTargetBee == null || mTargetBee.mCurStage != BeeStage.Larvae || Vector3.Distance(mTargetBee.gameObject.transform.position, transform.position) > 0.1f)
                 {
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
@@ -385,6 +448,7 @@ public class Bee : MonoBehaviour
 
         if (mTargetHoneycomb == null)
         {
+            print("2");
             mCanWork = false;
             StartCoroutine(CallDoJob());
             return;
@@ -423,14 +487,33 @@ public class Bee : MonoBehaviour
         StartCoroutine(GoToPos(mTargetHoneycomb.pos));
     }
 
+    private void FetchWax()
+    {
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Pollen);
+
+        if (mTargetHoneycomb == null)
+        {
+            mCanWork = false;
+            StartCoroutine(CallDoJob());
+            return;
+        }
+
+        mTargetHoneycomb.isTarget = true;
+        StartCoroutine(GoToPos(mTargetHoneycomb.pos));
+    }
+
     private IEnumerator CollectFromFlower()
     {
-        yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
+        Mng.canvas.FillSlider(kJobSlider, mFlowerCollectTime);
+
+        yield return new WaitForSeconds(mFlowerCollectTime+0.5f); //이동안 ui 표시
         mAtTarget = false;
         AddResource(mTargetFlowerSpot.pollenAmount, mTargetFlowerSpot.nectarAmount);
         Mng.canvas.kBeeInfo.UpdateStat(gameObject);
 
         mTargetFlowerSpot.isTarget = false;
+
+        kJobSlider.gameObject.SetActive(false);
 
         StartCoroutine(CallDoJob());
     }
@@ -451,6 +534,31 @@ public class Bee : MonoBehaviour
         }
 
         mTargetBee.mIsTarget = false;
+        mAtTarget = false;
+
+        StartCoroutine(CallDoJob());
+    }
+
+    private IEnumerator BuildStructure(Honeycomb _honeycomb)
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        GameResAmount mBuildNeedAmount = Mng.play.SubtractResourceAmounts(_honeycomb.mBuildNeedWax, _honeycomb.mBuildCurrentWax);
+
+        if(Mng.play.CompareResourceAmounts(mBuildNeedAmount, mCurrentPollen))
+        {
+            mCurrentPollen = Mng.play.SubtractResourceAmounts(mCurrentPollen, mBuildNeedAmount);
+            _honeycomb.mBuildCurrentWax = _honeycomb.mBuildNeedWax;
+        }
+        else
+        {
+            _honeycomb.mBuildCurrentWax = Mng.play.AddResourceAmounts(mCurrentPollen, _honeycomb.mBuildCurrentWax);
+            mCurrentPollen = new GameResAmount(0, GameResUnit.Microgram);
+        }
+
+        _honeycomb.UpdateBuildState();
+
+        mTargetHoneycomb.isTarget = false;
         mAtTarget = false;
 
         StartCoroutine(CallDoJob());
@@ -549,11 +657,6 @@ public class Bee : MonoBehaviour
         if(mCanWork == true)
         {
             mAtTarget = true;
-        }
-
-        if(mTargetHoneycomb != null)
-        {
-            mTargetHoneycomb.isTarget = false;
         }
 
         if(mCanWork == false)

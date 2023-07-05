@@ -65,13 +65,15 @@ namespace EnumDef
         LayEgg = 3,
     }
 
+    //버튼은 숫자로 함수 부르는걸로 되어있어 숫자 바꿀 때 주의
     public enum StructureType
     {
         None = 0,
-        Storage = 1,
-        Dryer = 2,
-        Coalgulate = 3,
-        Hatchtery = 4,
+        Building = 1,
+        Storage = 2,
+        Dryer = 3,
+        Coalgulate = 4,
+        Hatchtery = 5,
     }
 
     public enum HoneycombDirection
