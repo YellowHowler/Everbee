@@ -203,7 +203,7 @@ public class Bee : MonoBehaviour
         if(mCanWork == false)
         {
             //mCanWork = true;
-            print("idle");
+            //print("idle");
 
             Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
             StartCoroutine(GoToPos(randomPos));

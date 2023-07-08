@@ -1,6 +1,5 @@
 using ClassDef;
 using EnumDef;
-using HedgehogTeam.EasyTouch;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -41,7 +40,7 @@ public class PlayManager : MonoBehaviour
                                         new GameResAmount(0, GameResUnit.Microgram)
                                     };
 
-        EasyTouch.On_TouchStart += OnTouch;
+        //EasyTouch.On_TouchStart += OnTouch;
     }
 
     private void Start()
@@ -97,20 +96,20 @@ public class PlayManager : MonoBehaviour
         kMainCanvas.kResource.UpdateText();
     }
 
-    private void OnTouch(Gesture gesture)
-    {
-        if (gesture.pickedObject == null)
-            return;
+    //private void OnTouch(Gesture gesture)
+    //{
+    //    if (gesture.pickedObject == null)
+    //        return;
 
-        //Mng.canvas.kResource.SetText("??");
+    //    //Mng.canvas.kResource.SetText("??");
 
-        /*
-        if( kHive.kQueenBee.gameObject == gesture.pickedObject )
-        {
-            PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
-        }
-        */
-    }
+    //    /*
+    //    if( kHive.kQueenBee.gameObject == gesture.pickedObject )
+    //    {
+    //        PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
+    //    }
+    //    */
+    //}
 
     public GameResAmount AddResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {

@@ -1,5 +1,6 @@
 using ClassDef;
 using EnumDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class Manager : MonoBehaviour
     public Hive kHive;
     [Header("정원 매니저")]
     public Garden kGarden;
+
+    public Rect WorldBoundary { get; private set; }
 
 
     private void Awake()
@@ -66,5 +69,22 @@ public class Manager : MonoBehaviour
         go = Instantiate(kBees.gameObject);
         go.transform.parent = kStage;
         go.name = "Bees";
+    }
+
+    private void Update()
+    {
+        ComputeWorldBoundary();
+    }
+
+    public void ComputeWorldBoundary()
+    {
+        Rect rect = Rect.zero;
+        rect.xMin = rect.yMin = 10000000;
+        rect.xMax = rect.yMax = -10000000;
+
+        rect = kHive.ComputeWorldBoundary(rect);
+        rect = kGarden.ComputeWorldBoundary(rect);
+
+        WorldBoundary = rect;
     }
 }

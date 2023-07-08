@@ -10,6 +10,7 @@ public class Garden : MonoBehaviour
     [HideInInspector] public static Garden Instance;
 
     public GameObject[] flowerObjs;
+    public GameObject BoundaryObject;
 
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
 
@@ -71,4 +72,17 @@ public class Garden : MonoBehaviour
     {
         
     }
+
+	public Rect ComputeWorldBoundary(Rect rect)
+	{
+        var boundaryPos = BoundaryObject.transform.position;
+        var boundaryScale = BoundaryObject.transform.localScale;
+
+		rect.xMin = Mathf.Min(rect.xMin, boundaryPos.x - boundaryScale.x / 2);
+		rect.xMax = Mathf.Max(rect.xMax, boundaryPos.x + boundaryScale.x / 2);
+		rect.yMin = Mathf.Min(rect.yMin, boundaryPos.y - boundaryScale.y / 2);
+		rect.yMax = Mathf.Max(rect.yMax, boundaryPos.y + boundaryScale.y / 2);
+
+		return rect;
+	}
 }

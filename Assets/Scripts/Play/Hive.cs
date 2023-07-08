@@ -4,7 +4,7 @@ using UnityEngine;
 using EnumDef;
 using ClassDef;
 using StructDef;
-using HedgehogTeam.EasyTouch;
+//using HedgehogTeam.EasyTouch;
 using UnityEditor.PackageManager;
 
 public class Hive : MonoBehaviour
@@ -13,6 +13,9 @@ public class Hive : MonoBehaviour
 
     public float mHoneycombRadiusX = 0.5f;
     public float mHoneycombRadiusY = 0.8f;
+    public float mHoneycombDistance_X_Horizontal = 2;
+    public float mHoneycombDistance_X_Other = 1.5f;
+
     private Vector3 mHoneycombOrigin;
 
     public float mFloorY = -19.2f;
@@ -110,22 +113,22 @@ public class Hive : MonoBehaviour
         PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
     }
 
-    private void OnTouch(Gesture gesture)
-    {
-        if (gesture.pickedObject == null)
-            return;
+    //private void OnTouch(Gesture gesture)
+    //{
+    //    if (gesture.pickedObject == null)
+    //        return;
 
-        //Mng.canvas.kResource.SetText("??");
+    //    //Mng.canvas.kResource.SetText("??");
 
-        /*
-        if( kHive.kQueenBee.gameObject == gesture.pickedObject )
-        {
-            PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
-        }
-        */
+    //    /*
+    //    if( kHive.kQueenBee.gameObject == gesture.pickedObject )
+    //    {
+    //        PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
+    //    }
+    //    */
 
-        Debug.Log(gesture.pickedObject.name);
-    }
+    //    Debug.Log(gesture.pickedObject.name);
+    //}
 
     private Vector3 GetHexagonPos(Vector3 _pos, HoneycombDirection _dir)
     {
@@ -134,17 +137,17 @@ public class Hive : MonoBehaviour
             case HoneycombDirection.None:
                 return _pos;
             case HoneycombDirection.TopLeft:
-                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.up * 1.5f * mHoneycombRadiusY;
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.up * mHoneycombDistance_X_Other * mHoneycombRadiusY;
             case HoneycombDirection.TopRight:
-                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.up * 1.5f * mHoneycombRadiusY;
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.up * mHoneycombDistance_X_Other * mHoneycombRadiusY;
             case HoneycombDirection.Left:
-                return _pos + Vector3.left * mHoneycombRadiusX * 2;
+                return _pos + Vector3.left * mHoneycombRadiusX * mHoneycombDistance_X_Horizontal;
             case HoneycombDirection.Right:
-                return _pos + Vector3.right * mHoneycombRadiusX * 2;
+                return _pos + Vector3.right * mHoneycombRadiusX * mHoneycombDistance_X_Horizontal;
             case HoneycombDirection.BottomLeft:
-                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.down * 1.5f * mHoneycombRadiusY;
+                return _pos + Vector3.left * mHoneycombRadiusX + Vector3.down * mHoneycombDistance_X_Other * mHoneycombRadiusY;
             case HoneycombDirection.BottomRight:
-                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.down * 1.5f * mHoneycombRadiusY;
+                return _pos + Vector3.right * mHoneycombRadiusX + Vector3.down * mHoneycombDistance_X_Other * mHoneycombRadiusY;
         }
 
         return _pos;
@@ -154,7 +157,7 @@ public class Hive : MonoBehaviour
     {
         kHoverObj.SetActive(false);
 
-        EasyTouch.On_TouchStart += OnTouch;
+        //EasyTouch.On_TouchStart += OnTouch;
 
         Vector3 newPos = new Vector3(transform.position.x, transform.position.y, 0.05f);
 
@@ -276,4 +279,16 @@ public class Hive : MonoBehaviour
         mTargetQueen = _queen;
         Mng.canvas.DisableToggleButtons();
     }
+
+    public Rect ComputeWorldBoundary(Rect rect)
+    {
+        // PlayManager.Instance.kHiveBound 는 월드 좌표다.
+
+        rect.xMin = Mathf.Min(rect.xMin, PlayManager.Instance.kHiveXBound.start);
+        rect.xMax = Mathf.Max(rect.xMax, PlayManager.Instance.kHiveXBound.end);
+		rect.yMin = Mathf.Min(rect.yMin, PlayManager.Instance.kHiveYBound.start);
+		rect.yMax = Mathf.Max(rect.yMax, PlayManager.Instance.kHiveYBound.end);
+
+        return rect;
+	}
 }

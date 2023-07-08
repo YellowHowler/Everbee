@@ -47,9 +47,27 @@ public class PlayerCamera : MonoBehaviour
             mCamera.transform.Translate(Vector3.down * Time.deltaTime * mScrollSpeed, Space.World);
             StopFollow();
         }
-    }
 
-    public void SetFollow(Transform _target)
+        Vector3 pos = mCamera.transform.position;
+        float ratio = (float)Screen.width / (float)Screen.height;
+        float halfCameraWidth = mCamera.orthographicSize * ratio;
+        float halfCameraHeight = mCamera.orthographicSize;
+        const float threshold = 1;
+
+        if (pos.x < Manager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold)
+            pos.x = Manager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold;
+		if (pos.x > Manager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold)
+			pos.x = Manager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold;
+
+        if (pos.y < Manager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold)
+            pos.y = Manager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold;
+		if (pos.y > Manager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold)
+			pos.y = Manager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold;
+
+        mCamera.transform.position = pos;
+	}
+
+	public void SetFollow(Transform _target)
     {
         mIsFollowing = true;
         mFollowTarget = _target;
