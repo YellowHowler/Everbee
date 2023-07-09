@@ -50,7 +50,8 @@ public class Bee : MonoBehaviour
     Honeycomb mTargetHoneycomb;
     Bee mTargetBee;
 
-    private bool mCanWork = true;
+    private bool mFirst = true;
+    private bool mCanWork = false;
 
     private void Start()
     {
@@ -202,11 +203,27 @@ public class Bee : MonoBehaviour
     {
         if(mCanWork == false)
         {
-            //mCanWork = true;
-            //print("idle");
+			//mCanWork = true;
+			//print("idle");
 
-            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
-            StartCoroutine(GoToPos(randomPos));
+            var randomHoneycomb = Mng.play.kHive.GetRandomHoneycomb();
+            if (randomHoneycomb == null)
+            {
+                StartCoroutine(CallDoJob());
+                return;
+            }
+
+			Vector3 randomPos = randomHoneycomb.transform.position;
+			if(mFirst)
+            {
+                // 처음에는 즉시 이동
+                transform.position = randomPos;
+                mFirst = false;
+                mCanWork = true;
+                StartCoroutine(CallDoJob());
+            }
+            else
+                StartCoroutine(GoToPos(randomPos));
         }
         else if(kCurrentJob == Job.Collect)
         {

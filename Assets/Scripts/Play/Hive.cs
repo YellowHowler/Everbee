@@ -53,8 +53,22 @@ public class Hive : MonoBehaviour
     [HideInInspector] public bool mGuidingQueen  = false;
     [HideInInspector] public QueenBee mTargetQueen  = null;
 
-    /// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
-    public Honeycomb GetUsableHoneycomb(GameResType _type)
+
+
+	private void Awake()
+	{
+		Instance = this;
+		mHoneycombOrigin = transform.position;
+		kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
+	}
+
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	/// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
+	public Honeycomb GetUsableHoneycomb(GameResType _type)
     {
         foreach (Honeycomb h in mHoneycombList)
         {
@@ -113,6 +127,11 @@ public class Hive : MonoBehaviour
 
         PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
         PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
+    }
+
+    public Honeycomb GetRandomHoneycomb()
+    {
+        return mHoneycombList.Count > 0 ? mHoneycombList[UnityEngine.Random.Range(0, mHoneycombList.Count)] : null;
     }
 
     //private void OnTouch(Gesture gesture)
@@ -193,14 +212,7 @@ public class Hive : MonoBehaviour
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
     }
 
-    private void Awake()
-    {
-        Instance = this;
-        mHoneycombOrigin = transform.position;
-        kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
-    }
-
-    private void Update()
+	private void Update()
     {
 		if (!Mng.canvas.kIsViewingMenu)
 		{

@@ -43,7 +43,12 @@ public class PlayManager : MonoBehaviour
         //EasyTouch.On_TouchStart += OnTouch;
     }
 
-    private void Start()
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	private void Start()
     {
         
     }

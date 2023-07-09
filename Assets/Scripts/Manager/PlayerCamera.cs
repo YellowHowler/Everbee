@@ -13,42 +13,61 @@ public class PlayerCamera : MonoBehaviour
     private Transform mFollowTarget;
     private bool mIsFollowing = false;
 
+    private bool mFirst = true;
+
     void Awake()
     {
         Instance = this;
         mCamera = gameObject.GetComponent<Camera>();
     }
 
-    // Update is called once per frame
-    void Update()
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	// Update is called once per frame
+	void LateUpdate()
     {   
-        if(mIsFollowing == true)
+        if (mFirst)
         {
-            transform.position = Mng.play.SetZ(mFollowTarget.position, transform.position.z);
-        }
+            Vector3 startPos = mCamera.transform.position;
+            startPos.x = (PlayManager.Instance.kHiveXBound.start + PlayManager.Instance.kHiveXBound.end) / 2;
+            startPos.y = (PlayManager.Instance.kHiveYBound.start + PlayManager.Instance.kHiveYBound.end) / 2;
+            mCamera.transform.position = startPos;
 
-        float horizontalAxis = Input.GetAxis("Horizontal");
-        float verticalAxis = Input.GetAxis("Vertical");
+            mFirst = false;
+        }
+        else
+        {
+            if(mIsFollowing == true)
+            {
+                transform.position = Mng.play.SetZ(mFollowTarget.position, transform.position.z);
+            }
 
-        if ((Input.mousePosition.x >= Screen.width * mScrollBound) || (horizontalAxis > 0.5f))
-        {
-            mCamera.transform.Translate(Vector3.right * Time.deltaTime * mScrollSpeed, Space.World);
-            StopFollow();
-        }
-        else if ((Input.mousePosition.x <= Screen.width * (1 - mScrollBound)) || (horizontalAxis < -0.5f))
-        {
-            mCamera.transform.Translate(Vector3.left * Time.deltaTime * mScrollSpeed, Space.World);
-            StopFollow();
-        }
-        if ((Input.mousePosition.y >= Screen.height * mScrollBound) || (verticalAxis > 0.5f))
-        {
-            mCamera.transform.Translate(Vector3.up * Time.deltaTime * mScrollSpeed, Space.World);
-            StopFollow();
-        }
-        else if ((Input.mousePosition.y <= Screen.height * (1 - mScrollBound)) || (verticalAxis < -0.5f))
-        {
-            mCamera.transform.Translate(Vector3.down * Time.deltaTime * mScrollSpeed, Space.World);
-            StopFollow();
+            float horizontalAxis = Input.GetAxis("Horizontal");
+            float verticalAxis = Input.GetAxis("Vertical");
+
+            if ((Input.mousePosition.x >= Screen.width * mScrollBound) || (horizontalAxis > 0.5f))
+            {
+                mCamera.transform.Translate(Vector3.right * Time.deltaTime * mScrollSpeed, Space.World);
+                StopFollow();
+            }
+            else if ((Input.mousePosition.x <= Screen.width * (1 - mScrollBound)) || (horizontalAxis < -0.5f))
+            {
+                mCamera.transform.Translate(Vector3.left * Time.deltaTime * mScrollSpeed, Space.World);
+                StopFollow();
+            }
+            if ((Input.mousePosition.y >= Screen.height * mScrollBound) || (verticalAxis > 0.5f))
+            {
+                mCamera.transform.Translate(Vector3.up * Time.deltaTime * mScrollSpeed, Space.World);
+                StopFollow();
+            }
+            else if ((Input.mousePosition.y <= Screen.height * (1 - mScrollBound)) || (verticalAxis < -0.5f))
+            {
+                mCamera.transform.Translate(Vector3.down * Time.deltaTime * mScrollSpeed, Space.World);
+                StopFollow();
+            }
         }
 
         Vector3 pos = mCamera.transform.position;

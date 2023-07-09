@@ -73,11 +73,16 @@ public class SoundManager : MonoBehaviour
         Init(false);
     }
 
-    //////////////////////////////////////////////////////////////////////////////////
-    //*공용
-    #region Common
-    /// <summary>초기화(**선언 필수!**) / _isControlPanel : GUI 컨트롤 패널 등장 유무</summary>
-    public void Init(bool _isControlPanel = true)
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//*공용
+	#region Common
+	/// <summary>초기화(**선언 필수!**) / _isControlPanel : GUI 컨트롤 패널 등장 유무</summary>
+	public void Init(bool _isControlPanel = true)
     {
         mIsGuiControlPanel = _isControlPanel;
 

@@ -30,7 +30,12 @@ public class Manager : MonoBehaviour
         Instance = this;
     }
 
-    IEnumerator Start()
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	IEnumerator Start()
     {
         GameObject go = Instantiate(kSoundManager.gameObject);
         go.transform.parent = transform;

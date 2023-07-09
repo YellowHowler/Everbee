@@ -58,6 +58,11 @@ public class MainCanvas : MonoBehaviour
         kWarningTxt.gameObject.SetActive(false);
     }
 
+    private void OnDestroy()
+    {
+        Instance = null;
+    }
+
     public void DisableToggleButtons() 
     {
         for(int i = 0; i < kToggleButtons.Length; i++)

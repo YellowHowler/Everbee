@@ -61,7 +61,12 @@ public class Garden : MonoBehaviour
         print(mFlowerSpotList.Count);
     }
 
-    private void Start()
+	private void OnDestroy()
+	{
+		Instance = null;
+	}
+
+	private void Start()
     {
         AddNewFlower(FlowerType.Cosmos, new Vector3(0, 0.4f, 0));
         AddNewFlower(FlowerType.Lavender, new Vector3(2f, 0.4f, 0));
