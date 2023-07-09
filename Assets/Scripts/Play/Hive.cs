@@ -21,10 +21,12 @@ public class Hive : MonoBehaviour
     public float mFloorY = -19.2f;
 
     public GameObject kHoneycombObj;
-    public GameObject kHoverObj;
     public GameObject kItemObj;
 
-    public Sprite[] kHoneycombNectarSprites;
+	public GameObject kHoverObj;
+    private SpriteRenderer kHoverObjSpriteRenderer;
+
+	public Sprite[] kHoneycombNectarSprites;
     public Sprite[] kHoneycombPollenSprites;
     public Sprite[] kHoneycombHoneySprites;
     public Sprite[] kHoneycombWaxSprites;
@@ -195,14 +197,28 @@ public class Hive : MonoBehaviour
     {
         Instance = this;
         mHoneycombOrigin = transform.position;
+        kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        
-    }
+		if (!Mng.canvas.kIsViewingMenu)
+		{
+	        if (Input.GetMouseButton(1)) // 오른버튼 누르면 취소
+	        {
+		        mIsBuilding = false;
+		        return;
+	        }
 
-    public Honeycomb GetHoneycombFromPos(Vector3 _pos)
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+				mIsBuilding = false;
+				return;
+			}
+		}
+	}
+
+	public Honeycomb GetHoneycombFromPos(Vector3 _pos)
     {
         print(_pos);
         float minDistance = mHoneycombRadiusY;
@@ -240,7 +256,7 @@ public class Hive : MonoBehaviour
         Mng.canvas.DisableToggleButtons();
         Mng.canvas.ShowBuildCancel();
 
-        kHoverObj.GetComponent<SpriteRenderer>().sprite = kBuildSprites[(int)_type - 1];
+        kHoverObjSpriteRenderer.sprite = kBuildSprites[(int)_type - 1];
         kHoverObj.SetActive(true);
 
         StartCoroutine(SetBuildCor());
@@ -267,7 +283,40 @@ public class Hive : MonoBehaviour
 
             kHoverObj.transform.localPosition = new Vector3(xPos * mHoneycombRadiusX, yPos * mHoneycombRadiusY * 1.5f, transform.position.z);
 
-            yield return null;
+			// 해당 위치의 honeyObj 을 가져온다.
+			var hoverPos = kHoverObj.transform.position;
+            Honeycomb found = null;
+            foreach(var honeyObj in mHoneycombList)
+            {
+                if ((honeyObj.transform.position - hoverPos).sqrMagnitude < 0.05f)
+                {
+                    found = honeyObj;
+                    break;
+                }
+            }
+
+            bool hoverEnabled = false;
+            if (found == null)
+            {
+                hoverEnabled = false;
+            }
+            else
+            {
+                switch(mStructureType)
+                {
+                    case StructureType.Storage:
+                        hoverEnabled = (found.kStructureType == StructureType.None);
+                        break;
+
+                    case StructureType.Dryer:
+                        hoverEnabled = (found.kStructureType == StructureType.Storage);
+                        break;
+                }
+            }
+
+			kHoverObjSpriteRenderer.color = hoverEnabled ? Color.white : new Color(0.5f,0.5f,0.5f,0.5f);
+
+			yield return null;
         }
         
         EndBuild();

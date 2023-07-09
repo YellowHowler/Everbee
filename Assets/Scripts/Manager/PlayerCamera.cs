@@ -27,22 +27,25 @@ public class PlayerCamera : MonoBehaviour
             transform.position = Mng.play.SetZ(mFollowTarget.position, transform.position.z);
         }
 
-        if (Input.mousePosition.x >= Screen.width * mScrollBound)
+        float horizontalAxis = Input.GetAxis("Horizontal");
+        float verticalAxis = Input.GetAxis("Vertical");
+
+        if ((Input.mousePosition.x >= Screen.width * mScrollBound) || (horizontalAxis > 0.5f))
         {
             mCamera.transform.Translate(Vector3.right * Time.deltaTime * mScrollSpeed, Space.World);
             StopFollow();
         }
-        else if (Input.mousePosition.x <= Screen.width * (1 - mScrollBound))
+        else if ((Input.mousePosition.x <= Screen.width * (1 - mScrollBound)) || (horizontalAxis < -0.5f))
         {
             mCamera.transform.Translate(Vector3.left * Time.deltaTime * mScrollSpeed, Space.World);
             StopFollow();
         }
-        if (Input.mousePosition.y >= Screen.height * mScrollBound)
+        if ((Input.mousePosition.y >= Screen.height * mScrollBound) || (verticalAxis > 0.5f))
         {
             mCamera.transform.Translate(Vector3.up * Time.deltaTime * mScrollSpeed, Space.World);
             StopFollow();
         }
-        else if (Input.mousePosition.y <= Screen.height * (1 - mScrollBound))
+        else if ((Input.mousePosition.y <= Screen.height * (1 - mScrollBound)) || (verticalAxis < -0.5f))
         {
             mCamera.transform.Translate(Vector3.down * Time.deltaTime * mScrollSpeed, Space.World);
             StopFollow();
