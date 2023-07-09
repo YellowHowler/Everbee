@@ -60,11 +60,20 @@ public class Hive : MonoBehaviour
 		Instance = this;
 		mHoneycombOrigin = transform.position;
 		kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
+
+        Manager.Instance.EscapeKeyDispatcher.AddFunc(OnEscapeKeyPressed);
 	}
 
 	private void OnDestroy()
 	{
+        Manager.Instance.EscapeKeyDispatcher.DelFunc(OnEscapeKeyPressed);
 		Instance = null;
+	}
+
+    private bool OnEscapeKeyPressed()
+    {
+		mIsBuilding = false;
+		return true;
 	}
 
 	/// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
@@ -214,19 +223,13 @@ public class Hive : MonoBehaviour
 
 	private void Update()
     {
-		if (!Mng.canvas.kIsViewingMenu)
+		if (!PopupBase.IsTherePopup())
 		{
 	        if (Input.GetMouseButton(1)) // 오른버튼 누르면 취소
 	        {
 		        mIsBuilding = false;
 		        return;
 	        }
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-				mIsBuilding = false;
-				return;
-			}
 		}
 	}
 
@@ -257,11 +260,11 @@ public class Hive : MonoBehaviour
         Mng.canvas.EnableToggleButtons();
         kHoverObj.SetActive(false);
         Mng.canvas.HideBuildCancel();
+        Mng.canvas.kInven.gameObject.SetActive(true);
     }
 
     public void SetDrawBuild(StructureType _type)
     {
-        Mng.canvas.kIsViewingMenu = false;
         mIsBuilding = true;
         mStructureType = _type;
 

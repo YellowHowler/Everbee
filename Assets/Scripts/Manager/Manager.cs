@@ -22,6 +22,8 @@ public class Manager : MonoBehaviour
     [Header("정원 매니저")]
     public Garden kGarden;
 
+    public EventFuncDispatcher EscapeKeyDispatcher = new EventFuncDispatcher();
+
     public Rect WorldBoundary { get; private set; }
 
 
@@ -79,6 +81,24 @@ public class Manager : MonoBehaviour
     private void Update()
     {
         ComputeWorldBoundary();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+			// EscapeKeyDispatcher 는 팝업창이 비어있을 때에만 유효
+
+			var lastPopup = PopupBase.GetLastPopup();
+            if (lastPopup != null)
+            {
+                lastPopup.ProcessEscapeKey();
+            }
+            else
+            {
+		        EscapeKeyDispatcher.Dispatch((func) =>
+                {
+                    return func();
+                });
+            }
+        }
     }
 
     public void ComputeWorldBoundary()

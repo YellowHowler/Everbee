@@ -68,10 +68,10 @@ public class QueenBee : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(Mng.canvas.kIsViewingMenu == false && mCurState == QueenState.Wander && Mng.play.kHive.mIsBuilding == false)
+        if(!PopupBase.IsTherePopup() && mCurState == QueenState.Wander && Mng.play.kHive.mIsBuilding == false)
         {
             Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
-            Mng.canvas.kQueen.gameObject.SetActive(true);
+            Mng.canvas.kQueen.Show();
             Mng.canvas.kQueen.mTargetQueen = this;
             Mng.canvas.ShowMenu();
         }

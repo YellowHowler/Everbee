@@ -22,8 +22,6 @@ public class MainCanvas : MonoBehaviour
 
     public Button[] kToggleButtons;
 
-    [HideInInspector] public bool kIsViewingMenu = false;
-
     public GameObject kCancelBuildObj;  
 
     private bool mIsFading = false;
@@ -118,12 +116,6 @@ public class MainCanvas : MonoBehaviour
         kCancelBuildObj.SetActive(false);
     }
 
-    public void CancelBuild()
-    {
-        Mng.canvas.kInven.gameObject.SetActive(true);
-        Mng.play.kHive.EndBuild();
-    }
-
     public void DisplayWarning(string _warning)
     {   
         kWarningTxt.gameObject.SetActive(true);
@@ -181,12 +173,10 @@ public class MainCanvas : MonoBehaviour
 
     public void ShowMenu()
     {
-        kIsViewingMenu = true;
-        kBeeInfo.gameObject.SetActive(false);
+        kBeeInfo.Hide();
     }
 
     public void HideMenu()
     {
-        kIsViewingMenu = false;
     }
 }

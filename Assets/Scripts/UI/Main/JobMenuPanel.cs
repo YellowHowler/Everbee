@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JobMenuPanel : MonoBehaviour
+public class JobMenuPanel : PopupBase
 {
     public Transform kJobScrollContents;
     public GameObject kBeeJobManageObj;
 
-    public void AddBeeJobUI(Bee _bee)
+	override public void ProcessEscapeKey()
+	{
+		OnJobMenuBgClick();
+		base.ProcessEscapeKey();
+	}
+
+	public void AddBeeJobUI(Bee _bee)
     {
         GameObject newJobManageObj = Instantiate(kBeeJobManageObj, kJobScrollContents);
         newJobManageObj.GetComponent<BeeJobManage>().kBee = _bee;
@@ -16,7 +22,7 @@ public class JobMenuPanel : MonoBehaviour
     public void OnJobMenuBgClick()
     {
         Mng.canvas.HideMenu();
-        gameObject.SetActive(false);
+        Hide();
     }
 
     void Start()

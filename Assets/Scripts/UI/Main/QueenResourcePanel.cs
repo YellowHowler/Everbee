@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class QueenResourcePanel : MonoBehaviour
+public class QueenResourcePanel : PopupBase
 {
     [HideInInspector] public QueenBee mTargetQueen;
 
@@ -28,7 +28,13 @@ public class QueenResourcePanel : MonoBehaviour
         
     }
 
-    public void QueenLayEgg()
+	override public void ProcessEscapeKey()
+	{
+		OnQueenResourceBgClick();
+		base.ProcessEscapeKey();
+	}
+
+	public void QueenLayEgg()
     {
         mTargetQueen.WaitForTargetHoneycomb();
         OnQueenResourceBgClick();
@@ -58,6 +64,6 @@ public class QueenResourcePanel : MonoBehaviour
     public void OnQueenResourceBgClick()
     {
         Mng.canvas.HideMenu();
-        gameObject.SetActive(false);
+        Hide();
     }
 }

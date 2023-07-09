@@ -19,7 +19,7 @@ public class HoneycombEditor : Editor
         _this = target as Honeycomb;
     }
 
-    public override void OnInspectorGUI()
+    override public void OnInspectorGUI()
     {
         base.OnInspectorGUI();
 

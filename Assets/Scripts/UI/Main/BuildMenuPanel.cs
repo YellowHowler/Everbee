@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildMenuPanel : MonoBehaviour
+public class BuildMenuPanel : PopupBase
 {
     void Start()
     {
@@ -15,16 +15,21 @@ public class BuildMenuPanel : MonoBehaviour
         
     }
 
+    override public void ProcessEscapeKey()
+    {
+        OnBuildMenuBgClick();
+        base.ProcessEscapeKey();
+    }
+
     public void OnBuildMenuBgClick()
     {
         Mng.canvas.HideMenu();
-        
-        gameObject.SetActive(false);
+        Hide();
     }
 
     public void OnBuildBtnClick(int _type)
     {
-        gameObject.SetActive(false);
+        Hide();
         Mng.canvas.kInven.gameObject.SetActive(false);
         Mng.play.kHive.SetDrawBuild((StructureType)_type);
     }

@@ -185,9 +185,9 @@ public class Bee : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(Mng.canvas.kIsViewingMenu == false)
+        if(!PopupBase.IsTherePopup())
         {
-            Mng.canvas.kBeeInfo.gameObject.SetActive(true);
+            Mng.canvas.kBeeInfo.Show();
             Mng.play.kCamera.SetFollow(transform);
             Mng.canvas.kBeeInfo.SetObject(gameObject);
         }

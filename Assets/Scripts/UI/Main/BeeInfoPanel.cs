@@ -7,7 +7,7 @@ using StructDef;
 using ClassDef;
 using TMPro;
 
-public class BeeInfoPanel : MonoBehaviour
+public class BeeInfoPanel : PopupBase
 {
     public TMP_Text kLevelText;
     public Slider kLevelSlider;
@@ -40,7 +40,13 @@ public class BeeInfoPanel : MonoBehaviour
         
     }
 
-    public void SetStat(GameObject _obj)
+	override public void ProcessEscapeKey()
+	{
+		PlayerCamera.Instance.StopFollow();
+		base.ProcessEscapeKey();
+	}
+
+	public void SetStat(GameObject _obj)
     {
         Bee targetBee = _obj.GetComponent<Bee>();
 

@@ -1500,7 +1500,6 @@ MonoBehaviour:
   kToggleButtons:
   - {fileID: 1527254501}
   - {fileID: 1250815478}
-  kIsViewingMenu: 0
   kCancelBuildObj: {fileID: 859612541}
 --- !u!1 &244238992
 GameObject:

@@ -316,7 +316,7 @@ public class Honeycomb : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(kStructureType == StructureType.None || Mng.canvas.kIsViewingMenu || Mng.play.kHive.mIsBuilding) 
+        if(kStructureType == StructureType.None || PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
         {
             return;
         }
@@ -331,7 +331,7 @@ public class Honeycomb : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(Mng.canvas.kIsViewingMenu == true)
+        if(PopupBase.IsTherePopup())
         {
             return;
         }
@@ -394,7 +394,7 @@ public class Honeycomb : MonoBehaviour
     {
         Hive hive = Mng.play.kHive;
 
-        if(Mng.canvas.kIsViewingMenu == true)
+        if(PopupBase.IsTherePopup())
         {
             return;
         }
