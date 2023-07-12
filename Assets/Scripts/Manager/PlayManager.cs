@@ -8,6 +8,8 @@ using static UnityEngine.UI.CanvasScaler;
 
 public class PlayManager : MonoBehaviour
 {
+    static public bool MustLoadSaveData = false;
+
     public static PlayManager Instance { get; private set; }
 
     public Hive kHive;
@@ -54,7 +56,20 @@ public class PlayManager : MonoBehaviour
 
 	private void Start()
     {
-        SaveManager.Instance.Load();
+        if (MustLoadSaveData)
+        {
+            MustLoadSaveData = false;
+            if (!SaveManager.Instance.Load())
+            {
+                kHive.InitDefault();
+                kGarden.InitDefault();
+            }
+        }
+        else
+        {
+            kHive.InitDefault();
+            kGarden.InitDefault();
+        }
     }
 
     public void GameStart()

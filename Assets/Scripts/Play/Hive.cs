@@ -47,8 +47,8 @@ public class Hive : MonoBehaviour
 
     [HideInInspector] public GameResAmount[] mMaxItemAmounts;
 
-    public GameResAmount mQueenHoneyNeed{get; set;}
-    public GameResAmount mQueenPollenNeed{get; set;}
+    [HideInInspector] public GameResAmount mQueenHoneyNeed;
+    [HideInInspector] public GameResAmount mQueenPollenNeed;
 
     [HideInInspector] public bool mGuidingQueen  = false;
     [HideInInspector] public QueenBee mTargetQueen  = null;
@@ -128,24 +128,29 @@ public class Hive : MonoBehaviour
         }
     }*/
 
-    public Honeycomb AddNewHoneycomb(Vector3 _pos)
+    public Honeycomb AddNewHoneycomb()
     {
-        GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform.GetChild(0));
+        GameObject newHoneycomb = Instantiate(kHoneycombObj, Vector3.zero, Quaternion.identity, transform.GetChild(0));
         Honeycomb honeycomb = newHoneycomb.GetComponent<Honeycomb>();
         honeycomb.mHive = this;
 
         mHoneycombList.Add(honeycomb);
 
-        PlayManager.Instance.kHiveXBound.start = Mathf.Min(_pos.x - 0.5f, PlayManager.Instance.kHiveXBound.start);
-        PlayManager.Instance.kHiveXBound.end = Mathf.Max(_pos.x + 0.5f, PlayManager.Instance.kHiveXBound.end);
-
-        PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
-        PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
-
         return honeycomb;
     }
 
-    public Honeycomb GetRandomHoneycomb()
+    public void SetHoneycombPosition(Honeycomb comb, Vector3 _pos)
+    {
+        comb.pos = _pos;
+
+		PlayManager.Instance.kHiveXBound.start = Mathf.Min(_pos.x - 0.5f,PlayManager.Instance.kHiveXBound.start);
+		PlayManager.Instance.kHiveXBound.end = Mathf.Max(_pos.x + 0.5f,PlayManager.Instance.kHiveXBound.end);
+
+		PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f,PlayManager.Instance.kHiveYBound.start);
+		PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f,PlayManager.Instance.kHiveYBound.end);
+	}
+
+	public Honeycomb GetRandomHoneycomb()
     {
         return mHoneycombList.Count > 0 ? mHoneycombList[UnityEngine.Random.Range(0, mHoneycombList.Count)] : null;
     }
@@ -194,6 +199,11 @@ public class Hive : MonoBehaviour
     {
         kHoverObj.SetActive(false);
 
+		PlayManager.Instance.EscapeKeyDispatcher.AddFunc(OnEscapeKeyPressed);
+	}
+
+	public void InitDefault()
+    {
         //EasyTouch.On_TouchStart += OnTouch;
 
         Vector3 newPos = new Vector3(transform.position.x, transform.position.y, 0.05f);
@@ -202,7 +212,9 @@ public class Hive : MonoBehaviour
         {
             for(int j = 0; j < 10; j++)
             {
-                var comb = AddNewHoneycomb(newPos);
+                var comb = AddNewHoneycomb();
+                SetHoneycombPosition(comb, newPos);
+
                 comb.amount = new GameResAmount(0f, GameResUnit.Microgram);
 
                 if(i % 2 == 0)
@@ -213,6 +225,8 @@ public class Hive : MonoBehaviour
                 {
                     newPos = GetHexagonPos(newPos, HoneycombDirection.Left);
                 }
+
+                comb.InitDefault();
             }
 
             newPos = GetHexagonPos(newPos, HoneycombDirection.TopRight);
@@ -227,8 +241,6 @@ public class Hive : MonoBehaviour
 
         mQueenHoneyNeed = new GameResAmount(1, GameResUnit.Milligram);
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
-
-        PlayManager.Instance.EscapeKeyDispatcher.AddFunc(OnEscapeKeyPressed);
     }
 
 	private void Update()
@@ -372,6 +384,9 @@ public class Hive : MonoBehaviour
 	{
 		public List<Honeycomb.CSaveData> mHoneycombList = new List<Honeycomb.CSaveData>();
 		public GameResAmount[] mMaxItemAmounts;
+
+		public GameResAmount mQueenHoneyNeed;
+		public GameResAmount mQueenPollenNeed;
 	}
 
 	public void ExportTo(CSaveData savedata)
@@ -395,6 +410,9 @@ public class Hive : MonoBehaviour
 
         for(int i=0; i<mMaxItemAmounts.Length; ++i)
             savedata.mMaxItemAmounts[i] = mMaxItemAmounts[i];
+
+        savedata.mQueenHoneyNeed = mQueenHoneyNeed;
+        savedata.mQueenPollenNeed = mQueenPollenNeed;
 	}
 
 	public void ImportFrom(CSaveData savedata)
@@ -405,8 +423,9 @@ public class Hive : MonoBehaviour
 
         for(int i=0; i<savedata.mHoneycombList.Count; ++i)
         {
-            var comb = AddNewHoneycomb(Vector3.zero);
+            var comb = AddNewHoneycomb();
             comb.ImportFrom(savedata.mHoneycombList[i]);
+            SetHoneycombPosition(comb, comb.pos);
         }
 
         if (savedata.mMaxItemAmounts == null)
@@ -419,5 +438,8 @@ public class Hive : MonoBehaviour
 
         for(int i=0; i<savedata.mMaxItemAmounts.Length; ++i)
             mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
+
+		mQueenHoneyNeed = savedata.mQueenHoneyNeed;
+		mQueenPollenNeed = savedata.mQueenPollenNeed;
 	}
 }

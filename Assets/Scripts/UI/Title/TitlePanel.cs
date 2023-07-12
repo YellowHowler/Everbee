@@ -15,11 +15,19 @@ public class TitlePanel: MonoBehaviour
 	void Awake()
 	{
 		StartButton.onClick.AddListener(OnStartClicked);
+		ContinueButton.onClick.AddListener(OnContinueClicked);
 		QuitButton.onClick.AddListener(OnQuitClicked);
 	}
 
 	private void OnStartClicked()
 	{
+		PlayManager.MustLoadSaveData = false;
+		SceneManager.LoadScene("Scenes/Everbee");
+	}
+
+	private void OnContinueClicked()
+	{
+		PlayManager.MustLoadSaveData = true;
 		SceneManager.LoadScene("Scenes/Everbee");
 	}
 

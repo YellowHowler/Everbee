@@ -18,11 +18,6 @@ public class Honeycomb : MonoBehaviour
     public GameResType type; //���� �ڿ��� �����ϰ� �ִ���
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
 
-    public GameResAmount kMaxHoneyAmount;
-    public GameResAmount kMaxNectarAmount;
-    public GameResAmount kMaxPollenAmount;
-    public GameResAmount kMaxWaxAmount;
-
     public Hive mHive { get; set; }
 
     public StructureType kStructureType = StructureType.None;
@@ -45,19 +40,22 @@ public class Honeycomb : MonoBehaviour
 
     private void Start()
     {
-        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
-        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[1];
-        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[2];
-        kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
+		kCanvas.SetActive(true);
+		kCanvas.GetComponent<Canvas>().worldCamera = Camera.main;
+	}
 
-        SetStructure(StructureType.None);
+    private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
+    private GameResAmount GetMaxNectarAmount() { return Mng.play.kHive.mMaxItemAmounts[1]; }
+    private GameResAmount GetMaxPollenAmount() { return Mng.play.kHive.mMaxItemAmounts[2]; }
+    private GameResAmount GetMaxWaxAmount() { return Mng.play.kHive.mMaxItemAmounts[3]; }
 
-        kCanvas.SetActive(true);
-        kCanvas.GetComponent<Canvas>().worldCamera = Camera.main;
-        HideObjects();
-    }
+	public void InitDefault()
+    {
+        SetStructure(StructureType.None, true);
+		HideObjects();
+	}
 
-    private void HideObjects()
+	private void HideObjects()
     {
         kHoverObj.SetActive(false);
         kTimerPanel.SetActive(false);
@@ -107,7 +105,7 @@ public class Honeycomb : MonoBehaviour
         kEmptyObj.gameObject.SetActive(true);
     }
 
-    public bool SetStructure(StructureType _type) //true if build successful
+    public bool SetStructure(StructureType _type, bool forced) //true if build successful
     {
         switch (_type)
         {
@@ -115,7 +113,7 @@ public class Honeycomb : MonoBehaviour
                 SetAllChildrenActive(false);
                 break;
             case StructureType.Storage:
-                if(kStructureType != StructureType.None) 
+                if(!forced && kStructureType != StructureType.None) 
                 {
                     return false;
                 }
@@ -123,7 +121,7 @@ public class Honeycomb : MonoBehaviour
                 kStorageObj.SetActive(true);
                 break;
             case StructureType.Dryer:
-                if(kStructureType != StructureType.Storage) 
+                if(!forced && kStructureType != StructureType.Storage) 
                 {
                     return false;
                 }
@@ -147,19 +145,19 @@ public class Honeycomb : MonoBehaviour
 
         if (_type == GameResType.Nectar)
         {
-            maxAmount = kMaxNectarAmount;
+            maxAmount = GetMaxNectarAmount();
         }
         else if (_type == GameResType.Pollen)
         {
-            maxAmount = kMaxPollenAmount;
+            maxAmount = GetMaxPollenAmount();
         }
         else if (_type == GameResType.Honey)
         {
-            maxAmount = kMaxHoneyAmount;
+            maxAmount = GetMaxHoneyAmount();
         }
         else if (_type == GameResType.Wax)
         {
-            maxAmount = kMaxWaxAmount;
+            maxAmount = GetMaxWaxAmount();
         }
 
         return maxAmount;
@@ -353,7 +351,7 @@ public class Honeycomb : MonoBehaviour
 
         if(hive.mIsBuilding == true)
         {
-            if(SetStructure(hive.mStructureType) == true)
+            if(SetStructure(hive.mStructureType, false) == true)
             {
                 Mng.canvas.kInven.gameObject.SetActive(true);
                 hive.mIsBuilding = false;
@@ -500,5 +498,7 @@ public class Honeycomb : MonoBehaviour
         type = savedata.type;
         amount = savedata.amount;
         kStructureType = savedata.kStructureType;
+
+        SetStructure(kStructureType, true);
     }
 }

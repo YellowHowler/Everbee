@@ -32,8 +32,9 @@ public class QueenBee : MonoBehaviour
         Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
 
         //kSlider.gameObject.SetActive(false);
+
+        // DoJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
         
-        mFirst = true;
         StartCoroutine(Wander());
     }
 

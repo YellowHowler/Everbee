@@ -22,13 +22,14 @@ public class SaveManager: MonoBehaviour
 	static private SaveManager _Instance;
 
 	public Hive.CSaveData HiveSaveData = new Hive.CSaveData();
-	// Garden 은 구조를 바꿔야 한다.
+	public Garden.CSaveData GardenSaveData = new Garden.CSaveData();
 
 	private string FileName = "Save.dat";
 
 	public bool Save()
 	{
 		PlayManager.Instance.kHive.ExportTo(HiveSaveData);
+		PlayManager.Instance.kGarden.ExportTo(GardenSaveData);
 
 		string json = JsonUtility.ToJson(this);
 
@@ -50,6 +51,7 @@ public class SaveManager: MonoBehaviour
 			JsonUtility.FromJsonOverwrite(json, this);
 
 			PlayManager.Instance.kHive.ImportFrom(HiveSaveData);
+			PlayManager.Instance.kGarden.ImportFrom(GardenSaveData);
 		}
 		catch (System.Exception ex)
 		{

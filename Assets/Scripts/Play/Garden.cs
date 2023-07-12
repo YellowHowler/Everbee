@@ -66,7 +66,7 @@ public class Garden : MonoBehaviour
 		Instance = null;
 	}
 
-	private void Start()
+	public void InitDefault()
     {
         AddNewFlower(FlowerType.Cosmos, new Vector3(0, 0.4f, 0));
         AddNewFlower(FlowerType.Lavender, new Vector3(2f, 0.4f, 0));
@@ -93,7 +93,7 @@ public class Garden : MonoBehaviour
 
 
 	// 세이브/로드 관련
-	/*public class CSaveData
+	public class CSaveData
 	{
         public List<string> mFlowers = new List<string>();
 		public List<FlowerSpot.CSaveData> mFlowerSpotList = new List<FlowerSpot.CSaveData>();
@@ -101,7 +101,7 @@ public class Garden : MonoBehaviour
 
 	public void ExportTo(CSaveData savedata)
 	{
-        savedata.mFlowers.Clear();
+        /*savedata.mFlowers.Clear();
         for(int i=0; i<flo)
 
 		savedata.mFlowerSpotList.Clear();
@@ -111,14 +111,14 @@ public class Garden : MonoBehaviour
 			FlowerSpot.CSaveData spotdata = new FlowerSpot.CSaveData();
 			mFlowerSpotList[i].ExportTo(spotdata);
 			savedata.mFlowerSpotList.Add(spotdata);
-		}
+		}*/
 	}
 
 	public void ImportFrom(CSaveData savedata)
 	{
 		mFlowerSpotList.Clear();
 
-		for(int i=0; i<savedata.mFlowerSpotList.Count; ++i)
+		/*for(int i=0; i<savedata.mFlowerSpotList.Count; ++i)
 		{
             AddNewFlower()
 			var comb = AddNewHoneycomb(Vector3.zero);
@@ -135,5 +135,8 @@ public class Garden : MonoBehaviour
 
 		for(int i = 0;i<savedata.mMaxItemAmounts.Length;++i)
 			mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
-	}*/
+        */
+
+        InitDefault();  // 임시
+	}
 }

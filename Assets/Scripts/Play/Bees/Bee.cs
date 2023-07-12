@@ -53,10 +53,7 @@ public class Bee : MonoBehaviour
     private bool mFirst = true;
     private bool mCanWork = false;
 
-    private void Start()
-    {
-        mFirst = true;
-    }
+    // UpdateJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
 
     void Update()
     {
