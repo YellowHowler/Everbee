@@ -1,5 +1,6 @@
 using EnumDef;
 using StructDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,7 +11,7 @@ public class Honeycomb : MonoBehaviour
 { 
     public SpriteRenderer kSpriteRenderer;
 
-    public Vector3 pos { get { return transform.position; } set { pos = value; } }
+    public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
 
     public bool isTarget;
 
@@ -470,5 +471,34 @@ public class Honeycomb : MonoBehaviour
     {
         type = GameResType.Egg;
         Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 0, BeeStage.Egg);
+    }
+
+
+    // 세이브/로드 관련
+    [Serializable]
+    public class CSaveData
+    {
+		public Vector3 pos;
+
+		public GameResType type;
+		public GameResAmount amount;
+
+		public StructureType kStructureType;
+	}
+
+    public void ExportTo(CSaveData savedata)
+    {
+        savedata.pos = pos;
+        savedata.type = type;
+        savedata.amount = amount;
+        savedata.kStructureType = kStructureType;
+    }
+
+    public void ImportFrom(CSaveData savedata)
+    {
+        pos = savedata.pos;
+        type = savedata.type;
+        amount = savedata.amount;
+        kStructureType = savedata.kStructureType;
     }
 }

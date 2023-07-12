@@ -14,7 +14,7 @@ public class Garden : MonoBehaviour
 
     List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
 
-    private float flowerY = 0.4f; // ²ÉµéÀÇ y ÁÂÇ¥°ª
+    private float flowerY = 0.4f; // ê½ƒë“¤ì˜ y ì¢Œí‘œê°’
 
     public FlowerSpot GetUsableFlowerSpot()
     {
@@ -26,7 +26,7 @@ public class Garden : MonoBehaviour
         return null;
     }
 
-    /// <summary> ÇöÀç ¾À¿¡ ÀÖ´Â ¸ğµç Flower SpotµéÀ» °¡Á®¿Â´Ù </summary>
+    /// <summary> í˜„ì¬ ì”¬ì— ìˆëŠ” ëª¨ë“  Flower Spotë“¤ì„ ê°€ì ¸ì˜¨ë‹¤ </summary>
     public void GetAllFlowerSpots() 
     {
         mFlowerSpotList.Clear();
@@ -35,7 +35,7 @@ public class Garden : MonoBehaviour
 
         foreach(GameObject f in flowerSpots)
         {
-            mFlowerSpotList.Add(f.GetComponent<FlowerSpot>()); //ÀÓ½Ã
+            mFlowerSpotList.Add(f.GetComponent<FlowerSpot>()); //ì„ì‹œ
         }
     }
 
@@ -90,4 +90,50 @@ public class Garden : MonoBehaviour
 
 		return rect;
 	}
+
+
+	// ì„¸ì´ë¸Œ/ë¡œë“œ ê´€ë ¨
+	/*public class CSaveData
+	{
+        public List<string> mFlowers = new List<string>();
+		public List<FlowerSpot.CSaveData> mFlowerSpotList = new List<FlowerSpot.CSaveData>();
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+        savedata.mFlowers.Clear();
+        for(int i=0; i<flo)
+
+		savedata.mFlowerSpotList.Clear();
+
+		for(int i=0; i<mFlowerSpotList.Count; ++i)
+		{
+			FlowerSpot.CSaveData spotdata = new FlowerSpot.CSaveData();
+			mFlowerSpotList[i].ExportTo(spotdata);
+			savedata.mFlowerSpotList.Add(spotdata);
+		}
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+		mFlowerSpotList.Clear();
+
+		for(int i=0; i<savedata.mFlowerSpotList.Count; ++i)
+		{
+            AddNewFlower()
+			var comb = AddNewHoneycomb(Vector3.zero);
+			comb.ImportFrom(savedata.mHoneycombList[i]);
+		}
+
+		if(savedata.mMaxItemAmounts == null)
+			mMaxItemAmounts = null;
+		else
+		{
+			if((mMaxItemAmounts == null) || (mMaxItemAmounts.Length != savedata.mMaxItemAmounts.Length))
+				mMaxItemAmounts = new GameResAmount[savedata.mMaxItemAmounts.Length];
+		}
+
+		for(int i = 0;i<savedata.mMaxItemAmounts.Length;++i)
+			mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
+	}*/
 }

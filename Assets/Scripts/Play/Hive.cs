@@ -4,6 +4,7 @@ using UnityEngine;
 using EnumDef;
 using ClassDef;
 using StructDef;
+using System;
 //using HedgehogTeam.EasyTouch;
 
 public class Hive : MonoBehaviour
@@ -107,7 +108,7 @@ public class Hive : MonoBehaviour
         return null;
     }
 
-    public void GetAllHoneycombs() //현재 씬에 있는 모든 Honeycomb 다 가져온다
+    /*public void GetAllHoneycombs() //현재 씬에 있는 모든 Honeycomb 다 가져온다
     {
         mHoneycombList.Clear();
 
@@ -125,9 +126,9 @@ public class Hive : MonoBehaviour
             PlayManager.Instance.kHiveYBound.start = Mathf.Min(honeycomb.pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
             PlayManager.Instance.kHiveYBound.end = Mathf.Max(honeycomb.pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
         }
-    }
+    }*/
 
-    public void AddNewHoneycomb(Vector3 _pos, GameResAmount _amount)
+    public Honeycomb AddNewHoneycomb(Vector3 _pos)
     {
         GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform.GetChild(0));
         Honeycomb honeycomb = newHoneycomb.GetComponent<Honeycomb>();
@@ -140,6 +141,8 @@ public class Hive : MonoBehaviour
 
         PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
         PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
+
+        return honeycomb;
     }
 
     public Honeycomb GetRandomHoneycomb()
@@ -199,7 +202,8 @@ public class Hive : MonoBehaviour
         {
             for(int j = 0; j < 10; j++)
             {
-                AddNewHoneycomb(newPos, new GameResAmount(0f, GameResUnit.Microgram));
+                var comb = AddNewHoneycomb(newPos);
+                comb.amount = new GameResAmount(0f, GameResUnit.Microgram);
 
                 if(i % 2 == 0)
                 {
@@ -360,5 +364,60 @@ public class Hive : MonoBehaviour
 		rect.yMax = Mathf.Max(rect.yMax, PlayManager.Instance.kHiveYBound.end);
 
         return rect;
+	}
+
+    [Serializable]
+	// 세이브/로드 관련
+	public class CSaveData
+	{
+		public List<Honeycomb.CSaveData> mHoneycombList = new List<Honeycomb.CSaveData>();
+		public GameResAmount[] mMaxItemAmounts;
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+        savedata.mHoneycombList.Clear();
+
+        for(int i=0; i<mHoneycombList.Count; ++i)
+        {
+            Honeycomb.CSaveData combSavedata = new Honeycomb.CSaveData();
+            mHoneycombList[i].ExportTo(combSavedata);
+            savedata.mHoneycombList.Add(combSavedata);
+        }
+
+        if (mMaxItemAmounts == null)
+            savedata.mMaxItemAmounts = null;
+        else
+        {
+            if ( (savedata.mMaxItemAmounts == null) || (savedata.mMaxItemAmounts.Length != mMaxItemAmounts.Length) )
+                savedata.mMaxItemAmounts = new GameResAmount[mMaxItemAmounts.Length];
+        }
+
+        for(int i=0; i<mMaxItemAmounts.Length; ++i)
+            savedata.mMaxItemAmounts[i] = mMaxItemAmounts[i];
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+        for(int i=0; i<mHoneycombList.Count; ++i)
+            GameObject.Destroy(mHoneycombList[i].gameObject);
+        mHoneycombList.Clear();
+
+        for(int i=0; i<savedata.mHoneycombList.Count; ++i)
+        {
+            var comb = AddNewHoneycomb(Vector3.zero);
+            comb.ImportFrom(savedata.mHoneycombList[i]);
+        }
+
+        if (savedata.mMaxItemAmounts == null)
+            mMaxItemAmounts = null;
+        else
+        {
+            if ( (mMaxItemAmounts == null) || (mMaxItemAmounts.Length != savedata.mMaxItemAmounts.Length) )
+                mMaxItemAmounts = new GameResAmount[savedata.mMaxItemAmounts.Length];
+        }
+
+        for(int i=0; i<savedata.mMaxItemAmounts.Length; ++i)
+            mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
 	}
 }

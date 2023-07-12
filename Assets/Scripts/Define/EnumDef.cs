@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace EnumDef
 {
+    [Serializable]
     public enum GameResUnit
     {
         Microgram = 1,
@@ -12,6 +14,7 @@ namespace EnumDef
         Kilogram = 4
     }
 
+    [Serializable]
     public enum GameResType
     {
         Empty = -1,
@@ -23,6 +26,7 @@ namespace EnumDef
         Larvae = 5
     }
 
+    [Serializable]
     public enum FlowerType
     {
         Cosmos = 1,
@@ -31,6 +35,7 @@ namespace EnumDef
         CaliforniaPoppy
     }
 
+    [Serializable]
     public enum BeeStage
     {
         Egg = 0,
@@ -39,6 +44,7 @@ namespace EnumDef
         Bee = 3,
     }
 
+    [Serializable]
     public enum Job
     {
         Idle = 0,
@@ -47,6 +53,7 @@ namespace EnumDef
         Feed = 3, 
     }
 
+    [Serializable]
     public enum CollectState
     {
         GoToFlower = 0,
@@ -57,6 +64,7 @@ namespace EnumDef
         StoreNectar,
     }
 
+    [Serializable]
     public enum QueenState
     {
         Wander = 0,
@@ -65,6 +73,7 @@ namespace EnumDef
         LayEgg = 3,
     }
 
+    [Serializable]
     public enum StructureType
     {
         None = 0,
@@ -74,6 +83,7 @@ namespace EnumDef
         Hatchtery = 4,
     }
 
+    [Serializable]
     public enum HoneycombDirection
     {
         None = 0,

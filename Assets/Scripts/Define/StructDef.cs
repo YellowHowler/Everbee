@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using EnumDef;
+using System;
 
 namespace StructDef
 {
+    [Serializable]
     public struct GameResAmount
     {
         public float amount;
@@ -17,6 +19,7 @@ namespace StructDef
         }
     }
 
+    [Serializable]
     public struct VectorBound
     {
         public float start;

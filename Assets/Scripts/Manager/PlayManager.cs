@@ -54,7 +54,7 @@ public class PlayManager : MonoBehaviour
 
 	private void Start()
     {
-        
+        SaveManager.Instance.Load();
     }
 
     public void GameStart()
@@ -87,7 +87,10 @@ public class PlayManager : MonoBehaviour
                     MainCanvas.Instance.kDialoguePopup.Show("Do you want to quit?", LHS.CLHSDialogUI.EButtonType.YESNO, (result) => 
                     {
                         if (result == LHS.CLHSDialogUI.EDialogResult.YES)
-                            UnityEngine.SceneManagement.SceneManager.LoadScene("Scenes/TitleScene"); 
+                        {
+							SaveManager.Instance.Save();
+							UnityEngine.SceneManagement.SceneManager.LoadScene("Scenes/TitleScene"); 
+                        }
 
                         return true; 
                     });

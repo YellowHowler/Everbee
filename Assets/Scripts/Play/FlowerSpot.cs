@@ -30,4 +30,53 @@ public class FlowerSpot : MonoBehaviour
 
         pos = transform.position;
     }
+
+
+	// 세이브/로드 관련
+	public class CSaveData
+	{
+		public Vector3 pos;
+
+		public FlowerType type;
+
+		public bool occupied;
+
+		public float nectar;
+		public GameResUnit nectarUnit;
+		public float pollen;
+		public GameResUnit pollenUnit;
+
+		public GameResAmount nectarAmount;
+		public GameResAmount pollenAmount;
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+		savedata.pos = pos;
+		savedata.type = type;
+		savedata.occupied = occupied;
+
+		savedata.nectar = nectar;
+		savedata.nectarUnit = nectarUnit;
+		savedata.pollen = pollen;
+		savedata.pollenUnit = pollenUnit;
+
+		savedata.nectarAmount = nectarAmount;
+		savedata.pollenAmount = pollenAmount;
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+		pos = savedata.pos;
+		type = savedata.type;
+		occupied = savedata.occupied;
+
+		nectar = savedata.nectar;
+		nectarUnit = savedata.nectarUnit;
+		pollen = savedata.pollen;
+		pollenUnit = savedata.pollenUnit;
+
+		nectarAmount = savedata.nectarAmount;
+		pollenAmount = savedata.pollenAmount;
+	}
 }
