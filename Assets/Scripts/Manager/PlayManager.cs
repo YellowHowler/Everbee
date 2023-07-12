@@ -81,6 +81,19 @@ public class PlayManager : MonoBehaviour
 				{
 					return func();
 				});
+
+                if (!EscapeKeyDispatcher.Consumed)
+                {
+                    MainCanvas.Instance.kDialoguePopup.Show("Do you want to quit?", LHS.CLHSDialogUI.EButtonType.YESNO, (result) => 
+                    {
+                        if (result == LHS.CLHSDialogUI.EDialogResult.YES)
+                            UnityEngine.SceneManagement.SceneManager.LoadScene("Scenes/TitleScene"); 
+
+                        return true; 
+                    });
+                    
+                    return;
+                }
 			}
 		}
 	}

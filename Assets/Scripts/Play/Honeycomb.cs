@@ -285,6 +285,7 @@ public class Honeycomb : MonoBehaviour
 
         //Gizmos.DrawSphere(transform.position, 0.825f);
 
+    #if UNITY_EDITOR
         if (mHive != null)
         {
             if (mHive.kIsDrawHoneycombName == true)
@@ -293,6 +294,7 @@ public class Honeycomb : MonoBehaviour
             if (mHive.kIsDrawHoneycombShape == true)
                 Gizmos.DrawWireSphere(transform.position, Mng.play.kHive.mHoneycombRadiusY);
         }
+    #endif
     }
 
     private void ToggleDoor()

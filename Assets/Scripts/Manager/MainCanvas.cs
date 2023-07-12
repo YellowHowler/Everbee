@@ -19,6 +19,7 @@ public class MainCanvas : MonoBehaviour
     public InventoryBarPanel kInven;
     public QueenResourcePanel kQueen;
     public BeeInfoPanel kBeeInfo;
+    public LHS.CLHSDialogUI kDialoguePopup;
 
     public Button[] kToggleButtons;
 
@@ -54,6 +55,9 @@ public class MainCanvas : MonoBehaviour
         EnableToggleButtons();
         kCancelBuildObj.SetActive(false);
         kWarningTxt.gameObject.SetActive(false);
+
+        kDialoguePopup.Init();
+        kDialoguePopup.gameObject.SetActive(false);
     }
 
     private void OnDestroy()

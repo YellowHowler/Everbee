@@ -5,7 +5,6 @@ using EnumDef;
 using ClassDef;
 using StructDef;
 //using HedgehogTeam.EasyTouch;
-using UnityEditor.PackageManager;
 
 public class Hive : MonoBehaviour
 {
@@ -72,7 +71,12 @@ public class Hive : MonoBehaviour
 
     private bool OnEscapeKeyPressed()
     {
-		mIsBuilding = false;
+        if (mIsBuilding)
+        {
+            mIsBuilding = false;
+            return false;
+        }
+		
 		return true;
 	}
 
