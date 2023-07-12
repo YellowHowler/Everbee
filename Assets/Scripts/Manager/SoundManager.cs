@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    static public SoundManager Instance;
+    static public SoundManager Instance { get; private set; }
 
     public enum Type {
         Effect,     // 출력 타입 효과음

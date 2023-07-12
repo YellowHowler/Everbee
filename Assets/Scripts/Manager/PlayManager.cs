@@ -8,7 +8,7 @@ using static UnityEngine.UI.CanvasScaler;
 
 public class PlayManager : MonoBehaviour
 {
-    public static PlayManager Instance;
+    public static PlayManager Instance { get; private set; }
 
     public Hive kHive;
     public Garden kGarden;
@@ -22,7 +22,11 @@ public class PlayManager : MonoBehaviour
     public VectorBound kHiveXBound = new VectorBound(10000, -10000);
     public VectorBound kHiveYBound = new VectorBound(10000, -10000);
 
-    void Awake()
+	public EventFuncDispatcher EscapeKeyDispatcher = new EventFuncDispatcher();
+	public Rect WorldBoundary { get; private set; }
+
+
+	void Awake()
     {
         Instance = this;
 
@@ -56,13 +60,32 @@ public class PlayManager : MonoBehaviour
     public void GameStart()
     {
     }
-    
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
-    public int RoundFloat(float _num)
+	// Update is called once per frame
+	private void Update()
+	{
+		ComputeWorldBoundary();
+
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
+			// EscapeKeyDispatcher 는 팝업창이 비어있을 때에만 유효
+
+			var lastPopup = PopupBase.GetLastPopup();
+			if(lastPopup != null)
+			{
+				lastPopup.ProcessEscapeKey();
+			}
+			else
+			{
+				EscapeKeyDispatcher.Dispatch((func) =>
+				{
+					return func();
+				});
+			}
+		}
+	}
+
+	public int RoundFloat(float _num)
     {
         return (int)Mathf.Floor(_num + 0.5f);
     }
@@ -231,5 +254,17 @@ public class PlayManager : MonoBehaviour
     {
         return new Vector3(_pos.x, _pos.y, _z);
     }
+
+	public void ComputeWorldBoundary()
+	{
+		Rect rect = Rect.zero;
+		rect.xMin = rect.yMin = 10000000;
+		rect.xMax = rect.yMax = -10000000;
+
+		rect = kHive.ComputeWorldBoundary(rect);
+		rect = kGarden.ComputeWorldBoundary(rect);
+
+		WorldBoundary = rect;
+	}
 }
 

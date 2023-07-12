@@ -9,7 +9,7 @@ using TMPro;
 
 public class MainCanvas : MonoBehaviour
 {
-    static public MainCanvas Instance;
+    static public MainCanvas Instance { get; private set; }
 
     public TMP_Text kWarningTxt;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    public static PlayerCamera Instance;
+    public static PlayerCamera Instance { get; private set; }
 
     private Camera mCamera;
     private float mScrollSpeed = 3.5f;
@@ -76,15 +76,15 @@ public class PlayerCamera : MonoBehaviour
         float halfCameraHeight = mCamera.orthographicSize;
         const float threshold = 1;
 
-        if (pos.x < Manager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold)
-            pos.x = Manager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold;
-		if (pos.x > Manager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold)
-			pos.x = Manager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold;
+        if (pos.x < PlayManager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold)
+            pos.x = PlayManager.Instance.WorldBoundary.xMin + halfCameraWidth - threshold;
+		if (pos.x > PlayManager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold)
+			pos.x = PlayManager.Instance.WorldBoundary.xMax - halfCameraWidth + threshold;
 
-        if (pos.y < Manager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold)
-            pos.y = Manager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold;
-		if (pos.y > Manager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold)
-			pos.y = Manager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold;
+        if (pos.y < PlayManager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold)
+            pos.y = PlayManager.Instance.WorldBoundary.yMin + halfCameraHeight - threshold;
+		if (pos.y > PlayManager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold)
+			pos.y = PlayManager.Instance.WorldBoundary.yMax - halfCameraHeight + threshold;
 
         mCamera.transform.position = pos;
 	}

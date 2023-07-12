@@ -20,6 +20,7 @@ public class QueenBee : MonoBehaviour
 
     public Slider kSlider;
     private float mEggTime = 5f;
+    private bool mFirst = true;
 
     void Awake()
     {
@@ -32,6 +33,7 @@ public class QueenBee : MonoBehaviour
 
         //kSlider.gameObject.SetActive(false);
         
+        mFirst = true;
         StartCoroutine(Wander());
     }
 
@@ -84,12 +86,24 @@ public class QueenBee : MonoBehaviour
 
         while (mCurState == QueenState.Wander)
         {
-            Vector3 randomPos = new Vector3(Random.Range(Mng.play.kHiveXBound.start, Mng.play.kHiveXBound.end), Random.Range(Mng.play.kHiveYBound.start, Mng.play.kHiveYBound.end), 0);
-
-            while(Vector3.Distance(transform.position, randomPos) > 0.005f)
+            var targetComb = Mng.play.kHive.GetRandomHoneycomb();
+            if (targetComb != null)
             {
-                transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
-                yield return sec;
+				Vector3 randomPos = targetComb.transform.position;
+
+				if(mFirst)
+                {
+                    mFirst = false;
+                    transform.position = randomPos;
+                }
+                else
+                {
+                    while(Vector3.Distance(transform.position, randomPos) > 0.005f)
+                    {
+                        transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
+                        yield return sec;
+                    }
+                }
             }
 
             yield return new WaitForSeconds(Random.Range(3f, 7f));

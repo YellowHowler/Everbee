@@ -55,6 +55,7 @@ public class Bee : MonoBehaviour
 
     private void Start()
     {
+        mFirst = true;
     }
 
     void Update()

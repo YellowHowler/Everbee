@@ -7,7 +7,7 @@ using ClassDef;
 
 public class Garden : MonoBehaviour
 {
-    [HideInInspector] public static Garden Instance;
+    [HideInInspector] public static Garden Instance { get; private set; }
 
     public GameObject[] flowerObjs;
     public GameObject BoundaryObject;

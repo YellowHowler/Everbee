@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
-    static public Manager Instance;
+    static public Manager Instance { get; private set; }
 
     public Transform kStage;
 
@@ -21,10 +21,6 @@ public class Manager : MonoBehaviour
     public Hive kHive;
     [Header("정원 매니저")]
     public Garden kGarden;
-
-    public EventFuncDispatcher EscapeKeyDispatcher = new EventFuncDispatcher();
-
-    public Rect WorldBoundary { get; private set; }
 
 
     private void Awake()
@@ -76,40 +72,5 @@ public class Manager : MonoBehaviour
         go = Instantiate(kBees.gameObject);
         go.transform.parent = kStage;
         go.name = "Bees";
-    }
-
-    private void Update()
-    {
-        ComputeWorldBoundary();
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-			// EscapeKeyDispatcher 는 팝업창이 비어있을 때에만 유효
-
-			var lastPopup = PopupBase.GetLastPopup();
-            if (lastPopup != null)
-            {
-                lastPopup.ProcessEscapeKey();
-            }
-            else
-            {
-		        EscapeKeyDispatcher.Dispatch((func) =>
-                {
-                    return func();
-                });
-            }
-        }
-    }
-
-    public void ComputeWorldBoundary()
-    {
-        Rect rect = Rect.zero;
-        rect.xMin = rect.yMin = 10000000;
-        rect.xMax = rect.yMax = -10000000;
-
-        rect = kHive.ComputeWorldBoundary(rect);
-        rect = kGarden.ComputeWorldBoundary(rect);
-
-        WorldBoundary = rect;
     }
 }

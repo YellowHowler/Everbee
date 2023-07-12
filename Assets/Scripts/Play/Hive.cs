@@ -9,7 +9,7 @@ using UnityEditor.PackageManager;
 
 public class Hive : MonoBehaviour
 {
-    public static Hive Instance;
+    public static Hive Instance { get; private set; }
 
     public float mHoneycombRadiusX = 0.5f;
     public float mHoneycombRadiusY = 0.8f;
@@ -60,13 +60,13 @@ public class Hive : MonoBehaviour
 		Instance = this;
 		mHoneycombOrigin = transform.position;
 		kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
-
-        Manager.Instance.EscapeKeyDispatcher.AddFunc(OnEscapeKeyPressed);
 	}
 
 	private void OnDestroy()
 	{
-        Manager.Instance.EscapeKeyDispatcher.DelFunc(OnEscapeKeyPressed);
+        if (PlayManager.Instance != null)
+            PlayManager.Instance.EscapeKeyDispatcher.DelFunc(OnEscapeKeyPressed);
+
 		Instance = null;
 	}
 
@@ -219,6 +219,8 @@ public class Hive : MonoBehaviour
 
         mQueenHoneyNeed = new GameResAmount(1, GameResUnit.Milligram);
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
+
+        PlayManager.Instance.EscapeKeyDispatcher.AddFunc(OnEscapeKeyPressed);
     }
 
 	private void Update()
