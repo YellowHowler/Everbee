@@ -382,8 +382,8 @@ public class Hive : MonoBehaviour
 	// 세이브/로드 관련
 	public class CSaveData
 	{
-		public List<Honeycomb.CSaveData> mHoneycombList = new List<Honeycomb.CSaveData>();
 		public GameResAmount[] mMaxItemAmounts;
+		public List<Honeycomb.CSaveData> mHoneycombList = new List<Honeycomb.CSaveData>();
 
 		public GameResAmount mQueenHoneyNeed;
 		public GameResAmount mQueenPollenNeed;
@@ -393,23 +393,23 @@ public class Hive : MonoBehaviour
 	{
         savedata.mHoneycombList.Clear();
 
-        for(int i=0; i<mHoneycombList.Count; ++i)
+		if(mMaxItemAmounts == null)
+			savedata.mMaxItemAmounts = null;
+		else
+		{
+			if((savedata.mMaxItemAmounts == null) || (savedata.mMaxItemAmounts.Length != mMaxItemAmounts.Length))
+				savedata.mMaxItemAmounts = new GameResAmount[mMaxItemAmounts.Length];
+		}
+
+		for(int i = 0;i<mMaxItemAmounts.Length;++i)
+			savedata.mMaxItemAmounts[i] = mMaxItemAmounts[i];
+
+		for(int i=0; i<mHoneycombList.Count; ++i)
         {
             Honeycomb.CSaveData combSavedata = new Honeycomb.CSaveData();
             mHoneycombList[i].ExportTo(combSavedata);
             savedata.mHoneycombList.Add(combSavedata);
         }
-
-        if (mMaxItemAmounts == null)
-            savedata.mMaxItemAmounts = null;
-        else
-        {
-            if ( (savedata.mMaxItemAmounts == null) || (savedata.mMaxItemAmounts.Length != mMaxItemAmounts.Length) )
-                savedata.mMaxItemAmounts = new GameResAmount[mMaxItemAmounts.Length];
-        }
-
-        for(int i=0; i<mMaxItemAmounts.Length; ++i)
-            savedata.mMaxItemAmounts[i] = mMaxItemAmounts[i];
 
         savedata.mQueenHoneyNeed = mQueenHoneyNeed;
         savedata.mQueenPollenNeed = mQueenPollenNeed;
@@ -417,7 +417,18 @@ public class Hive : MonoBehaviour
 
 	public void ImportFrom(CSaveData savedata)
 	{
-        for(int i=0; i<mHoneycombList.Count; ++i)
+		if(savedata.mMaxItemAmounts == null)
+			mMaxItemAmounts = null;
+		else
+		{
+			if((mMaxItemAmounts == null) || (mMaxItemAmounts.Length != savedata.mMaxItemAmounts.Length))
+				mMaxItemAmounts = new GameResAmount[savedata.mMaxItemAmounts.Length];
+		}
+
+		for(int i = 0;i<savedata.mMaxItemAmounts.Length;++i)
+			mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
+
+		for(int i=0; i<mHoneycombList.Count; ++i)
             GameObject.Destroy(mHoneycombList[i].gameObject);
         mHoneycombList.Clear();
 
@@ -427,17 +438,6 @@ public class Hive : MonoBehaviour
             comb.ImportFrom(savedata.mHoneycombList[i]);
             SetHoneycombPosition(comb, comb.pos);
         }
-
-        if (savedata.mMaxItemAmounts == null)
-            mMaxItemAmounts = null;
-        else
-        {
-            if ( (mMaxItemAmounts == null) || (mMaxItemAmounts.Length != savedata.mMaxItemAmounts.Length) )
-                mMaxItemAmounts = new GameResAmount[savedata.mMaxItemAmounts.Length];
-        }
-
-        for(int i=0; i<savedata.mMaxItemAmounts.Length; ++i)
-            mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
 
 		mQueenHoneyNeed = savedata.mQueenHoneyNeed;
 		mQueenPollenNeed = savedata.mQueenPollenNeed;

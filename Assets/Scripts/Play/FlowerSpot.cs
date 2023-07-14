@@ -1,5 +1,6 @@
 using EnumDef;
 using StructDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,8 +11,6 @@ public class FlowerSpot : MonoBehaviour
 
     [HideInInspector] public bool isTarget = false;
     public Vector3 pos;
-
-    public FlowerType type;
 
     public bool occupied;
 
@@ -33,11 +32,10 @@ public class FlowerSpot : MonoBehaviour
 
 
 	// 세이브/로드 관련
+	[Serializable]
 	public class CSaveData
 	{
 		public Vector3 pos;
-
-		public FlowerType type;
 
 		public bool occupied;
 
@@ -53,8 +51,6 @@ public class FlowerSpot : MonoBehaviour
 	public void ExportTo(CSaveData savedata)
 	{
 		savedata.pos = pos;
-		savedata.type = type;
-		savedata.occupied = occupied;
 
 		savedata.nectar = nectar;
 		savedata.nectarUnit = nectarUnit;
@@ -68,8 +64,6 @@ public class FlowerSpot : MonoBehaviour
 	public void ImportFrom(CSaveData savedata)
 	{
 		pos = savedata.pos;
-		type = savedata.type;
-		occupied = savedata.occupied;
 
 		nectar = savedata.nectar;
 		nectarUnit = savedata.nectarUnit;

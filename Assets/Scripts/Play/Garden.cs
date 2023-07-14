@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,20 +8,24 @@ using ClassDef;
 
 public class Garden : MonoBehaviour
 {
-    [HideInInspector] public static Garden Instance { get; private set; }
+    public static Garden Instance { get; private set; }
 
-    public GameObject[] flowerObjs;
-    public GameObject BoundaryObject;
+    public List<Flower> mFlowerTemplates;   // 이것을 가지고 생성함
+	public GameObject BoundaryObject;
 
-    List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
-
+	private List<Flower> mFlowers = new List<Flower>();
+    private List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
     private float flowerY = 0.4f; // 꽃들의 y 좌표값
 
     public FlowerSpot GetUsableFlowerSpot()
     {
-        foreach(FlowerSpot s in mFlowerSpotList)
+        int offset = UnityEngine.Random.Range(0, mFlowerSpotList.Count);
+        for(int i=0; i<mFlowerSpotList.Count; ++i)
         {
-            if(s.occupied == false && s.isTarget == false) return s;
+            int index = (i + offset) % mFlowerSpotList.Count;
+            var spot = mFlowerSpotList[index];
+            if (spot.occupied == false && spot.isTarget == false) 
+                return spot;
         }
 
         return null;
@@ -31,34 +36,27 @@ public class Garden : MonoBehaviour
     {
         mFlowerSpotList.Clear();
 
-        GameObject[] flowerSpots = GameObject.FindGameObjectsWithTag("FlowerSpot");
-
-        foreach(GameObject f in flowerSpots)
-        {
-            mFlowerSpotList.Add(f.GetComponent<FlowerSpot>()); //임시
-        }
+        foreach(var flower in mFlowers)
+            foreach(var spot in flower.m_FlowerSpots)
+                mFlowerSpotList.Add(spot);
     }
 
-    public void AddNewFlower(FlowerType _flower, Vector3 _pos)
+    public Flower AddNewFlower(Flower _flower, float x)
     {
-        GameObject newFlower = Instantiate(flowerObjs[(int)_flower], _pos, Quaternion.identity, transform.GetChild(0));
+        var newFlower = Instantiate(_flower.gameObject, new Vector3(x, flowerY, 0), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
 
-        for (int i = 0; i < newFlower.transform.childCount; i++)
-        {
-            FlowerSpot flowerSpot = newFlower.transform.GetChild(i).GetComponent<FlowerSpot>();
-            flowerSpot.mGarden = this;
+        newFlower.mGarden = this;
+        foreach(var spot in newFlower.m_FlowerSpots)
+            spot.mGarden = this;
 
-            mFlowerSpotList.Add(flowerSpot);
-        }
+        mFlowers.Add(newFlower);
+
+        return newFlower;
     }
 
     private void Awake()
     {
         Instance = this;
-
-        //Flower Create, List Insert
-        //GetAllFlowerSpots();
-        print(mFlowerSpotList.Count);
     }
 
 	private void OnDestroy()
@@ -68,9 +66,11 @@ public class Garden : MonoBehaviour
 
 	public void InitDefault()
     {
-        AddNewFlower(FlowerType.Cosmos, new Vector3(0, 0.4f, 0));
-        AddNewFlower(FlowerType.Lavender, new Vector3(2f, 0.4f, 0));
-        AddNewFlower(FlowerType.OxeyeDaisy, new Vector3(3.7f, 0.4f, 0));
+        AddNewFlower(mFlowerTemplates[0], 0);
+        AddNewFlower(mFlowerTemplates[1], 2);
+        AddNewFlower(mFlowerTemplates[2], 3.7f);
+
+        GetAllFlowerSpots();
     }
 
     private void Update()
@@ -92,51 +92,44 @@ public class Garden : MonoBehaviour
 	}
 
 
-	// 세이브/로드 관련
+    // 세이브/로드 관련
+    [Serializable]
 	public class CSaveData
 	{
-        public List<string> mFlowers = new List<string>();
-		public List<FlowerSpot.CSaveData> mFlowerSpotList = new List<FlowerSpot.CSaveData>();
+        public List<Flower.CSaveData> Flowers = new List<Flower.CSaveData>();
 	}
 
 	public void ExportTo(CSaveData savedata)
 	{
-        /*savedata.mFlowers.Clear();
-        for(int i=0; i<flo)
+        savedata.Flowers.Clear();
 
-		savedata.mFlowerSpotList.Clear();
-
-		for(int i=0; i<mFlowerSpotList.Count; ++i)
-		{
-			FlowerSpot.CSaveData spotdata = new FlowerSpot.CSaveData();
-			mFlowerSpotList[i].ExportTo(spotdata);
-			savedata.mFlowerSpotList.Add(spotdata);
-		}*/
+        for(int i=0; i<mFlowers.Count; ++i)
+        {
+            var flowersavedata = new Flower.CSaveData();
+            mFlowers[i].ExportTo(flowersavedata);
+            savedata.Flowers.Add(flowersavedata);
+        }
 	}
 
 	public void ImportFrom(CSaveData savedata)
 	{
-		mFlowerSpotList.Clear();
+		mFlowers.Clear();
 
-		/*for(int i=0; i<savedata.mFlowerSpotList.Count; ++i)
-		{
-            AddNewFlower()
-			var comb = AddNewHoneycomb(Vector3.zero);
-			comb.ImportFrom(savedata.mHoneycombList[i]);
-		}
+        for(int i=0; i<savedata.Flowers.Count; ++i)
+        {
+            var flowersavedata = savedata.Flowers[i];
 
-		if(savedata.mMaxItemAmounts == null)
-			mMaxItemAmounts = null;
-		else
-		{
-			if((mMaxItemAmounts == null) || (mMaxItemAmounts.Length != savedata.mMaxItemAmounts.Length))
-				mMaxItemAmounts = new GameResAmount[savedata.mMaxItemAmounts.Length];
-		}
+            foreach(var templ in mFlowerTemplates)
+            {
+                if (templ.FlowerName == flowersavedata.FlowerName)
+                {
+                    var flower = AddNewFlower(templ, flowersavedata.XPosition);
+                    flower.ImportFrom(flowersavedata);
+                    break;
+                }
+            }
+        }
 
-		for(int i = 0;i<savedata.mMaxItemAmounts.Length;++i)
-			mMaxItemAmounts[i] = savedata.mMaxItemAmounts[i];
-        */
-
-        InitDefault();  // 임시
+        GetAllFlowerSpots();
 	}
 }

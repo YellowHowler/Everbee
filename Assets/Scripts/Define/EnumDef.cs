@@ -27,15 +27,6 @@ namespace EnumDef
     }
 
     [Serializable]
-    public enum FlowerType
-    {
-        Cosmos = 1,
-        OxeyeDaisy,
-        Lavender,
-        CaliforniaPoppy
-    }
-
-    [Serializable]
     public enum BeeStage
     {
         Egg = 0,

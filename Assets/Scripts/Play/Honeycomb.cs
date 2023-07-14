@@ -500,5 +500,6 @@ public class Honeycomb : MonoBehaviour
         kStructureType = savedata.kStructureType;
 
         SetStructure(kStructureType, true);
+        UpdateType(type);
     }
 }
