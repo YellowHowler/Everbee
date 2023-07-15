@@ -72,6 +72,9 @@ MonoBehaviour:
   kDryerSprites:
   - {fileID: 21300000, guid: df0a30c74f2a24e4aaa529e8a5700fb8, type: 3}
   - {fileID: 21300000, guid: bb86e664fac4a4b2faea9ae16bb9ca1d, type: 3}
+  kCoalgulateSprites:
+  - {fileID: 21300000, guid: e20db33c8ee0c644392285f086bcf835, type: 3}
+  - {fileID: 21300000, guid: 468f1900319b64040adf4d649071152b, type: 3}
 --- !u!60 &1434350828547772509
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -944,7 +947,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2377433211401587110}
         m_TargetAssemblyTypeName: Honeycomb, Assembly-CSharp
-        m_MethodName: NectarToHoney
+        m_MethodName: ConvertResource
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -38,6 +38,7 @@ public class Honeycomb : MonoBehaviour
     private bool mIsConverting = false;
 
     public Sprite[] kDryerSprites;
+    public Sprite[] kCoalgulateSprites;
 
     private void Start()
     {
@@ -312,15 +313,35 @@ public class Honeycomb : MonoBehaviour
 
         if(mIsOpen)
         {
-            kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[1];
-            kCanvas.SetActive(true);
+            switch(kStructureType)
+            {
+                case StructureType.Dryer:
+					kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[1];
+                    break;
+
+				case StructureType.Coalgulate:
+					kCoalgulateObj.GetComponent<SpriteRenderer>().sprite = kCoalgulateSprites[1];
+					break;
+			}
+
+			kCanvas.SetActive(true);
             kButtonPanel.SetActive(true);
 
             kTimerPanel.SetActive(false);
         }
         else
         {
-            kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[0];
+			switch(kStructureType)
+			{
+				case StructureType.Dryer:
+					kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[0];
+					break;
+
+				case StructureType.Coalgulate:
+					kCoalgulateObj.GetComponent<SpriteRenderer>().sprite = kCoalgulateSprites[0];
+					break;
+			}
+
             kButtonPanel.SetActive(false);
         }
     }
@@ -377,7 +398,8 @@ public class Honeycomb : MonoBehaviour
 
                     break;
                 case StructureType.Dryer:
-                    if(mIsConverting == true)
+				case StructureType.Coalgulate:
+					if(mIsConverting == true)
                     {
                         return;
                     }
@@ -439,27 +461,51 @@ public class Honeycomb : MonoBehaviour
         }
     }
 
-    public void NectarToHoney()
+    public void ConvertResource()
     {
-        if(type == GameResType.Nectar && amount.amount > 0)
+        if (kStructureType == StructureType.Dryer)
         {
-            kButtonPanel.SetActive(false);
-            kTimerPanel.SetActive(true);
-            ToggleDoor();
+            if(type == GameResType.Nectar && amount.amount > 0)
+            {
+                kButtonPanel.SetActive(false);
+                kTimerPanel.SetActive(true);
+                ToggleDoor();
 
-            mIsConverting = true;
+                mIsConverting = true;
 
-            StartCoroutine(ConvertCor(10, GameResType.Honey));
+                StartCoroutine(ConvertCor(10, GameResType.Honey));
+            }
+            else if(amount.amount == 0)
+            {
+                Mng.canvas.DisplayWarning("Honeycomb is empty");
+            }
+            else if(type != GameResType.Nectar)
+            {
+                Mng.canvas.DisplayWarning("Dryer can only convert nectar");
+            }
         }
-        else if(amount.amount == 0)
+        else if (kStructureType == StructureType.Coalgulate)
         {
-            Mng.canvas.DisplayWarning("Honeycomb is empty");
-        }
-        else if(type != GameResType.Nectar)
-        {
-            Mng.canvas.DisplayWarning("Dryer can only convert nectar");
-        }
-    }
+			if(type == GameResType.Honey && amount.amount > 0)
+			{
+				kButtonPanel.SetActive(false);
+				kTimerPanel.SetActive(true);
+				ToggleDoor();
+
+				mIsConverting = true;
+
+				StartCoroutine(ConvertCor(10, GameResType.Wax));
+			}
+			else if(amount.amount == 0)
+			{
+				Mng.canvas.DisplayWarning("Honeycomb is empty");
+			}
+			else if(type != GameResType.Honey)
+			{
+				Mng.canvas.DisplayWarning("Coalgulate can only convert honey");
+			}
+		}
+	}
 
     private IEnumerator ConvertCor(int _time, GameResType _finType)
     {
