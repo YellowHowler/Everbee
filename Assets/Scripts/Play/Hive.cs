@@ -348,8 +348,16 @@ public class Hive : MonoBehaviour
                     case StructureType.Dryer:
                         hoverEnabled = (found.kStructureType == StructureType.Storage);
                         break;
-                }
-            }
+
+					case StructureType.Coalgulate:
+						hoverEnabled = (found.kStructureType == StructureType.Storage);
+						break;
+
+					case StructureType.Hatchtery:
+						hoverEnabled = (found.kStructureType == StructureType.None);
+						break;
+				}
+			}
 
 			kHoverObjSpriteRenderer.color = hoverEnabled ? Color.white : new Color(0.5f,0.5f,0.5f,0.5f);
 

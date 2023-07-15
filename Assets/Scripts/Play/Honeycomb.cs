@@ -26,6 +26,7 @@ public class Honeycomb : MonoBehaviour
     public GameObject kStorageObj;
     public GameObject kDryerObj;
     public GameObject kHatchteryObj;
+    public GameObject kCoalgulateObj;
     public GameObject kHoverObj;
 
     public GameObject kCanvas;
@@ -129,7 +130,16 @@ public class Honeycomb : MonoBehaviour
                 kStorageObj.SetActive(true);
                 kDryerObj.SetActive(true);
                 break;
-            case StructureType.Hatchtery:
+			case StructureType.Coalgulate:
+				if(!forced && kStructureType != StructureType.Storage)
+				{
+					return false;
+				}
+				SetAllChildrenActive(false);
+				kStorageObj.SetActive(true);
+				kCoalgulateObj.SetActive(true);
+				break;
+			case StructureType.Hatchtery:
                 SetAllChildrenActive(false);
                 kHatchteryObj.SetActive(true);
                 break;
