@@ -17,6 +17,11 @@ namespace StructDef
             amount = _amount;
             unit = _unit;
         }
+
+        override public string ToString()
+        {
+            return string.Format("{0} {1}", unit, amount);
+        }
     }
 
     [Serializable]

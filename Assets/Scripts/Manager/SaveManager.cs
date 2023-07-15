@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ public class SaveManager: MonoBehaviour
 
 	public Hive.CSaveData HiveSaveData = new Hive.CSaveData();
 	public Garden.CSaveData GardenSaveData = new Garden.CSaveData();
+	public Bees.CSaveData BeesSaveData = new Bees.CSaveData();
 
 	private string FileName = "Save.dat";
 	private string GetFullPath()
@@ -40,6 +42,7 @@ public class SaveManager: MonoBehaviour
 	{
 		PlayManager.Instance.kHive.ExportTo(HiveSaveData);
 		PlayManager.Instance.kGarden.ExportTo(GardenSaveData);
+		PlayManager.Instance.kBees.ExportTo(BeesSaveData);
 
 		string json = JsonUtility.ToJson(this);
 
@@ -62,6 +65,7 @@ public class SaveManager: MonoBehaviour
 
 			PlayManager.Instance.kHive.ImportFrom(HiveSaveData);
 			PlayManager.Instance.kGarden.ImportFrom(GardenSaveData);
+			PlayManager.Instance.kBees.ImportFrom(BeesSaveData);
 		}
 		catch (System.Exception ex)
 		{

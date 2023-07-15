@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ using TMPro;
 
 public class Bee : MonoBehaviour
 {
+    public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
     [HideInInspector] public int kLevel;
     [HideInInspector] public float kExp = 0; // 0~1 
 
@@ -573,10 +575,64 @@ public class Bee : MonoBehaviour
 
         if(mCanWork == false)
         {
-            yield return new WaitForSeconds(Random.Range(3, 6));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(3, 6));
         }
 
         mCanWork = true;
         StartCoroutine(CallDoJob());
     }
+
+
+	// 세이브/로드 관련
+	[Serializable]
+	public class CSaveData
+	{
+        public Vector3 Pos;
+		public int kLevel;
+		public float kExp = 0; // 0~1 
+		public BeeStage mCurStage;
+
+		public GameResAmount mHoneyFeedAmount = new GameResAmount(0.8f,GameResUnit.Microgram);
+		public GameResAmount mPollenFeedAmount = new GameResAmount(0.8f,GameResUnit.Microgram);
+
+		public GameResAmount mCurrentPollen = new GameResAmount(0,GameResUnit.Microgram);
+		public GameResAmount mCurrentNectar = new GameResAmount(0,GameResUnit.Microgram);
+		public GameResAmount mCurrentHoney = new GameResAmount(0,GameResUnit.Microgram);
+		public GameResAmount mCurrentWax = new GameResAmount(0,GameResUnit.Microgram);
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+        savedata.Pos = pos;
+		savedata.kLevel = kLevel;
+		savedata.kExp = kExp;
+        savedata.mCurStage = mCurStage;
+
+		savedata.mHoneyFeedAmount = mHoneyFeedAmount;
+		savedata.mPollenFeedAmount = mPollenFeedAmount;
+
+		savedata.mCurrentPollen = mCurrentPollen;
+		savedata.mCurrentNectar = mCurrentNectar;
+		savedata.mCurrentHoney = mCurrentHoney;
+		savedata.mCurrentWax = mCurrentWax;
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+        pos = savedata.Pos;
+		kLevel = savedata.kLevel;
+		kExp = savedata.kExp;
+		mCurStage = savedata.mCurStage;
+
+		mHoneyFeedAmount = savedata.mHoneyFeedAmount;
+		mPollenFeedAmount = savedata.mPollenFeedAmount;
+
+		mCurrentPollen = savedata.mCurrentPollen;
+		mCurrentNectar = savedata.mCurrentNectar;
+		mCurrentHoney = savedata.mCurrentHoney;
+		mCurrentWax = savedata.mCurrentWax;
+
+		UpdateLevel(kLevel);
+		UpdateStage(mCurStage);
+	}
 }

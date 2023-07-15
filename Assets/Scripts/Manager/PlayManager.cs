@@ -63,12 +63,14 @@ public class PlayManager : MonoBehaviour
             {
                 kHive.InitDefault();
                 kGarden.InitDefault();
+                kBees.InitDefault();
             }
         }
         else
         {
             kHive.InitDefault();
             kGarden.InitDefault();
+            kBees.InitDefault();
         }
     }
 

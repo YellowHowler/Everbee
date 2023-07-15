@@ -9,6 +9,7 @@ public class Flower:MonoBehaviour
 	public FlowerSpot[] m_FlowerSpots;
 	public float XPosition { get { return transform.localPosition.x; } set { transform.localPosition = new Vector3(value, 0, 0); } }
 
+
 	// 세이브/로드 관련
 	[Serializable]
 	public class CSaveData

@@ -1,5 +1,6 @@
 using EnumDef;
 using StructDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -13,6 +14,7 @@ public class QueenBee : MonoBehaviour
 
     private Animator mAnimator;
 
+    public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
     [HideInInspector] public GameResAmount mCurHoney = new GameResAmount(0f, GameResUnit.Microgram);
     [HideInInspector] public GameResAmount mCurPollen = new GameResAmount(0f, GameResUnit.Microgram);
 
@@ -33,7 +35,7 @@ public class QueenBee : MonoBehaviour
 
         //kSlider.gameObject.SetActive(false);
 
-        // DoJob ÀÌ Start º¸´Ù ¸ÕÀú ºÒ¸®±âµµ ÇÏ±â ¶§¹®¿¡ Start ¿¡¼­ mFirst = true ¸¦ ÇØÁÖ¸é ¾ÈµÈ´Ù.
+        // DoJob ì´ Start ë³´ë‹¤ ë¨¼ì € ë¶ˆë¦¬ê¸°ë„ í•˜ê¸° ë•Œë¬¸ì— Start ì—ì„œ mFirst = true ë¥¼ í•´ì£¼ë©´ ì•ˆëœë‹¤.
         
         StartCoroutine(Wander());
     }
@@ -107,7 +109,7 @@ public class QueenBee : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(Random.Range(3f, 7f));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 7f));
         }
     }
 
@@ -155,4 +157,31 @@ public class QueenBee : MonoBehaviour
         mCurState = QueenState.Wander;
         StartCoroutine(Wander());
     }
+
+
+	// ì„¸ì´ë¸Œ/ë¡œë“œ ê´€ë ¨
+	[Serializable]
+	public class CSaveData
+	{
+        public Vector3 Pos;
+		public GameResAmount mCurHoney = new GameResAmount(0f,GameResUnit.Microgram);
+		public GameResAmount mCurPollen = new GameResAmount(0f,GameResUnit.Microgram);
+		public QueenState mCurState = QueenState.Wander;
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+        savedata.Pos = pos;
+		savedata.mCurHoney = mCurHoney;
+		savedata.mCurPollen = mCurPollen;
+		savedata.mCurState = mCurState;
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+        pos = savedata.Pos;
+		mCurHoney = savedata.mCurHoney;
+		mCurPollen = savedata.mCurPollen;
+		mCurState = savedata.mCurState;
+	}
 }
