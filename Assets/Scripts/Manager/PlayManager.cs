@@ -99,7 +99,7 @@ public class PlayManager : MonoBehaviour
 
                 if (!EscapeKeyDispatcher.Consumed)
                 {
-                    MainCanvas.Instance.kDialoguePopup.Show("Do you want to quit?", LHS.CLHSDialogUI.EButtonType.YESNO, (result) => 
+                    MainCanvas.Instance.kDialoguePopup.Show("Do you want to quit?\r\n(Your progress will be saved) ", LHS.CLHSDialogUI.EButtonType.YESNO, (result) => 
                     {
                         if (result == LHS.CLHSDialogUI.EDialogResult.YES)
                         {

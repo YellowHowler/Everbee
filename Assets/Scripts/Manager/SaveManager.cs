@@ -25,6 +25,16 @@ public class SaveManager: MonoBehaviour
 	public Garden.CSaveData GardenSaveData = new Garden.CSaveData();
 
 	private string FileName = "Save.dat";
+	private string GetFullPath()
+	{
+		return string.Format("{0}\\{1}", Application.persistentDataPath, FileName);
+	}
+
+	public bool IsThereSaveData()
+	{
+		string path = GetFullPath();
+		return File.Exists(path);
+	}
 
 	public bool Save()
 	{
@@ -33,7 +43,7 @@ public class SaveManager: MonoBehaviour
 
 		string json = JsonUtility.ToJson(this);
 
-		string path = string.Format("{0}\\{1}", Application.persistentDataPath, FileName);
+		string path = GetFullPath();
 		File.WriteAllText(path, json);
 
 		return true;
@@ -41,7 +51,7 @@ public class SaveManager: MonoBehaviour
 
 	public bool Load()
 	{
-		string path = string.Format("{0}\\{1}", Application.persistentDataPath, FileName);
+		string path = GetFullPath();
 		if (!File.Exists(path))
 			return false;
 
