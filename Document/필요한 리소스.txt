@@ -1,4 +1,10 @@
 -
+Wax 타일 리소스
+Coalgulate, Hatchtery 스프라이트
+
+Nector/Honey/Pollun/Wax 타일 리소스가 서로 구분이 잘 안간다.(현재는 Honey 만 약간 다른 색깔인 상태)
+
+
 UI 리소스 - 게임화면 타이틀화면, 게임오버화면, 게임클리어화면, 셋팅화면
 
 UI 사운드

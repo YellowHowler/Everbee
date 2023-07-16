@@ -61,8 +61,8 @@ public class PlayManager : MonoBehaviour
 		kHive.InitDefault();
 		kGarden.InitDefault();
 		kBees.InitDefault();
-		MainCanvas.Instance.kInven.Init();
 		kInventory.Init(MainCanvas.Instance.kInven.kItemImages.Length);
+		MainCanvas.Instance.kInven.Init();
 	}
 	private void Start()
     {

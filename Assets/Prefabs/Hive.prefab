@@ -85,7 +85,16 @@ MonoBehaviour:
   - {fileID: -8939641801828256496, guid: f6f411957dfd04ffe889f72cffa1487d, type: 3}
   - {fileID: -5650252858546511152, guid: 90eb397eff7544fb4b711645bee25f0c, type: 3}
   - {fileID: 583425901705128420, guid: 7734974f67a9c4374a1986bde239bcde, type: 3}
-  kHoneycombWaxSprites: []
+  kHoneycombWaxSprites:
+  - {fileID: 21300000, guid: 995db0636918fbd418d1c1f6286b1a8f, type: 3}
+  - {fileID: 21300000, guid: acbe63987227b8d4da45871be7755db3, type: 3}
+  - {fileID: 21300000, guid: bb54f5b02dfcf4043bca6f8b4eaff67b, type: 3}
+  - {fileID: 21300000, guid: a1de5df150dd8b040b6e6074b1dc22a2, type: 3}
+  - {fileID: 21300000, guid: ffd24d1166a1ca44f9d2cd3382b7df0d, type: 3}
+  - {fileID: 21300000, guid: 31f1e225c7ab66846ae68c2a16c9aaa7, type: 3}
+  - {fileID: 21300000, guid: 9172d3e473beb4e4ea409c113e6d3bf7, type: 3}
+  - {fileID: 21300000, guid: f1c1a1deaa3c2c34eb5a036ea85fa067, type: 3}
+  - {fileID: 21300000, guid: 099a9e781bc46844e87b869544d95764, type: 3}
   kBuildSprites:
   - {fileID: -4867428694687306895, guid: 97722c23100d142dca0a16a2b00dd14e, type: 3}
   - {fileID: 21300000, guid: df0a30c74f2a24e4aaa529e8a5700fb8, type: 3}
