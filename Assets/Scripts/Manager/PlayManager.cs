@@ -72,6 +72,8 @@ public class PlayManager : MonoBehaviour
             kGarden.InitDefault();
             kBees.InitDefault();
         }
+
+        kHive.CheckAllResources();
     }
 
     public void GameStart()
@@ -143,16 +145,30 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    public void ResetResourceOfStorage(GameResType _type)
+    {
+        if (_type == GameResType.Empty)
+            return;
+
+        kStorageResourceAmounts[(int)_type] = new GameResAmount(0, kStorageResourceAmounts[(int)_type].unit);
+    }
+
     public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
     {
-        kStorageResourceAmounts[(int)_type] = AddResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
+		if(_type == GameResType.Empty)
+			return;
+
+		kStorageResourceAmounts[(int)_type] = AddResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
 
         kMainCanvas.kResource.UpdateText();
     }
 
     public void SubtractResourceFromStorage(GameResType _type, GameResAmount _amount)
     {
-        kStorageResourceAmounts[(int)_type] = SubtractResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
+		if(_type == GameResType.Empty)
+			return;
+
+		kStorageResourceAmounts[(int)_type] = SubtractResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);
 
         kMainCanvas.kResource.UpdateText();
     }

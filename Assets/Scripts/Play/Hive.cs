@@ -81,6 +81,15 @@ public class Hive : MonoBehaviour
 		return true;
 	}
 
+	public void CheckAllResources()
+	{
+        for(int i=0; i<PlayManager.Instance.kStorageResourceAmounts.Length; ++i)
+            PlayManager.Instance.ResetResourceOfStorage((GameResType)i);
+
+        foreach(var comb in mHoneycombList)
+            PlayManager.Instance.AddResourceToStorage(comb.type, comb.amount);
+	}
+
 	/// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
 	public Honeycomb GetUsableHoneycomb(GameResType _type)
     {

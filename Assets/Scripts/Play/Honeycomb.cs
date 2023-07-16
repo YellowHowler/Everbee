@@ -517,7 +517,12 @@ public class Honeycomb : MonoBehaviour
             yield return sec;
         }
 
+        kTimerPanel.gameObject.SetActive(false);
+
         UpdateType(_finType);
+
+        Mng.play.kHive.CheckAllResources();
+
         mIsConverting = false;
     }   
 

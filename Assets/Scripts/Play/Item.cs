@@ -223,15 +223,17 @@ public class Item : MonoBehaviour
                 }
                 UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
                 break;
+
             case StructureType.Dryer:
-                if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
+			case StructureType.Coalgulate:
+				if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
                 {
                     return;
                 }
                 UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
                 break;
-        }
-    }
+		}
+	}
 
     private void OnMouseDrag()
     {
