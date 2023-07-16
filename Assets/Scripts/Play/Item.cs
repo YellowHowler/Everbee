@@ -1,5 +1,6 @@
 using EnumDef;
 using StructDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -14,13 +15,9 @@ public class Item : MonoBehaviour
 
     public Rigidbody2D rb;
 
-    public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
     public GameResType type = GameResType.Honey;
-
-    public GameResAmount kMaxNectarAmount;
-    public GameResAmount kMaxPollenAmount;
-    public GameResAmount kMaxHoneyAmount;
-    public GameResAmount kMaxWaxAmount;
+    public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
+    public float XPosition { get { return transform.localPosition.x; } set { Vector3 pos = transform.localPosition; pos.x = value; transform.localPosition = pos; } }
 
     private bool mIsDropped = false;
 
@@ -33,11 +30,6 @@ public class Item : MonoBehaviour
 
     private void Awake()
     {
-        kMaxNectarAmount = Mng.play.kHive.mMaxItemAmounts[1];
-        kMaxPollenAmount = Mng.play.kHive.mMaxItemAmounts[2];
-        kMaxHoneyAmount = Mng.play.kHive.mMaxItemAmounts[0];
-        kMaxWaxAmount = Mng.play.kHive.mMaxItemAmounts[3];
-
         mTouchingObjs = new List<GameObject>();
     }
 
@@ -51,32 +43,37 @@ public class Item : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
         mIsDropped = true;
 
-        StartCoroutine(DestroyCor());
+        //StartCoroutine(DestroyCor());
     }
 
-    private IEnumerator DestroyCor()
+    /*private IEnumerator DestroyCor()
     {
         yield return new WaitForSeconds(300);
         Destroy(gameObject);
-    }
+    }*/
 
-    public GameResAmount GetMaxAmount(GameResType _type)
+	private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
+	private GameResAmount GetMaxNectarAmount() { return Mng.play.kHive.mMaxItemAmounts[1]; }
+	private GameResAmount GetMaxPollenAmount() { return Mng.play.kHive.mMaxItemAmounts[2]; }
+	private GameResAmount GetMaxWaxAmount() { return Mng.play.kHive.mMaxItemAmounts[3]; }
+
+	public GameResAmount GetMaxAmount(GameResType _type)
     {
         GameResAmount maxAmount = new GameResAmount(0, GameResUnit.Microgram);
 
         switch(_type)
         {
             case GameResType.Nectar:
-                maxAmount = kMaxNectarAmount;
+                maxAmount = GetMaxNectarAmount();
                 break;
             case GameResType.Pollen:
-                maxAmount = kMaxPollenAmount;
+                maxAmount = GetMaxPollenAmount();
                 break;
             case GameResType.Honey:
-                maxAmount = kMaxHoneyAmount;
+                maxAmount = GetMaxHoneyAmount();
                 break;
             case GameResType.Wax:
-                maxAmount = kMaxWaxAmount;
+                maxAmount = GetMaxWaxAmount();
                 break;
         }
 
@@ -92,7 +89,7 @@ public class Item : MonoBehaviour
 
         if(amount.amount == 0)
         {
-            Destroy(gameObject);
+            Mng.play.kInventory.RemoveItem(this);
         }
         
         GameResAmount maxAmount = GetMaxAmount(type);
@@ -162,7 +159,7 @@ public class Item : MonoBehaviour
         InventoryBarPanel inven = Mng.canvas.kInven;
         if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
         {
-            GameResAmount sumAmount = Mng.play.AddResourceAmounts(inven.mItemAmounts[inven.mHoveredNum], amount);
+            GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[inven.mHoveredNum].amount, amount);
             if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
             {
                 inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
@@ -187,7 +184,7 @@ public class Item : MonoBehaviour
                     if(type == GameResType.Pollen || type == GameResType.Honey)
                     {
                         mTouchingObj.GetComponent<QueenBee>().AddResource(type, amount);
-                        Destroy(gameObject);
+                        Mng.play.kInventory.RemoveItem(this);
                     }
                     break;
                 case "Bee":
@@ -280,7 +277,7 @@ public class Item : MonoBehaviour
             }
             
             col.gameObject.SetActive(false);
-            Destroy(col.gameObject);
+            Mng.play.kInventory.RemoveItem(this);
         }
     }
 
@@ -303,4 +300,30 @@ public class Item : MonoBehaviour
 
         mTouchingObjs.Remove(col.gameObject);
     }
+
+
+	// 세이브/로드 관련
+	[Serializable]
+	public class CSaveData
+	{
+		public float XPosition;
+		public GameResType type = GameResType.Honey;
+		public GameResAmount amount = new GameResAmount(0f,GameResUnit.Microgram);
+	}
+
+	public void ExportTo(CSaveData savedata)
+	{
+		savedata.XPosition = XPosition;
+        savedata.type = type;
+		savedata.amount = amount;
+	}
+
+	public void ImportFrom(CSaveData savedata)
+	{
+		XPosition = savedata.XPosition;
+		type = savedata.type;
+		amount = savedata.amount;
+
+        UpdateAmount(type, amount);
+	}
 }

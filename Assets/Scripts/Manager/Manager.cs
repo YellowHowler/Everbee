@@ -21,9 +21,11 @@ public class Manager : MonoBehaviour
     public Hive kHive;
     [Header("정원 매니저")]
     public Garden kGarden;
+	[Header("인벤토리 매니저")]
+	public Inventory kInventory;
 
 
-    private void Awake()
+	private void Awake()
     {
         Instance = this;
     }
@@ -62,7 +64,11 @@ public class Manager : MonoBehaviour
         while (Hive.Instance == null)
             yield return null;
 
-        go = Instantiate(kPlayManager.gameObject);
+		go = Instantiate(kInventory.gameObject);
+		go.transform.parent = kStage;
+		go.name = "Inventory";
+
+		go = Instantiate(kPlayManager.gameObject);
         go.transform.parent = transform;
         go.name = "PlayManager";
 
@@ -72,5 +78,5 @@ public class Manager : MonoBehaviour
         go = Instantiate(kBees.gameObject);
         go.transform.parent = kStage;
         go.name = "Bees";
-    }
+	}
 }

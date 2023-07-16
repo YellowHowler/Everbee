@@ -416,11 +416,14 @@ public class Honeycomb : MonoBehaviour
             return;
         }
         
-        Item item = Instantiate(Mng.play.kHive.kItemObj, gameObject.transform.position, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-        UpdateAmount(item.UpdateAmount(type, amount));
+        Item item = Mng.play.kInventory.CreateItem(type, amount, gameObject.transform.position);
+        if (item != null)
+        {
+            UpdateAmount(item.UpdateAmount(type, amount));
 
-        Mng.play.SubtractResourceFromStorage(item.type, item.amount);
-        print(item.amount.amount);
+            Mng.play.SubtractResourceFromStorage(item.type, item.amount);
+            print(item.amount.amount);
+        }
     }
 
     private void OnMouseUp()

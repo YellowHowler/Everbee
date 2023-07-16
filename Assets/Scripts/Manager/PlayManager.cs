@@ -16,6 +16,7 @@ public class PlayManager : MonoBehaviour
     public Garden kGarden;
     public MainCanvas kMainCanvas;
     public Bees kBees;
+    public Inventory kInventory;
 
     public PlayerCamera kCamera;
 
@@ -35,6 +36,7 @@ public class PlayManager : MonoBehaviour
         kHive = GameObject.Find("Stage/Hive").GetComponent<Hive>();
         kGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
         kMainCanvas = GameObject.Find("Canvas").GetComponent<MainCanvas>();
+        kInventory = GameObject.Find("Inventory").GetComponent<Inventory>();
 
         kCamera = Camera.main.GetComponent<PlayerCamera>();
 
@@ -54,26 +56,26 @@ public class PlayManager : MonoBehaviour
 		Instance = null;
 	}
 
+    private void InitDefault()
+    {
+		kHive.InitDefault();
+		kGarden.InitDefault();
+		kBees.InitDefault();
+		MainCanvas.Instance.kInven.Init();
+		kInventory.Init(MainCanvas.Instance.kInven.kItemImages.Length);
+	}
 	private void Start()
     {
         if (MustLoadSaveData)
         {
             MustLoadSaveData = false;
             if (!SaveManager.Instance.Load())
-            {
-                kHive.InitDefault();
-                kGarden.InitDefault();
-                kBees.InitDefault();
-            }
+                InitDefault();
         }
         else
-        {
-            kHive.InitDefault();
-            kGarden.InitDefault();
-            kBees.InitDefault();
-        }
+            InitDefault();
 
-        kHive.CheckAllResources();
+		kHive.CheckAllResources();
     }
 
     public void GameStart()

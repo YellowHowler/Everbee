@@ -203,7 +203,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 0
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1082254198}
   m_FillRect: {fileID: 1082254197}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
@@ -2224,7 +2224,7 @@ Transform:
   m_Children:
   - {fileID: 1040875180}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &300669141
 GameObject:
@@ -3709,7 +3709,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 0
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1367268124}
   m_FillRect: {fileID: 1367268123}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
@@ -4873,7 +4873,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 0
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 39639805}
   m_FillRect: {fileID: 39639804}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
@@ -8784,7 +8784,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1313468874
 GameObject:
@@ -9170,6 +9170,7 @@ MonoBehaviour:
   kBees: {fileID: 6787906963824755689, guid: 77049f64666686f438063384f1f27884, type: 3}
   kHive: {fileID: 2762676342460929572, guid: 14562ad261e953748aaea1a6587e028d, type: 3}
   kGarden: {fileID: 3359108210065714086, guid: c5b41d913d1a4d44a8e83aea8f0c07c5, type: 3}
+  kInventory: {fileID: 3479897190156735469, guid: f15b09b3927ab4948b14cb96668d2de0, type: 3}
 --- !u!1 &1346252973
 GameObject:
   m_ObjectHideFlags: 0
@@ -13708,7 +13709,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 0
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 2052727876}
   m_FillRect: {fileID: 2052727875}
   m_HandleRect: {fileID: 0}
   m_Direction: 0
@@ -14474,50 +14475,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2122762733}
   m_CullTransparentMesh: 1
---- !u!1 &2127243778
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2127243780}
-  - component: {fileID: 2127243779}
-  m_Layer: 0
-  m_Name: Easytouch
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2127243779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127243778}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 42241010c6f9ddc46b78abdc21d505c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &2127243780
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2127243778}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2146344112
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using EnumDef;
 using StructDef;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,26 +10,18 @@ using TMPro;
 
 public class InventoryBarPanel : MonoBehaviour
 {
-    int mSlotCount = 3;
-
     public Image[] kItemImages;
     public TMP_Text[] kItemTexts;
     public GameObject[] kSelectedObjs;
 
     public Sprite[] kResourceSprites;
 
-    [HideInInspector] public GameResAmount[] mItemAmounts;
-    [HideInInspector] public GameResType[] mItemTypes;
-
     private int mSelectedNum = 1;
 
     [HideInInspector] public int mHoveredNum = -1;
 
-    void Start()
+    public void Init()
     {
-        mItemAmounts = new GameResAmount[mSlotCount];
-        mItemTypes = new GameResType[mSlotCount];
-
         SetSelected(1);
         UpdateSlots();
     }
@@ -62,11 +55,14 @@ public class InventoryBarPanel : MonoBehaviour
 
     public bool CheckIfSlotUsable(int _num, GameResType _type)
     {
-        if(mItemTypes[_num] == GameResType.Empty || mItemAmounts[_num].amount == 0)
+        var inventory = Mng.play.kInventory;
+        var slot = inventory.mItemSlots[_num];
+
+        if(slot.type == GameResType.Empty || slot.amount.amount == 0)
         {
             return true;
         }
-        if(mItemTypes[_num] == _type && Mng.play.CompareResourceAmounts(mItemAmounts[_num], GetMaxAmount(_type)) == true)
+        if(slot.type == _type && Mng.play.CompareResourceAmounts(slot.amount, GetMaxAmount(_type)) == true)
         {
             return true;
         }
@@ -74,11 +70,15 @@ public class InventoryBarPanel : MonoBehaviour
         return false;
     }
 
-    private void UpdateSlots()
+    public void UpdateSlots()
     {
-        for(int i = 0; i < mSlotCount; i++)
+        var inventory = Mng.play.kInventory;
+
+        for(int i = 0; i < kItemImages.Length; i++)
         {
-            if(mItemAmounts[i].amount == 0) 
+            var slot = inventory.mItemSlots[i];
+
+            if(slot.amount.amount == 0) 
             {
                 kItemImages[i].gameObject.SetActive(false);
                 kItemTexts[i].gameObject.SetActive(false);
@@ -88,16 +88,19 @@ public class InventoryBarPanel : MonoBehaviour
                 kItemImages[i].gameObject.SetActive(true);
                 kItemTexts[i].gameObject.SetActive(true);
 
-                kItemImages[i].sprite = kResourceSprites[(int)mItemTypes[i]];
-                kItemTexts[i].text = Mng.canvas.GetAmountText(mItemAmounts[i]);
+                kItemImages[i].sprite = kResourceSprites[(int)slot.type];
+                kItemTexts[i].text = Mng.canvas.GetAmountText(slot.amount);
             }
         }
     }
 
     public void UpdateSlotAmount(int _num, GameResType _type, GameResAmount _amount)
     {
-        mItemAmounts[_num] = _amount;
-        mItemTypes[_num] = _type;
+		var inventory = Mng.play.kInventory;
+		var slot = inventory.mItemSlots[_num];
+
+		slot.type = _type;
+		slot.amount = _amount;
 
         UpdateSlots();
     }
@@ -106,7 +109,7 @@ public class InventoryBarPanel : MonoBehaviour
     {
         mSelectedNum = _num;
 
-        for(int i = 0; i < mSlotCount; i++)
+        for(int i = 0; i < kSelectedObjs.Length; i++)
         {
             kSelectedObjs[i].SetActive(false);
         }
@@ -131,7 +134,10 @@ public class InventoryBarPanel : MonoBehaviour
 
     public void DropItem(int _num)
     {
-        if(mSelectedNum != _num || (mItemAmounts[_num].amount == 0 || mItemTypes[_num] == GameResType.Empty))
+		var inventory = Mng.play.kInventory;
+		var slot = inventory.mItemSlots[_num];
+
+		if(mSelectedNum != _num || (slot.amount.amount == 0 || slot.type == GameResType.Empty))
         {
             return;
         }
@@ -140,9 +146,9 @@ public class InventoryBarPanel : MonoBehaviour
         spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
 
         Item item = Instantiate(Mng.play.kHive.kItemObj, spawnPos, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-        item.UpdateAmount(mItemTypes[_num], mItemAmounts[_num]);
-        mItemTypes[_num] = GameResType.Empty;
-        mItemAmounts[_num] = new GameResAmount(0f, GameResUnit.Microgram);
+        item.UpdateAmount(slot.type, slot.amount);
+        slot.type = GameResType.Empty;
+        slot.amount = new GameResAmount(0f, GameResUnit.Microgram);
 
         UpdateSlots();
     }
