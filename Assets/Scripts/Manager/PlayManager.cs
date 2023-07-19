@@ -75,7 +75,7 @@ public class PlayManager : MonoBehaviour
         else
             InitDefault();
 
-		kHive.CheckAllResources();
+		kHive.RecountAllResources();
     }
 
     public void GameStart()

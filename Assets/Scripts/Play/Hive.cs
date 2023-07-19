@@ -50,9 +50,6 @@ public class Hive : MonoBehaviour
     [HideInInspector] public GameResAmount mQueenHoneyNeed;
     [HideInInspector] public GameResAmount mQueenPollenNeed;
 
-    [HideInInspector] public bool mGuidingQueen  = false;
-    [HideInInspector] public QueenBee mTargetQueen  = null;
-
 
 
 	private void Awake()
@@ -81,8 +78,9 @@ public class Hive : MonoBehaviour
 		return true;
 	}
 
-	public void CheckAllResources()
+	public void RecountAllResources()
 	{
+        // Hive 안에 있는 재료들 양을 전부 다시 계산한다.
         for(int i=0; i<PlayManager.Instance.kStorageResourceAmounts.Length; ++i)
             PlayManager.Instance.ResetResourceOfStorage((GameResType)i);
 
@@ -91,26 +89,54 @@ public class Hive : MonoBehaviour
 	}
 
 	/// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
-	public Honeycomb GetUsableHoneycomb(GameResType _type)
+	public Honeycomb GetUsableStorage(GameResType _type)
     {
-        foreach (Honeycomb h in mHoneycombList)
+        // 랜덤으로 고른다.
+        int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+        for(int i=0; i<mHoneycombList.Count; ++i)
         {
-            if (h.kStructureType == StructureType.Storage && (h.type == GameResType.Empty || (h.type == _type && h.IsFull() == false)) && h.isTarget == false)
+            int index = (i + offset) % mHoneycombList.Count;
+            var comb = mHoneycombList[index];
+
+            if (comb.kStructureType == StructureType.Storage && (comb.type == GameResType.Empty || (comb.type == _type && comb.IsFull() == false)) && comb.isTarget == false)
             {
-                return h;
+                return comb;
             }
         }
 
         return null;
     }
 
-    public Honeycomb GetHoneycombOfType(GameResType _type)
+    public Honeycomb GetFetchableStorage(GameResType _type)
     {
-        foreach (Honeycomb h in mHoneycombList)
+        // 랜덤으로 고른다.
+        int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+        for(int i=0; i<mHoneycombList.Count; ++i)
         {
-            if (h.kStructureType == StructureType.Storage && (h.type == _type && h.amount.amount > 0) && h.isTarget == false)
+            int index = (i + offset) % mHoneycombList.Count;
+            var comb = mHoneycombList[index];
+
+            if (comb.kStructureType == StructureType.Storage && (comb.type == _type && comb.amount.amount > 0) && comb.isTarget == false)
             {
-                return h;
+                return comb;
+            }
+        }
+
+        return null;
+    }
+
+    public Honeycomb GetUsableHoneyCombOfStructure(StructureType _stype)
+    {
+        // 랜덤으로 고른다.
+        int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+        for(int i=0; i<mHoneycombList.Count; ++i)
+        {
+            int index = (i + offset) % mHoneycombList.Count;
+            var comb = mHoneycombList[index];
+
+            if (comb.kStructureType == _stype && (comb.type == GameResType.Empty || !comb.IsFull()) && comb.isTarget == false)
+            {
+                return comb;
             }
         }
 
@@ -374,13 +400,6 @@ public class Hive : MonoBehaviour
         }
         
         EndBuild();
-    }
-
-    public void GuideQueen(QueenBee _queen)
-    {
-        mGuidingQueen = true;
-        mTargetQueen = _queen;
-        Mng.canvas.DisableToggleButtons();
     }
 
     public Rect ComputeWorldBoundary(Rect rect)

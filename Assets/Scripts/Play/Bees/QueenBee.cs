@@ -82,12 +82,13 @@ public class QueenBee : MonoBehaviour
         }
     }
 
+    private bool IsWandering() { return (mCurState == QueenState.Wander) || (mCurState == QueenState.WaitForTarget); }
     private IEnumerator Wander()
     {
         float waitSec = 0.05f;
         WaitForSeconds sec = new WaitForSeconds(waitSec);
 
-        while (mCurState == QueenState.Wander)
+        while (IsWandering())
         {
             var targetComb = Mng.play.kHive.GetRandomHoneycomb();
             if (targetComb != null)
@@ -101,7 +102,7 @@ public class QueenBee : MonoBehaviour
                 }
                 else
                 {
-                    while(Vector3.Distance(transform.position, randomPos) > 0.005f)
+                    while(IsWandering() && Vector3.Distance(transform.position, randomPos) > 0.005f)
                     {
                         transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
                         yield return sec;
@@ -109,7 +110,24 @@ public class QueenBee : MonoBehaviour
                 }
             }
 
-            yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 7f));
+            // 중간에 State 가 바뀌면 빠르게 대처할 수 있게 0.5초씩 끊어서 Wait 한다.
+            float waitTime = UnityEngine.Random.Range(3f, 7f);
+            while (IsWandering() && (waitTime > 0) )
+            {
+                waitTime -= 0.5f;
+                yield return new WaitForSeconds(0.5f);
+            }
+
+            if (mCurState == QueenState.WaitForTarget)
+            {
+                // 비어있는 부화실을 찾는다.
+                var comb = Mng.play.kHive.GetUsableHoneyCombOfStructure(StructureType.Hatchtery);
+                if (comb != null)
+                {
+                    mCurState = QueenState.GoToTarget;
+                    StartCoroutine(GoToTarget(comb));
+                }
+            }
         }
     }
 
@@ -131,14 +149,11 @@ public class QueenBee : MonoBehaviour
     {
         mCurState = QueenState.WaitForTarget;
         StopCoroutine(Wander());
-
-        Mng.play.kHive.GuideQueen(this);
     }
 
     public void SetTarget(Honeycomb _target)
     {
         mCurState = QueenState.GoToTarget;
-        Mng.play.kHive.mGuidingQueen = false;
         Mng.canvas.DisableToggleButtons();
         StartCoroutine(GoToTarget(_target));
     }
@@ -183,5 +198,8 @@ public class QueenBee : MonoBehaviour
 		mCurHoney = savedata.mCurHoney;
 		mCurPollen = savedata.mCurPollen;
 		mCurState = savedata.mCurState;
+
+        if (mCurState == QueenState.WaitForTarget)
+            WaitForTargetHoneycomb();
 	}
 }

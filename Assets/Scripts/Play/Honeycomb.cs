@@ -370,16 +370,6 @@ public class Honeycomb : MonoBehaviour
 
         Hive hive = Mng.play.kHive;
 
-        if(hive.mGuidingQueen == true)
-        {
-            if(kStructureType == StructureType.Storage && IsUsable(GameResType.Empty))
-            {
-                hive.mTargetQueen.SetTarget(this);
-                kStructureType = StructureType.Hatchtery;
-            }
-            return;
-        }
-
         if(hive.mIsBuilding == true)
         {
             if(SetStructure(hive.mStructureType, false) == true)
@@ -432,16 +422,6 @@ public class Honeycomb : MonoBehaviour
 
         if(PopupBase.IsTherePopup())
         {
-            return;
-        }
-
-        if(hive.mGuidingQueen == true )
-        {
-            if(hive.mTargetQueen.mCurState == QueenState.GoToTarget)
-            {
-                hive.mGuidingQueen  = false;
-                hive.mTargetQueen = null;
-            }
             return;
         }
 
@@ -524,7 +504,7 @@ public class Honeycomb : MonoBehaviour
 
         UpdateType(_finType);
 
-        Mng.play.kHive.CheckAllResources();
+        Mng.play.kHive.RecountAllResources();
 
         mIsConverting = false;
     }   

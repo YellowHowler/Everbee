@@ -185,6 +185,9 @@ public class Bee : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (mCurStage != BeeStage.Bee)
+            return;
+
         if(!PopupBase.IsTherePopup())
         {
             Mng.canvas.kBeeInfo.Show();
@@ -384,7 +387,7 @@ public class Bee : MonoBehaviour
 
     private void StorePollen()
     {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableHoneycomb(GameResType.Pollen);
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableStorage(GameResType.Pollen);
 
         if (mTargetHoneycomb == null)
         {
@@ -398,7 +401,7 @@ public class Bee : MonoBehaviour
 
     private void StoreNectar()
     {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableHoneycomb(GameResType.Nectar);
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetUsableStorage(GameResType.Nectar);
 
         if (mTargetHoneycomb == null)
         {
@@ -413,7 +416,7 @@ public class Bee : MonoBehaviour
 
     private void FetchPollen()
     {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Pollen);
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetFetchableStorage(GameResType.Pollen);
 
         if (mTargetHoneycomb == null)
         {
@@ -427,7 +430,7 @@ public class Bee : MonoBehaviour
 
     private void FetchHoney()
     {
-        mTargetHoneycomb = PlayManager.Instance.kHive.GetHoneycombOfType(GameResType.Honey);
+        mTargetHoneycomb = PlayManager.Instance.kHive.GetFetchableStorage(GameResType.Honey);
 
         if (mTargetHoneycomb == null)
         {
