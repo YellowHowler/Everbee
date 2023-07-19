@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.43081754, b: 0.43081754, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 4532425181281639435}
   - component: {fileID: 4532425181281639438}
   - component: {fileID: 4532425181281639437}
-  - component: {fileID: 4532425181281639436}
+  - component: {fileID: 6323385212093815119}
   m_Layer: 5
   m_Name: Collect
   m_TagString: Untagged
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4532425181281639436
+--- !u!114 &6323385212093815119
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -298,7 +298,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4532425181281639434}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -310,10 +310,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0.447, g: 0.447, b: 0.447, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.4672481, g: 0.7924528, b: 0.5690615, a: 1}
+    m_SelectedColor: {r: 0.74564695, g: 0.9528302, b: 0.5258544, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -330,13 +330,16 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 4532425181281639437}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: -1314816866738315166}
         m_TargetAssemblyTypeName: BeeJobManage, Assembly-CSharp
-        m_MethodName: OnCollectJobBtnClick
-        m_Mode: 1
+        m_MethodName: OnCollectJobBtnChanged
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -345,6 +348,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 0
 --- !u!1 &4532425181300592680
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,6 +496,7 @@ GameObject:
   - component: {fileID: -1314816866738315166}
   - component: {fileID: 4532425181543092714}
   - component: {fileID: 4532425181543092713}
+  - component: {fileID: 3393284405546966474}
   m_Layer: 5
   m_Name: BeeJobManage
   m_TagString: Untagged
@@ -518,10 +523,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &-1314816866738315166
 MonoBehaviour:
@@ -535,7 +540,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a649a86103392d8418be5c8ab28af5a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kBee: {fileID: 0}
+  kImage: {fileID: 4532425181210494070}
+  BuildButton: {fileID: 323465082227856264}
+  CollectButton: {fileID: 6323385212093815119}
+  FeedButton: {fileID: 2724740186824354773}
 --- !u!222 &4532425181543092714
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -574,6 +582,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3393284405546966474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4532425181543092727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fafe2cfe61f6974895a912c3755e8f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AllowSwitchOff: 1
 --- !u!1 &4532425182085222313
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,7 +606,7 @@ GameObject:
   - component: {fileID: 4532425182085222314}
   - component: {fileID: 4532425182085222317}
   - component: {fileID: 4532425182085222316}
-  - component: {fileID: 4532425182085222315}
+  - component: {fileID: 323465082227856264}
   m_Layer: 5
   m_Name: Build
   m_TagString: Untagged
@@ -652,7 +673,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4532425182085222315
+--- !u!114 &323465082227856264
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -661,7 +682,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4532425182085222313}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -673,10 +694,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0.447, g: 0.447, b: 0.447, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.4672481, g: 0.7924528, b: 0.5690615, a: 1}
+    m_SelectedColor: {r: 0.74564695, g: 0.9528302, b: 0.5258544, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -693,13 +714,16 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 4532425182085222316}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: -1314816866738315166}
         m_TargetAssemblyTypeName: BeeJobManage, Assembly-CSharp
-        m_MethodName: OnBuildJobBtnClick
-        m_Mode: 1
+        m_MethodName: OnBuildJobBtnChanged
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -708,6 +732,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 1
 --- !u!1 &4612448675597996324
 GameObject:
   m_ObjectHideFlags: 0
@@ -854,7 +879,7 @@ GameObject:
   - component: {fileID: 6622725677181593603}
   - component: {fileID: 3579105704707795908}
   - component: {fileID: 8140120049223073379}
-  - component: {fileID: 1689692608212338648}
+  - component: {fileID: 2724740186824354773}
   m_Layer: 5
   m_Name: Feed
   m_TagString: Untagged
@@ -921,7 +946,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1689692608212338648
+--- !u!114 &2724740186824354773
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -930,7 +955,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5002289262061676195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -942,10 +967,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_NormalColor: {r: 0.447, g: 0.447, b: 0.447, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.4672481, g: 0.7924528, b: 0.5690615, a: 1}
+    m_SelectedColor: {r: 0.74564695, g: 0.9528302, b: 0.5258544, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -962,13 +987,16 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 8140120049223073379}
-  m_OnClick:
+  toggleTransition: 1
+  graphic: {fileID: 0}
+  m_Group: {fileID: 0}
+  onValueChanged:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: -1314816866738315166}
         m_TargetAssemblyTypeName: BeeJobManage, Assembly-CSharp
-        m_MethodName: OnFeedJobBtnClick
-        m_Mode: 1
+        m_MethodName: OnFeedJobBtnChanged
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -977,3 +1005,4 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  m_IsOn: 0

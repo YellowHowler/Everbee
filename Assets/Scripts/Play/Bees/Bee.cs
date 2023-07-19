@@ -69,6 +69,18 @@ public class Bee : MonoBehaviour
         Mng.canvas.kBeeInfo.UpdateStat(gameObject);
     }
 
+    private GameObject GetCurrentStageObject()
+    {
+        switch(mCurStage)
+        {
+            case BeeStage.Egg: return mEggObj;
+            case BeeStage.Larvae: return mLarvaeObj;
+            case BeeStage.Pupa: return mPupaObj;
+            case BeeStage.Bee: return mBeeObj;
+            default: return mBeeObj;
+        }
+    }
+
     public void UpdateStage(BeeStage _stage)
     {
         mCurStage = _stage;
@@ -88,32 +100,23 @@ public class Bee : MonoBehaviour
                 break;
         }
 
-        UpdateStageSprite(_stage);
+        UpdateStageSprite();
         Mng.canvas.kBeeInfo.UpdateStat(gameObject);
     }
 
-    public void UpdateStageSprite(BeeStage _stage)
+    private void UpdateStageSprite()
     {
         mEggObj.SetActive(false);
         mLarvaeObj.SetActive(false);
         mPupaObj.SetActive(false);
         mBeeObj.SetActive(false);
 
-        switch(_stage)
-        {
-            case BeeStage.Egg:
-                mEggObj.SetActive(true);
-                break;
-            case BeeStage.Larvae:
-                mLarvaeObj.SetActive(true);
-                break;
-            case BeeStage.Pupa:
-                mPupaObj.SetActive(true);
-                break;
-            case BeeStage.Bee:
-                mBeeObj.SetActive(true);
-                break;
-        }
+        GetCurrentStageObject().SetActive(true);
+    }
+
+    public Sprite GetCurrentSprite()
+    {
+        return GetCurrentStageObject().GetComponent<SpriteRenderer>().sprite;
     }
 
     public void UpdateLevel(int _level)
@@ -308,6 +311,8 @@ public class Bee : MonoBehaviour
         }
         else if(kCurrentJob == Job.Feed)
         {
+            // 애벌레에게 먹이기 위해 Honey 나 Pollen 을 구해야 한다.
+
             if (mAtTarget == false && (mCurrentHoney.amount == 0 && mCurrentPollen.amount == 0))
             {
                 FetchPollen();

@@ -16,7 +16,10 @@ public class JobMenuPanel : PopupBase
 	public void AddBeeJobUI(Bee _bee)
     {
         GameObject newJobManageObj = Instantiate(kBeeJobManageObj, kJobScrollContents);
-        newJobManageObj.GetComponent<BeeJobManage>().kBee = _bee;
+        newJobManageObj.GetComponent<BeeJobManage>().SetBee(_bee);
+
+        var rect = kJobScrollContents.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, kJobScrollContents.childCount * newJobManageObj.GetComponent<RectTransform>().sizeDelta.y);
     }
 
     public void OnJobMenuBgClick()
