@@ -10,6 +10,7 @@ using TMPro;
 public class BeeInfoPanel : PopupBase
 {
     public TMP_Text kLevelText;
+    public TMP_Text kNameText;
     public Slider kLevelSlider;
 
     public GameObject kJobPanel;
@@ -27,7 +28,7 @@ public class BeeInfoPanel : PopupBase
 
     public TMP_Text kTimerText;
 
-    [HideInInspector] public GameObject mTargetObj;
+    [HideInInspector] public Bee mTargetBee;
 
     void Start()
     {
@@ -46,35 +47,36 @@ public class BeeInfoPanel : PopupBase
 		base.ProcessEscapeKey();
 	}
 
-	public void SetStat(GameObject _obj)
+	public void SetStat(Bee _bee)
     {
-        Bee targetBee = _obj.GetComponent<Bee>();
+        mTargetBee = _bee;
 
+        kNameText.text = mTargetBee.mCurStage.ToString();
+        kLevelText.text = "Level " + mTargetBee.kLevel;
+        kLevelSlider.value = mTargetBee.kExp;
 
-        kLevelText.text = "Level " + targetBee.kLevel;
-        kLevelSlider.value = targetBee.kExp;
-
-        if(targetBee.mCurStage == BeeStage.Egg || targetBee.mCurStage == BeeStage.Pupa)
+        if(mTargetBee.mCurStage != BeeStage.Bee)
         {   
             kFeedButton.gameObject.SetActive(false);
             kStoragePanel.SetActive(false);
             kJobPanel.SetActive(false);
             kTimerPanel.SetActive(true);
+            kStoragePanel.SetActive(false);
 
-            kTimerText.text = Mng.play.GetTimeText(targetBee.mConvertTime);
+            kTimerText.text = Mng.play.GetTimeText(mTargetBee.mConvertTime);
         }
-        
-        else if(targetBee.mCurStage == BeeStage.Bee || targetBee.mCurStage == BeeStage.Larvae)
+        else
         {
             kFeedButton.gameObject.SetActive(true);
             kStoragePanel.SetActive(true);
             kTimerPanel.SetActive(false);
             kJobPanel.SetActive(false);
+            kStoragePanel.SetActive(true);
 
-            kFeedTextHoney.text = Mng.canvas.GetAmountText(targetBee.mHoneyFeedAmount);
-            kFeedTextHoney.text = Mng.canvas.GetAmountText(targetBee.mPollenFeedAmount);
+            kFeedTextHoney.text = Mng.canvas.GetAmountText(mTargetBee.mHoneyFeedAmount);
+            kFeedTextHoney.text = Mng.canvas.GetAmountText(mTargetBee.mPollenFeedAmount);
 
-            if(Mng.play.CompareResourceAmounts(targetBee.mCurrentHoney, targetBee.mHoneyFeedAmount) == true && Mng.play.CompareResourceAmounts(targetBee.mCurrentPollen, targetBee.mPollenFeedAmount) == true)
+            if(Mng.play.CompareResourceAmounts(mTargetBee.mCurrentHoney, mTargetBee.mHoneyFeedAmount) == true && Mng.play.CompareResourceAmounts(mTargetBee.mCurrentPollen, mTargetBee.mPollenFeedAmount) == true)
             {
                 kFeedButton.enabled = false;
             }
@@ -84,11 +86,11 @@ public class BeeInfoPanel : PopupBase
             }
         }
 
-        if(targetBee.mCurStage == BeeStage.Bee)
+        if(mTargetBee.mCurStage == BeeStage.Bee)
         {
             kJobPanel.SetActive(true);
 
-            switch(targetBee.kCurrentJob)
+            switch(mTargetBee.kCurrentJob)
             {
                 case Job.Collect:
                     kJobText.text = "Collecting";
@@ -101,39 +103,39 @@ public class BeeInfoPanel : PopupBase
                     break;
             }
 
-            kStorageSliders[0].value = Mng.play.GetResourcePercent(targetBee.mCurrentHoney, targetBee.mMaxHoney)/100;
-            kStorageTexts[0].text = Mng.canvas.GetAmountRatioText(targetBee.mCurrentHoney, targetBee.mMaxHoney);
+            kStorageSliders[0].value = Mng.play.GetResourcePercent(mTargetBee.mCurrentHoney, mTargetBee.mMaxHoney)/100;
+            kStorageTexts[0].text = Mng.canvas.GetAmountRatioText(mTargetBee.mCurrentHoney, mTargetBee.mMaxHoney);
 
-            kStorageSliders[1].value = Mng.play.GetResourcePercent(targetBee.mCurrentNectar, targetBee.mMaxNectar)/100;
-            kStorageTexts[1].text = Mng.canvas.GetAmountRatioText(targetBee.mCurrentNectar, targetBee.mMaxNectar);
+            kStorageSliders[1].value = Mng.play.GetResourcePercent(mTargetBee.mCurrentNectar, mTargetBee.mMaxNectar)/100;
+            kStorageTexts[1].text = Mng.canvas.GetAmountRatioText(mTargetBee.mCurrentNectar, mTargetBee.mMaxNectar);
 
-            kStorageSliders[2].value = Mng.play.GetResourcePercent(targetBee.mCurrentPollen, targetBee.mMaxPollen)/100;
-            kStorageTexts[2].text = Mng.canvas.GetAmountRatioText(targetBee.mCurrentPollen, targetBee.mMaxPollen);
+            kStorageSliders[2].value = Mng.play.GetResourcePercent(mTargetBee.mCurrentPollen, mTargetBee.mMaxPollen)/100;
+            kStorageTexts[2].text = Mng.canvas.GetAmountRatioText(mTargetBee.mCurrentPollen, mTargetBee.mMaxPollen);
             
-            kStorageSliders[3].value = Mng.play.GetResourcePercent(targetBee.mCurrentWax, targetBee.mMaxWax)/100;
-            kStorageTexts[3].text = Mng.canvas.GetAmountRatioText(targetBee.mCurrentWax, targetBee.mMaxWax);
+            kStorageSliders[3].value = Mng.play.GetResourcePercent(mTargetBee.mCurrentWax, mTargetBee.mMaxWax)/100;
+            kStorageTexts[3].text = Mng.canvas.GetAmountRatioText(mTargetBee.mCurrentWax, mTargetBee.mMaxWax);
         }
     }
 
-    public void SetObject(GameObject _obj)
+    public void SetBee(Bee _bee)
     {
-        mTargetObj = _obj;
+        mTargetBee = _bee;
 
-        SetStat(_obj);
+        SetStat(_bee);
     }
 
-    public void UpdateStat(GameObject _obj)
+    public void UpdateStat(Bee _bee)
     {
-        if(mTargetObj != _obj)
+        if(mTargetBee != _bee)
         {
             return;
         }
 
-        SetStat(_obj);
+        SetStat(_bee);
     }
 
     public void FeedBee()
     {
-        mTargetObj.GetComponent<Bee>().Feed();
+        mTargetBee.Feed();
     }
 }
