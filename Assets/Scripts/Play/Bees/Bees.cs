@@ -53,11 +53,11 @@ public class Bees : MonoBehaviour
         return mQueenBee;
     }
 
-    public Bee FindLarvae()
+    public Bee FindLarvae(Bee finder)
     {
         foreach(Bee b in mBeeList)
         {
-            if(b.mCurStage == BeeStage.Larvae && b.mIsTarget == false)
+            if(b.mCurStage == BeeStage.Larvae && (!b.mTargetBee.IsLinked() || b.mTargetBee.GetObject() == finder))
             {
                 return b;
             }

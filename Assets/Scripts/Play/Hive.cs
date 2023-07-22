@@ -98,7 +98,7 @@ public class Hive : MonoBehaviour
             int index = (i + offset) % mHoneycombList.Count;
             var comb = mHoneycombList[index];
 
-            if (comb.kStructureType == StructureType.Storage && (comb.type == GameResType.Empty || (comb.type == _type && comb.IsFull() == false)) && comb.isTarget == false)
+            if (comb.kStructureType == StructureType.Storage && (comb.type == GameResType.Empty || (comb.type == _type && comb.IsFull() == false)) && !comb.mTargetBee.IsLinked())
             {
                 return comb;
             }
@@ -116,7 +116,7 @@ public class Hive : MonoBehaviour
             int index = (i + offset) % mHoneycombList.Count;
             var comb = mHoneycombList[index];
 
-            if (comb.kStructureType == StructureType.Storage && (comb.type == _type && comb.amount.amount > 0) && comb.isTarget == false)
+            if (comb.kStructureType == StructureType.Storage && (comb.type == _type && comb.amount.amount > 0) && !comb.mTargetBee.IsLinked())
             {
                 return comb;
             }
@@ -134,7 +134,7 @@ public class Hive : MonoBehaviour
             int index = (i + offset) % mHoneycombList.Count;
             var comb = mHoneycombList[index];
 
-            if (comb.kStructureType == _stype && (comb.type == GameResType.Empty || !comb.IsFull()) && comb.isTarget == false)
+            if (comb.kStructureType == _stype && (comb.type == GameResType.Empty || !comb.IsFull()) && !comb.mTargetBee.IsLinked())
             {
                 return comb;
             }

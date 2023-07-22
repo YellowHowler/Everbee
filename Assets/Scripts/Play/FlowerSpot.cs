@@ -9,8 +9,8 @@ public class FlowerSpot : MonoBehaviour
 {
     [HideInInspector] public Garden mGarden;
 
-    [HideInInspector] public bool isTarget = false;
     public Vector3 pos;
+	public CTargetLink<FlowerSpot, Bee> mTargetBee;
 
     public bool occupied;
 
@@ -24,6 +24,8 @@ public class FlowerSpot : MonoBehaviour
 
     private void Awake()
     {
+		mTargetBee = new CTargetLink<FlowerSpot, Bee>(this);
+
         nectarAmount = new GameResAmount(nectar, nectarUnit);
         pollenAmount = new GameResAmount(pollen, pollenUnit);
 

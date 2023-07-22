@@ -12,8 +12,7 @@ public class Honeycomb : MonoBehaviour
     public SpriteRenderer kSpriteRenderer;
 
     public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
-
-    public bool isTarget;
+    public CTargetLink<Honeycomb, Bee> mTargetBee;
 
     public GameResType type; //���� �ڿ��� �����ϰ� �ִ���
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
@@ -39,6 +38,12 @@ public class Honeycomb : MonoBehaviour
 
     public Sprite[] kDryerSprites;
     public Sprite[] kCoalgulateSprites;
+
+
+    private void Awake()
+    {
+        mTargetBee = new CTargetLink<Honeycomb, Bee>(this);
+    }
 
     private void Start()
     {

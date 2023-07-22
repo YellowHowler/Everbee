@@ -157,7 +157,7 @@ public class PlayManager : MonoBehaviour
 
     public void AddResourceToStorage(GameResType _type, GameResAmount _amount)
     {
-		if(_type == GameResType.Empty)
+		if ( (_type == GameResType.Empty) || (_type >= GameResType.Wax) )
 			return;
 
 		kStorageResourceAmounts[(int)_type] = AddResourceAmounts(kStorageResourceAmounts[(int)_type], _amount);

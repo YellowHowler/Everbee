@@ -24,7 +24,7 @@ public class Garden : MonoBehaviour
         {
             int index = (i + offset) % mFlowerSpotList.Count;
             var spot = mFlowerSpotList[index];
-            if (spot.occupied == false && spot.isTarget == false) 
+            if (spot.occupied == false && !spot.mTargetBee.IsLinked()) 
                 return spot;
         }
 
