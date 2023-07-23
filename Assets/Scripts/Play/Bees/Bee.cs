@@ -9,6 +9,8 @@ using TMPro;
 
 public class Bee : MonoBehaviour
 {
+    public const int c_BeeLevel = 8;
+
     public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
     [HideInInspector] public int kLevel;
     [HideInInspector] public float kExp = 0; // 0~1 
@@ -86,8 +88,11 @@ public class Bee : MonoBehaviour
         }
     }
 
-    public void UpdateStage(BeeStage _stage)
+    public void UpdateStage(BeeStage _stage, bool forced = false)
     {
+        if (!forced && mCurStage == _stage)
+            return;
+
         mCurStage = _stage;
 
         switch (_stage)
@@ -101,6 +106,7 @@ public class Bee : MonoBehaviour
                 StartCoroutine(PupaConvertCor());
                 break;
             case BeeStage.Bee:
+                mCanWork = false;
                 DoJob();
                 break;
         }
@@ -169,6 +175,7 @@ public class Bee : MonoBehaviour
             Mng.canvas.kBeeInfo.UpdateStat(this);
             yield return sec;
         }
+        UpdateLevel(c_BeeLevel);
         UpdateStage(BeeStage.Bee);
     }
 
@@ -231,6 +238,9 @@ public class Bee : MonoBehaviour
 
     private void DoJob()
     {
+        if (mCurStage != BeeStage.Bee)
+            return;
+
         if(mCanWork == false)
         {
 			//mCanWork = true;
@@ -410,7 +420,7 @@ public class Bee : MonoBehaviour
             }
             else if(mCurrentHoney.amount > 0 && mCurrentPollen.amount > 0 && mAtTarget == true)
             {
-                if(!mTargetBee.IsLinked() || mTargetBee.GetObject().mCurStage == BeeStage.Larvae || Vector3.Distance(mTargetBee.GetObject().gameObject.transform.position, transform.position) > 0.1f)
+                if(!mTargetBee.IsLinked() || mTargetBee.GetObject().mCurStage != BeeStage.Larvae || Vector3.Distance(mTargetBee.GetObject().gameObject.transform.position, transform.position) > 0.1f)
                 {
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
@@ -606,6 +616,9 @@ public class Bee : MonoBehaviour
 
     private IEnumerator GoToPos(Vector3 _targetPos)
     {
+        if (mCurStage != BeeStage.Bee)
+            yield break;
+
         mAtTarget = false;
 
         float waitSec = 0.05f;
@@ -685,7 +698,10 @@ public class Bee : MonoBehaviour
 		mCurrentHoney = savedata.mCurrentHoney;
 		mCurrentWax = savedata.mCurrentWax;
 
+		UpdateStage(mCurStage, true);
 		UpdateLevel(kLevel);
-		UpdateStage(mCurStage);
+
+        if (mCurStage != BeeStage.Bee)
+            mFirst = false;
 	}
 }

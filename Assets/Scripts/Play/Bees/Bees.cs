@@ -75,7 +75,7 @@ public class Bees : MonoBehaviour
     {
         for(int i = 0; i < 4; i++)
         {
-            CreateBee(Vector3.zero, 8, BeeStage.Bee);
+            CreateBee(Vector3.zero, Bee.c_BeeLevel, BeeStage.Bee);
         }
 
         CreateQueenBee(new Vector3(0, 15, 0));
