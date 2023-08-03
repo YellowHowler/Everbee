@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class JobMenuPanel : PopupBase
 {
+    public Button kJobBtn;
+    
     public Transform kJobScrollContents;
     public GameObject kBeeJobManageObj;
 
@@ -24,6 +27,8 @@ public class JobMenuPanel : PopupBase
 
     public void OnJobMenuBgClick()
     {
+        kJobBtn.interactable = true;
+        
         Mng.canvas.HideMenu();
         Hide();
     }

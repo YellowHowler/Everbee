@@ -7,7 +7,7 @@ public class PlayerCamera : MonoBehaviour
     public static PlayerCamera Instance { get; private set; }
 
     private Camera mCamera;
-    private float mScrollSpeed = 3.5f;
+    private float mScrollSpeed = 5.5f;
     private float mScrollBound = 0.98f;
 
     private Transform mFollowTarget;

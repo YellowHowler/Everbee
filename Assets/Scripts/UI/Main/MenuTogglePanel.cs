@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuTogglePanel : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public Button kJobBtn;
+    public Button kBuildBtn;
+
     void Start()
     {
         
@@ -18,6 +21,8 @@ public class MenuTogglePanel : MonoBehaviour
 
     public void OnBuildMenuBtnClick()
     {
+        kBuildBtn.interactable = false;
+
         Mng.canvas.ShowMenu();
 
         Mng.canvas.kQueen.Hide();
@@ -27,6 +32,8 @@ public class MenuTogglePanel : MonoBehaviour
 
 	public void OnJobMenuBtnClick()
     {
+        kJobBtn.interactable = false;
+
         Mng.canvas.ShowMenu();
         
         Mng.canvas.kQueen.Hide();

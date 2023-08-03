@@ -120,16 +120,26 @@ public class InventoryBarPanel : MonoBehaviour
     public void SetHovered(int _num)
     {
         mHoveredNum = _num;
+
+        for(int i = 0; i < kSelectedObjs.Length; i++)
+        {
+            kSelectedObjs[i].SetActive(false);
+        }
+
+        kSelectedObjs[mSelectedNum].SetActive(true);
         kSelectedObjs[mHoveredNum].SetActive(true);
     }
 
     public void CancelHovered()
     {
-        if(mHoveredNum != mSelectedNum)
-        {
-            kSelectedObjs[mHoveredNum].SetActive(false);
-        }
         mHoveredNum = -1;
+
+        for(int i = 0; i < kSelectedObjs.Length; i++)
+        {
+            kSelectedObjs[i].SetActive(false);
+        }
+
+        kSelectedObjs[mSelectedNum].SetActive(true);
     }
 
     public void DropItem(int _num)

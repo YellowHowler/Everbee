@@ -2,9 +2,12 @@ using EnumDef;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuildMenuPanel : PopupBase
 {
+    public Button kBuildBtn;
+
     void Start()
     {
         
@@ -23,6 +26,8 @@ public class BuildMenuPanel : PopupBase
 
     public void OnBuildMenuBgClick()
     {
+        kBuildBtn.interactable = true;
+
         Mng.canvas.HideMenu();
         Hide();
     }
