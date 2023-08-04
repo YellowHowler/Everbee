@@ -1,0 +1,20 @@
+"appbuild"
+{
+	"appid"	"2537950"
+	"desc"	"0.3"
+	"contentroot"	"..\content\Everbee\Windows"
+	"buildoutput"	"..\output\Everbee\Windows"
+	"depots"
+	{
+		"2537950"
+		{
+			"FileMapping"
+			{
+				"LocalPath"	"*"
+				"DepotPath"	"."
+				"recursive"	"1"
+			}
+			"FileExclusion"	"*.pdb"
+		}
+	}
+}

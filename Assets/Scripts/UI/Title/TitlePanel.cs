@@ -24,6 +24,18 @@ public class TitlePanel: MonoBehaviour
 		ContinueButton.interactable = SaveManager.Instance.IsThereSaveData();
 	}
 
+	void Start()
+	{
+		/*if (!SteamManager.Initialized)
+		{
+			kDialoguePopup.Show("Steam initialize failed.", LHS.CLHSDialogUI.EButtonType.OK, (result) =>
+			{
+				OnQuitClicked();
+				return true;
+			});
+		}*/
+	}
+
 	private void StartGame()
 	{
 		PlayManager.MustLoadSaveData = false;

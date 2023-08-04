@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c7c695651be6f340a32fef05a7d7c9a, type: 3}
+  m_Name: Content Builder Config
+  m_EditorClassIdentifier: 
+  username: xk9uKVEXtsPkaurMZPTm1x4TI4M7P31/269oHAyYD3xy4Erc7KsRhwzDbV7N9VXcQt0v5Jxo9L836TPYZ+4cpGsEQA9T/7A0sesMsDPXFBvFVZJeETRmHD1I8dkSb9tR
+  rememberPassword: 1
+  password: 4Riwib6aSO/IAd7jcKzoF+Uzqjke0e5O78IigEz27PH4rWf4k+yw2DL4L5DpaGRoa9hSygxO4R3SRxPoBFbgPyEWJB/eaKCC6icZ/NeGIlN9Bo7pAH1Gg3OcW1xH/0v5
+  targetApp: 2537950
+  lastDepot: 0
+  depots:
+  - name: Everbee Test
+    id: 2537950
+    target: 5
+    extension: 
