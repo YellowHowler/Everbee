@@ -18,7 +18,7 @@ MonoBehaviour:
   targetApp: 2537950
   lastDepot: 0
   depots:
-  - name: Everbee Test
-    id: 2537950
+  - name: default
+    id: 2537951
     target: 5
-    extension: 
+    extension: .exe
