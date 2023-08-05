@@ -2924,7 +2924,7 @@ GameObject:
   - component: {fileID: 403854442}
   - component: {fileID: 403854441}
   m_Layer: 12
-  m_Name: StorageBuild (1)
+  m_Name: DryerBuild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2949,10 +2949,10 @@ RectTransform:
   m_Father: {fileID: 1639514514}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -170}
-  m_SizeDelta: {x: 1000, y: 150}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &403854441
 MonoBehaviour:
@@ -3323,7 +3323,7 @@ GameObject:
   - component: {fileID: 480729746}
   - component: {fileID: 480729745}
   m_Layer: 12
-  m_Name: StorageBuild (2)
+  m_Name: SolidifierBuild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3348,10 +3348,10 @@ RectTransform:
   m_Father: {fileID: 1639514514}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -340}
-  m_SizeDelta: {x: 1000, y: 150}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &480729745
 MonoBehaviour:
@@ -5522,7 +5522,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Coalgulate
+  m_text: Solidifier
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
   m_sharedMaterial: {fileID: -3117597323557240487, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
@@ -6735,7 +6735,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1049435953
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9448,10 +9448,10 @@ RectTransform:
   m_Father: {fileID: 1639514514}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: 0}
-  m_SizeDelta: {x: 1000, y: 150}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1346252975
 MonoBehaviour:
@@ -10248,7 +10248,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e20db33c8ee0c644392285f086bcf835, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c5dcb88eb33f24455b0671df78e8828f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12161,7 +12161,7 @@ GameObject:
   - component: {fileID: 1819566995}
   - component: {fileID: 1819566994}
   m_Layer: 12
-  m_Name: StorageBuild (3)
+  m_Name: HatchteryBuild
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12186,10 +12186,10 @@ RectTransform:
   m_Father: {fileID: 1639514514}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 500, y: -510}
-  m_SizeDelta: {x: 1000, y: 150}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1819566994
 MonoBehaviour:
