@@ -126,7 +126,7 @@ public class Honeycomb : MonoBehaviour
             case StructureType.Storage:
                 if(!forced && kStructureType != StructureType.None) 
                 {
-                    Mng.canvas.DisplayWarning("Must upgrade from storage");
+                    Mng.canvas.DisplayWarning("Must place on empty space");
                     return false;
                 }
                 SetAllChildrenActive(false);

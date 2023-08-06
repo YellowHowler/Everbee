@@ -6118,7 +6118,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.8820755, g: 0.97176456, b: 1, a: 0}
+  m_BackGroundColor: {r: 0.8537736, g: 0.9658805, b: 1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 1
@@ -6844,7 +6844,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.36320752, g: 0.8076689, b: 1, a: 1}
+  m_Color: {r: 0.36470592, g: 0.7360137, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13115,6 +13115,11 @@ MonoBehaviour:
   kFeedTextHoney: {fileID: 1089703565}
   kFeedTextPollen: {fileID: 639679528}
   kFeedButton: {fileID: 244238994}
+  kJobIcons:
+  - {fileID: 21300000, guid: 0feab72048cdd436994a22fed9a426cd, type: 3}
+  - {fileID: 21300000, guid: dea5b8b9b0ff640b5b0badb00822ea41, type: 3}
+  - {fileID: 21300000, guid: 39547942bddc147af8d2f5eed140ba84, type: 3}
+  kJobImage: {fileID: 394632918}
   kJobText: {fileID: 1622417735}
   kThinkingText: {fileID: 912723620}
   kTimerText: {fileID: 1087611492}
@@ -13201,7 +13206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9450981, g: 0.79215693, b: 0.6156863, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

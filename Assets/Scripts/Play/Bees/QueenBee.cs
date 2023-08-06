@@ -91,6 +91,7 @@ public class QueenBee : MonoBehaviour
         while (IsWandering())
         {
             var targetComb = Mng.play.kHive.GetRandomHoneycomb();
+
             if (targetComb != null)
             {
 				Vector3 randomPos = targetComb.transform.position;
@@ -104,15 +105,19 @@ public class QueenBee : MonoBehaviour
                 {
                     while(IsWandering() && Vector3.Distance(transform.position, randomPos) > 0.005f)
                     {
+                        transform.rotation = Mng.play.GetPointingRotation(transform.position, randomPos, transform.rotation);
+                        
+                        mAnimator.SetBool("isMoving", true);
                         transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
                         yield return sec;
                     }
+                    mAnimator.SetBool("isMoving", false);
                 }
             }
 
             // 중간에 State 가 바뀌면 빠르게 대처할 수 있게 0.5초씩 끊어서 Wait 한다.
             float waitTime = UnityEngine.Random.Range(3f, 7f);
-            while (IsWandering() && (waitTime > 0) )
+            while (IsWandering() && (waitTime > 0))
             {
                 waitTime -= 0.5f;
                 yield return new WaitForSeconds(0.5f);
@@ -136,12 +141,16 @@ public class QueenBee : MonoBehaviour
         float waitSec = 0.05f;
         WaitForSeconds sec = new WaitForSeconds(waitSec);
 
+        transform.rotation = Mng.play.GetPointingRotation(transform.position, _target.pos, transform.rotation);
+
         while(Vector3.Distance(transform.position, _target.pos) > 0.005f)
         {
+            mAnimator.SetBool("isMoving", true);
             transform.position = Vector3.MoveTowards(transform.position, _target.pos, waitSec * mSpeed);
             yield return sec;
         }
 
+        mAnimator.SetBool("isMoving", false);
         StartCoroutine(LayEgg(_target));
     }
 

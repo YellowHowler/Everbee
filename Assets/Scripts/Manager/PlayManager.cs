@@ -147,6 +147,20 @@ public class PlayManager : MonoBehaviour
         }
     }
 
+    public Quaternion GetPointingRotation(Vector3 _originPos, Vector3 _targetPos, Quaternion _curRot)
+    {
+        Vector2 direction = new Vector2(
+            _originPos.x - _targetPos.x,
+            _originPos.y - _targetPos.y
+        );
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion angleAxis = Quaternion.AngleAxis(angle - 90f, Vector3.forward);
+        Quaternion rotation = Quaternion.Slerp(_curRot, angleAxis, 100f);
+        
+        return rotation;
+    }
+
     public void ResetResourceOfStorage(GameResType _type)
     {
         if (_type == GameResType.Empty)

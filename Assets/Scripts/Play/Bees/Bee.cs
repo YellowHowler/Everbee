@@ -625,6 +625,9 @@ public class Bee : MonoBehaviour
 
         WaitForSeconds sec = new WaitForSeconds(waitSec);
 
+        if(_targetPos.x > transform.position.x) transform.localRotation = Quaternion.Euler(0, 180, 0);
+        else transform.localRotation = Quaternion.Euler(0, 0, 0);
+
         while(Vector3.Distance(transform.position, _targetPos) > 0.005f)
         {
             transform.position = Vector3.MoveTowards(transform.position, _targetPos, waitSec * mSpeed);
