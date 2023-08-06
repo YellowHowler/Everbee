@@ -9,6 +9,8 @@ using TMPro;
 
 public class BeeInfoPanel : PopupBase
 {
+    public Image kImage;
+
     public TMP_Text kLevelText;
     public TMP_Text kNameText;
     public Slider kLevelSlider;
@@ -24,7 +26,10 @@ public class BeeInfoPanel : PopupBase
     public TMP_Text kFeedTextPollen;
     public Button kFeedButton;
 
+    public Sprite[] kJobIcons;
+    public Image kJobImage;
     public TMP_Text kJobText;
+    public TMP_Text kThinkingText;
 
     public TMP_Text kTimerText;
 
@@ -38,7 +43,10 @@ public class BeeInfoPanel : PopupBase
     // Update is called once per frame
     void Update()
     {
-        
+        if(mTargetBee)
+        {
+            kImage.sprite = mTargetBee.GetCurrentSprite();
+        }
     }
 
 	override public void ProcessEscapeKey()
@@ -94,14 +102,22 @@ public class BeeInfoPanel : PopupBase
             {
                 case Job.Collect:
                     kJobText.text = "Collecting";
+                    kJobImage.sprite = kJobIcons[0];
                     break;
                 case Job.Build:
                     kJobText.text = "Building";
+                    kJobImage.sprite = kJobIcons[1];
                     break;
                 case Job.Feed:
                     kJobText.text = "Feeding";
+                    kJobImage.sprite = kJobIcons[2];
+                    break;
+                default:
+                    kJobText.text = "Idle";
                     break;
             }
+
+            kThinkingText.text = Mng.canvas.GetBeeThinkingText(mTargetBee.Thinking);
 
             kStorageSliders[0].value = Mng.play.GetResourcePercent(mTargetBee.mCurrentHoney, mTargetBee.mMaxHoney)/100;
             kStorageTexts[0].text = Mng.canvas.GetAmountRatioText(mTargetBee.mCurrentHoney, mTargetBee.mMaxHoney);

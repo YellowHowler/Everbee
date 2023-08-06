@@ -254,12 +254,21 @@ public class PlayManager : MonoBehaviour
         {
             return 100;
         }
-        if((int)_maxAmount.unit != (int)_amount.unit)
+
+        int curUnit = (int)_amount.unit;
+        int maxUnit = (int)_maxAmount.unit;
+        
+        switch(maxUnit - curUnit)
         {
-            return 0;
+            case 0: 
+                return Mathf.Clamp(_amount.amount / _maxAmount.amount, 0, 1) * 100;
+            case 1: 
+                return Mathf.Clamp(_amount.amount / (_maxAmount.amount * 1000), 0, 1) * 100;
+            default:
+                return 0;
         }
 
-        return Mathf.Clamp(_amount.amount / _maxAmount.amount, 0, 1) * 100;
+        
     }
 
     public GameResAmount UpdateUnit(GameResAmount _amount)

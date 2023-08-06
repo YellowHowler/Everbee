@@ -9,6 +9,7 @@ public class BeeJobManage : MonoBehaviour
 {
     public Bee kBee { get; private set;}
     public Image kImage;
+    public TMP_Text kJobText;
     public TMP_Text kThinkingText;
     public Toggle BuildButton, CollectButton, FeedButton;
 
@@ -46,23 +47,25 @@ public class BeeJobManage : MonoBehaviour
             if (FeedButton.isOn)
                 FeedButton.Select();
 
-            string thinkingText = "";
-            switch(bee.Thinking)
+            switch(bee.kCurrentJob)
             {
-                case BeeThinking.None:                  thinkingText = ""; break;
-                case BeeThinking.MovingToFlower:        thinkingText = "Moving to\r\nflower"; break;
-                case BeeThinking.MovingToStorage:       thinkingText = "Moving to\r\nstorage"; break;
-                case BeeThinking.MovingToLarvae:        thinkingText = "Moving to\r\nlarvae"; break;
-                case BeeThinking.CollectingFromFlower:  thinkingText = "Collecting from\r\nflower"; break;
-                case BeeThinking.Feeding:               thinkingText = "Feeding"; break;
-                case BeeThinking.NoAvailableFlower:     thinkingText = "No available\r\nflower"; break;
-                case BeeThinking.NoAvailableNectarStorage:  thinkingText = "No available\r\nnectar storage"; break;
-                case BeeThinking.NoAvailablePollenStorage:  thinkingText = "No available\r\npollen storage"; break;
-                case BeeThinking.NoAvailableHoneyStorage:   thinkingText = "No available\r\nhorney storage"; break;
-                case BeeThinking.NoAvailableLarvae:     thinkingText = "No available\r\nlarvae"; break;
-                case BeeThinking.NoPollenInThisStorage: thinkingText = "No pollen\r\nin this storage"; break;
-                case BeeThinking.NoHoneyInThisStorage:  thinkingText = "No honey\r\nin this storage"; break;
+                case Job.Collect:
+                    kJobText.text = "Collecting";
+                    break;
+                case Job.Build:
+                    kJobText.text = "Building";
+                    break;
+                case Job.Feed:
+                    kJobText.text = "Feeding";
+                    break;
+                default:
+                    kJobText.text = "Idle";
+                    break;
             }
+
+            string thinkingText = "";
+            
+            thinkingText = Mng.canvas.GetBeeThinkingText(bee.Thinking);
 
             if (kThinkingText.text != thinkingText)
                 kThinkingText.text = thinkingText;

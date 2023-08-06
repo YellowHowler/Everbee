@@ -110,6 +110,29 @@ public class MainCanvas : MonoBehaviour
         return GetAmountText(_amount) + " / " + GetAmountText(_maxAmount);
     }
 
+    public string GetBeeThinkingText(BeeThinking _thinking)
+    {
+        switch(_thinking)
+        {
+            case BeeThinking.None:                  return  ""; 
+            case BeeThinking.MovingToFlower:        return  "Moving to flower"; 
+            case BeeThinking.MovingToStorage:       return  "Moving to storage"; 
+            case BeeThinking.MovingToLarvae:        return  "Moving to larvae"; 
+            case BeeThinking.CollectingFromFlower:  return  "Collecting from flower"; 
+            case BeeThinking.Feeding:               return  "Feeding"; 
+            case BeeThinking.NoAvailableFlower:     return  "No available flower"; 
+            case BeeThinking.NoAvailableNectarStorage:  return  "No available nectar storage"; 
+            case BeeThinking.NoAvailablePollenStorage:  return  "No available pollen storage"; 
+            case BeeThinking.NoAvailableHoneyStorage:   return  "No available horney storage"; 
+            case BeeThinking.NoAvailableLarvae:     return  "No available larvae"; 
+            case BeeThinking.NoPollenInThisStorage: return  "No pollen in target storage"; 
+            case BeeThinking.NoHoneyInThisStorage:  return  "No honey in target storage"; 
+            default: return "";
+        }
+
+        return "";
+    }
+
     public void ShowBuildCancel()
     {
         kCancelBuildObj.SetActive(true);
@@ -118,6 +141,12 @@ public class MainCanvas : MonoBehaviour
     public void HideBuildCancel()
     {
         kCancelBuildObj.SetActive(false);
+    }
+
+    public void EndBuild()
+    {
+        kInven.gameObject.SetActive(true);
+        Mng.play.kHive.mIsBuilding = false;
     }
 
     public void DisplayWarning(string _warning)

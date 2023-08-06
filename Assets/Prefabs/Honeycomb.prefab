@@ -72,7 +72,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: df0a30c74f2a24e4aaa529e8a5700fb8, type: 3}
   - {fileID: 21300000, guid: bb86e664fac4a4b2faea9ae16bb9ca1d, type: 3}
   kCoalgulateSprites:
-  - {fileID: 21300000, guid: e20db33c8ee0c644392285f086bcf835, type: 3}
+  - {fileID: 21300000, guid: c5dcb88eb33f24455b0671df78e8828f, type: 3}
   - {fileID: 21300000, guid: 468f1900319b64040adf4d649071152b, type: 3}
 --- !u!60 &1434350828547772509
 PolygonCollider2D:
@@ -1029,7 +1029,7 @@ SpriteRenderer:
   m_SortingLayerID: -1601183143
   m_SortingLayer: 4
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e20db33c8ee0c644392285f086bcf835, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c5dcb88eb33f24455b0671df78e8828f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -133,10 +133,10 @@ public class Bee : MonoBehaviour
     public void UpdateLevel(int _level)
     {
         kLevel = _level;
-        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
-        mMaxNectar = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxHoney = Mng.play.UpdateUnit(new GameResAmount(0.04f*kLevel, GameResUnit.Milligram));
+        mMaxNectar = Mng.play.UpdateUnit(new GameResAmount(0.04f*kLevel, GameResUnit.Milligram));
         mMaxPollen = Mng.play.UpdateUnit(new GameResAmount(2f*kLevel, GameResUnit.Milligram));
-        mMaxWax = Mng.play.UpdateUnit(new GameResAmount(0.2f*kLevel, GameResUnit.Milligram));
+        mMaxWax = Mng.play.UpdateUnit(new GameResAmount(0.04f*kLevel, GameResUnit.Milligram));
 
         mHoneyFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 0.15f*kLevel, GameResUnit.Milligram));
         mPollenFeedAmount = Mng.play.UpdateUnit(new GameResAmount(Mathf.Clamp(kLevel * 0.1f, 0, 1) * 1.5f*kLevel, GameResUnit.Milligram));

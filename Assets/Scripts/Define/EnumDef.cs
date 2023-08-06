@@ -87,6 +87,7 @@ namespace EnumDef
     [Serializable]
     public enum StructureType
     {
+        Building = -1,
         None = 0,
         Storage = 1,
         Dryer = 2,

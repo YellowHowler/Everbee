@@ -21,6 +21,10 @@ public class Honeycomb : MonoBehaviour
 
     public StructureType kStructureType = StructureType.None;
 
+    private StructureType mTargetStructureType = StructureType.None;
+    private GameResAmount mBuildNeedWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
+    private GameResAmount mCurWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
+
     public GameObject kEmptyObj;
     public GameObject kStorageObj;
     public GameObject kDryerObj;
@@ -122,6 +126,7 @@ public class Honeycomb : MonoBehaviour
             case StructureType.Storage:
                 if(!forced && kStructureType != StructureType.None) 
                 {
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
                     return false;
                 }
                 SetAllChildrenActive(false);
@@ -130,6 +135,7 @@ public class Honeycomb : MonoBehaviour
             case StructureType.Dryer:
                 if(!forced && kStructureType != StructureType.Storage) 
                 {
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
                     return false;
                 }
                 SetAllChildrenActive(false);
@@ -139,6 +145,7 @@ public class Honeycomb : MonoBehaviour
 			case StructureType.Coalgulate:
 				if(!forced && kStructureType != StructureType.Storage)
 				{
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
 					return false;
 				}
 				SetAllChildrenActive(false);
@@ -151,8 +158,50 @@ public class Honeycomb : MonoBehaviour
                 break;
         }
 
+
         kStructureType = _type;
         return true;
+    }
+
+    public GameResAmount UpdateWaxAmount(GameResAmount _amount)
+    {
+        mCurWaxAmount = Mng.play.AddResourceAmounts(_amount, mCurWaxAmount);
+        
+        GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
+
+        if(Mng.play.CompareResourceAmounts(mBuildNeedWaxAmount, mCurWaxAmount))
+        {
+            retAmount = Mng.play.SubtractResourceAmounts(mCurWaxAmount, mBuildNeedWaxAmount);
+            mCurWaxAmount = mBuildNeedWaxAmount;
+
+            switch (mTargetStructureType)
+            {
+                case StructureType.None:
+                    break;
+                case StructureType.Storage:
+                    SetAllChildrenActive(false);
+                    kStorageObj.SetActive(true);
+                    break;
+                case StructureType.Dryer:
+                    SetAllChildrenActive(false);
+                    kStorageObj.SetActive(true);
+                    kDryerObj.SetActive(true);
+                    break;
+                case StructureType.Coalgulate:
+                    SetAllChildrenActive(false);
+                    kStorageObj.SetActive(true);
+                    kCoalgulateObj.SetActive(true);
+                    break;
+                case StructureType.Hatchtery:
+                    SetAllChildrenActive(false);
+                    kHatchteryObj.SetActive(true);
+                    break;
+            }
+
+            kStructureType = mTargetStructureType;
+        }
+
+        return retAmount;
     }
 
     private GameResAmount GetMaxAmount(GameResType _type)
@@ -379,8 +428,7 @@ public class Honeycomb : MonoBehaviour
         {
             if(SetStructure(hive.mStructureType, false) == true)
             {
-                Mng.canvas.kInven.gameObject.SetActive(true);
-                hive.mIsBuilding = false;
+                Mng.canvas.EndBuild();
             }
         }
         else
