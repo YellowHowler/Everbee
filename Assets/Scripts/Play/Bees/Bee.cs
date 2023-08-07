@@ -17,6 +17,8 @@ public class Bee : MonoBehaviour
 
     [HideInInspector] public BeeStage mCurStage;
 
+    public Animator kBeeAnimator;
+
     [HideInInspector] public GameResAmount mHoneyFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
     [HideInInspector] public GameResAmount mPollenFeedAmount = new GameResAmount(0.8f, GameResUnit.Microgram);
     private int mEggLevel = 1;
@@ -66,7 +68,7 @@ public class Bee : MonoBehaviour
 
     void Update()
     {
-      
+        kBeeAnimator.SetBool("hasPollen", mCurrentPollen.amount > 0.1f);
     }
 
     public void UpdateJob(Job _job)

@@ -11,6 +11,8 @@ public class QueenResourcePanel : PopupBase
 {
     [HideInInspector] public QueenBee mTargetQueen;
 
+    public Button kQueenBtn;
+
     public Slider kHoneySlider;
     public Slider kPollenSlider;
 
@@ -63,6 +65,7 @@ public class QueenResourcePanel : PopupBase
 
     public void OnQueenResourceBgClick()
     {
+        kQueenBtn.interactable = true;
         Mng.canvas.HideMenu();
         Hide();
     }

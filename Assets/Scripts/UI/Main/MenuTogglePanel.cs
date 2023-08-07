@@ -7,6 +7,7 @@ public class MenuTogglePanel : MonoBehaviour
 {
     public Button kJobBtn;
     public Button kBuildBtn;
+    public Button kQueenBtn;
 
     void Start()
     {
@@ -39,5 +40,16 @@ public class MenuTogglePanel : MonoBehaviour
         Mng.canvas.kQueen.Hide();
         Mng.canvas.kBuild.Hide();
         Mng.canvas.kJob.Show();
+    }
+
+    public void OnQueenMenuBtnClick()
+    {
+        kQueenBtn.interactable = false;
+
+        Mng.canvas.ShowMenu();
+        
+        Mng.canvas.kQueen.Show();
+        Mng.canvas.kBuild.Hide();
+        Mng.canvas.kJob.Hide();
     }
 }

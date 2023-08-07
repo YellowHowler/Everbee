@@ -1,121 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1765061285279014368
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4089731943729345519}
-  - component: {fileID: 5830852198908914459}
-  m_Layer: 0
-  m_Name: FlowerSpot
-  m_TagString: FlowerSpot
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4089731943729345519
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765061285279014368}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5.8, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8672060376378711011}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5830852198908914459
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1765061285279014368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8cb25720c07464fac4e5fe9f68a5fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mGarden: {fileID: 0}
-  isTarget: 0
-  pos: {x: 0, y: 0, z: 0}
-  occupied: 0
-  nectar: 200
-  nectarUnit: 1
-  pollen: 14
-  pollenUnit: 2
-  nectarAmount:
-    amount: 0
-    unit: 0
-  pollenAmount:
-    amount: 0
-    unit: 0
---- !u!1 &5026255454613024123
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 858263801546340635}
-  - component: {fileID: 1547142605312923169}
-  m_Layer: 0
-  m_Name: FlowerSpot (1)
-  m_TagString: FlowerSpot
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &858263801546340635
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5026255454613024123}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 3.9, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8672060376378711011}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1547142605312923169
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5026255454613024123}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8cb25720c07464fac4e5fe9f68a5fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mGarden: {fileID: 0}
-  isTarget: 0
-  pos: {x: 0, y: 0, z: 0}
-  occupied: 0
-  nectar: 200
-  nectarUnit: 1
-  pollen: 14
-  pollenUnit: 2
-  nectarAmount:
-    amount: 0
-    unit: 0
-  pollenAmount:
-    amount: 0
-    unit: 0
 --- !u!1 &7605470441391527501
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,8 +30,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4089731943729345519}
-  - {fileID: 858263801546340635}
+  - {fileID: 1169563694903508016}
+  - {fileID: 3948844094515521763}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -218,5 +102,149 @@ MonoBehaviour:
   mGarden: {fileID: 0}
   FlowerName: Lavender
   m_FlowerSpots:
-  - {fileID: 5830852198908914459}
-  - {fileID: 1547142605312923169}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!1001 &6590844899369169132
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 8672060376378711011}
+    m_Modifications:
+    - target: {fileID: 5425849638784765147, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_Name
+      value: Flower Spot
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: nectar
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: pollen
+      value: 14
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+--- !u!4 &1169563694903508016 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+  m_PrefabInstance: {fileID: 6590844899369169132}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &9043616969412944959
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 8672060376378711011}
+    m_Modifications:
+    - target: {fileID: 5425849638784765147, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_Name
+      value: Flower Spot (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: nectar
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: pollen
+      value: 14
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+--- !u!4 &3948844094515521763 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+  m_PrefabInstance: {fileID: 9043616969412944959}
+  m_PrefabAsset: {fileID: 0}

@@ -1,63 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7233888268032702633
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5084618540134503164}
-  - component: {fileID: 2576404179938628672}
-  m_Layer: 0
-  m_Name: Flower Spot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5084618540134503164
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7233888268032702633}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6602401701651255913}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2576404179938628672
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7233888268032702633}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa8cb25720c07464fac4e5fe9f68a5fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mGarden: {fileID: 0}
-  isTarget: 0
-  pos: {x: 0, y: 0, z: 0}
-  occupied: 0
-  nectar: 1
-  nectarUnit: 2
-  pollen: 22.8
-  pollenUnit: 2
-  nectarAmount:
-    amount: 0
-    unit: 0
-  pollenAmount:
-    amount: 0
-    unit: 0
 --- !u!1 &8291692626080167656
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,7 +30,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5084618540134503164}
+  - {fileID: 2830544650664815558}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -159,4 +101,80 @@ MonoBehaviour:
   mGarden: {fileID: 0}
   FlowerName: Oxeye Daisy
   m_FlowerSpots:
-  - {fileID: 2576404179938628672}
+  - {fileID: 0}
+--- !u!1001 &7783451760041961242
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 2
+    m_TransformParent: {fileID: 6602401701651255913}
+    m_Modifications:
+    - target: {fileID: 5425849638784765147, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_Name
+      value: Flower Spot
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: nectar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: pollen
+      value: 22.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5425849638784765149, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+      propertyPath: nectarUnit
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_AddedGameObjects: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+--- !u!4 &2830544650664815558 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5425849638784765148, guid: 0fe3095f8aab74b41a6bdae60fc2d2f0, type: 3}
+  m_PrefabInstance: {fileID: 7783451760041961242}
+  m_PrefabAsset: {fileID: 0}

@@ -304,6 +304,7 @@ MonoBehaviour:
   kLevel: 0
   kExp: 0
   mCurStage: 0
+  kBeeAnimator: {fileID: 8875955162677159939}
   mHoneyFeedAmount:
     amount: 0.8
     unit: 1

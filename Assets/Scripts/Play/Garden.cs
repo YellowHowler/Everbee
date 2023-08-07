@@ -37,7 +37,7 @@ public class Garden : MonoBehaviour
         mFlowerSpotList.Clear();
 
         foreach(var flower in mFlowers)
-            foreach(var spot in flower.m_FlowerSpots)
+            foreach(var spot in flower.mFlowerSpots)
                 mFlowerSpotList.Add(spot);
     }
 
@@ -45,8 +45,10 @@ public class Garden : MonoBehaviour
     {
         var newFlower = Instantiate(_flower.gameObject, new Vector3(x, flowerY, 0), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
 
+        newFlower.mFlowerSpots = newFlower.GetComponentsInChildren<FlowerSpot>();
+
         newFlower.mGarden = this;
-        foreach(var spot in newFlower.m_FlowerSpots)
+        foreach(var spot in newFlower.mFlowerSpots)
             spot.mGarden = this;
 
         mFlowers.Add(newFlower);
