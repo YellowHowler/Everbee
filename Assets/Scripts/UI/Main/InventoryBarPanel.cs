@@ -20,8 +20,12 @@ public class InventoryBarPanel : MonoBehaviour
 
     [HideInInspector] public int mHoveredNum = -1;
 
+    private int mSlotNum;
+
     public void Init()
     {
+        mSlotNum = kItemImages.Length;
+
         SetSelected(1);
         UpdateSlots();
     }
@@ -53,6 +57,19 @@ public class InventoryBarPanel : MonoBehaviour
         return maxAmount;
     }
 
+    public int GetAvailableSlot(GameResType _type)
+    {
+        for(int i = 0; i < mSlotNum; i++)
+        {
+            if(CheckIfSlotUsable(i, _type))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public bool CheckIfSlotUsable(int _num, GameResType _type)
     {
         var inventory = Mng.play.kInventory;
@@ -74,7 +91,7 @@ public class InventoryBarPanel : MonoBehaviour
     {
         var inventory = Mng.play.kInventory;
 
-        for(int i = 0; i < kItemImages.Length; i++)
+        for(int i = 0; i < mSlotNum; i++)
         {
             var slot = inventory.mItemSlots[i];
 
@@ -115,6 +132,7 @@ public class InventoryBarPanel : MonoBehaviour
         }
 
         kSelectedObjs[mSelectedNum].SetActive(true);
+        kSelectedObjs[mSelectedNum].GetComponent<Image>().color = Color.white;
     }
 
     public void SetHovered(int _num)
@@ -128,6 +146,11 @@ public class InventoryBarPanel : MonoBehaviour
 
         kSelectedObjs[mSelectedNum].SetActive(true);
         kSelectedObjs[mHoveredNum].SetActive(true);
+        
+        if(mHoveredNum != mSelectedNum)
+            kSelectedObjs[mHoveredNum].GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+        else    
+            kSelectedObjs[mSelectedNum].GetComponent<Image>().color = Color.white;
     }
 
     public void CancelHovered()
@@ -140,6 +163,7 @@ public class InventoryBarPanel : MonoBehaviour
         }
 
         kSelectedObjs[mSelectedNum].SetActive(true);
+        kSelectedObjs[mSelectedNum].GetComponent<Image>().color = Color.white;
     }
 
     public void DropItem(int _num)
@@ -155,10 +179,14 @@ public class InventoryBarPanel : MonoBehaviour
         Vector3 spawnPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
 
-        Item item = Instantiate(Mng.play.kHive.kItemObj, spawnPos, Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
+        Item item = Instantiate(Mng.play.kHive.kItemObj, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
         item.UpdateAmount(slot.type, slot.amount);
+        item.mPrevSlot = _num;
         slot.type = GameResType.Empty;
         slot.amount = new GameResAmount(0f, GameResUnit.Microgram);
+
+        Mng.play.kHive.mPlaceItem = item;
+        Mng.play.kHive.mIsPlacingItem = true;
 
         UpdateSlots();
     }

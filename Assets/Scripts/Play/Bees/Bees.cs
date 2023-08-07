@@ -44,6 +44,25 @@ public class Bees : MonoBehaviour
         return bee;
     }
 
+    public Bee GetBeeFromPos(Vector3 _pos)
+    {
+        float minDistance = 1.5f;
+        Bee retBee = null;
+
+        foreach(Bee bee in mBeeList)
+        {
+            float distance = Mathf.Sqrt(Mathf.Pow((bee.pos.x - _pos.x),2) + Mathf.Pow((bee.pos.y - _pos.y),2));
+
+            if(distance < minDistance)
+            {
+                minDistance = distance;
+                retBee = bee;
+            }
+        }
+
+        return retBee;
+    }
+
     public QueenBee CreateQueenBee(Vector3 _pos)
     {
         if (mQueenBee == null)

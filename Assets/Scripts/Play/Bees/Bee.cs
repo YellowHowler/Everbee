@@ -202,6 +202,16 @@ public class Bee : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(PopupBase.IsTherePopup())
+        {
+            return;
+        }
+
+        if(Mng.play.kHive.mIsBuilding == true || Mng.play.kHive.mIsPlacingItem == true)
+        {
+            return;
+        }
+
         if(Mng.canvas.kBeeInfo.gameObject.activeSelf || !PopupBase.IsTherePopup())
         {
             Mng.canvas.kBeeInfo.Show();

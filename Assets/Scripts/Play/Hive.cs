@@ -40,6 +40,9 @@ public class Hive : MonoBehaviour
     [Header("Honeycomb 모양 보기")]
     public bool kIsDrawHoneycombShape = true;
 
+    [HideInInspector] public bool mIsPlacingItem = false;
+    [HideInInspector] public Item mPlaceItem;
+
     [HideInInspector] public bool mIsBuilding = false;
     [HideInInspector] public StructureType mStructureType = StructureType.None;
 
@@ -50,7 +53,9 @@ public class Hive : MonoBehaviour
     [HideInInspector] public GameResAmount mQueenHoneyNeed;
     [HideInInspector] public GameResAmount mQueenPollenNeed;
 
+    [HideInInspector] public Dictionary<StructureType, GameResAmount> mWaxCosts = new Dictionary<StructureType, GameResAmount>();
 
+    [HideInInspector] public bool mMouseOverBuildCancel = false;
 
 	private void Awake()
 	{
@@ -276,6 +281,9 @@ public class Hive : MonoBehaviour
 
         mQueenHoneyNeed = new GameResAmount(1, GameResUnit.Milligram);
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
+
+        mWaxCosts.Add(StructureType.Storage, new GameResAmount(0, GameResUnit.Microgram));
+
     }
 
 	private void Update()
@@ -292,8 +300,7 @@ public class Hive : MonoBehaviour
 
 	public Honeycomb GetHoneycombFromPos(Vector3 _pos)
     {
-        print(_pos);
-        float minDistance = mHoneycombRadiusY;
+        float minDistance = mHoneycombRadiusY + 0.4f;
         Honeycomb retHoneycomb = null;
 
         foreach(Honeycomb honeycomb in mHoneycombList)
@@ -338,6 +345,8 @@ public class Hive : MonoBehaviour
     {
         while (mIsBuilding == true)
         {
+            kHoverObjSpriteRenderer.enabled = !mMouseOverBuildCancel;
+
             Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 touchPos = new Vector2(pos.x, pos.y);
 
@@ -394,7 +403,7 @@ public class Hive : MonoBehaviour
 				}
 			}
 
-			kHoverObjSpriteRenderer.color = hoverEnabled ? Color.white : new Color(0.5f,0.5f,0.5f,0.5f);
+			kHoverObjSpriteRenderer.color = hoverEnabled ? new Color(0.5f,1f,0.5f,1f) : new Color(1f,0.5f,0.5f,1f);
 
 			yield return null;
         }

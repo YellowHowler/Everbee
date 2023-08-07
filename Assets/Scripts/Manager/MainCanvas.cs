@@ -102,7 +102,7 @@ public class MainCanvas : MonoBehaviour
 
     public string GetAmountText(GameResAmount _amount)
     {
-        return _amount.amount.ToString("#.00") + Mng.canvas.GetUnitText(_amount.unit);
+        return _amount.amount.ToString("#.0") + Mng.canvas.GetUnitText(_amount.unit);
     }
 
     public string GetAmountRatioText(GameResAmount _amount, GameResAmount _maxAmount)
@@ -206,6 +206,11 @@ public class MainCanvas : MonoBehaviour
 
     public void ShowMenu()
     {
+        Mng.play.kHive.mIsBuilding = false;
+        if( Mng.play.kHive.mIsPlacingItem == true)
+        {
+            Mng.play.kHive.mPlaceItem.CancelPlace();
+        }
         kBeeInfo.Hide();
     }
 

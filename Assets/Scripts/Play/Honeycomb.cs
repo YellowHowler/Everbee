@@ -22,6 +22,7 @@ public class Honeycomb : MonoBehaviour
     public StructureType kStructureType = StructureType.None;
 
     private StructureType mTargetStructureType = StructureType.None;
+    private StructureType mPrevStructureType = StructureType.None;
     private GameResAmount mBuildNeedWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
     private GameResAmount mCurWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
@@ -36,6 +37,7 @@ public class Honeycomb : MonoBehaviour
 
     public GameObject kTimerPanel;
     public GameObject kButtonPanel;
+    public GameObject kBuildPanel;
 
     [HideInInspector] public bool mIsOpen = false;
     private bool mIsConverting = false;
@@ -118,36 +120,27 @@ public class Honeycomb : MonoBehaviour
 
     public bool SetStructure(StructureType _type, bool forced) //true if build successful
     {
+        kBuildPanel.SetActive(false);
+
         switch (_type)
         {
             case StructureType.None:
                 SetAllChildrenActive(false);
                 break;
+            case StructureType.Building:
+                SetStructure(mPrevStructureType, true);
+                PrepareBuildStructure(mTargetStructureType);
+                break;
             case StructureType.Storage:
-                if(!forced && kStructureType != StructureType.None) 
-                {
-                    Mng.canvas.DisplayWarning("Must place on empty space");
-                    return false;
-                }
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
                 break;
             case StructureType.Dryer:
-                if(!forced && kStructureType != StructureType.Storage) 
-                {
-                    Mng.canvas.DisplayWarning("Must upgrade from storage");
-                    return false;
-                }
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
                 kDryerObj.SetActive(true);
                 break;
 			case StructureType.Coalgulate:
-				if(!forced && kStructureType != StructureType.Storage)
-				{
-                    Mng.canvas.DisplayWarning("Must upgrade from storage");
-					return false;
-				}
 				SetAllChildrenActive(false);
 				kStorageObj.SetActive(true);
 				kCoalgulateObj.SetActive(true);
@@ -163,42 +156,73 @@ public class Honeycomb : MonoBehaviour
         return true;
     }
 
+    public bool PrepareBuildStructure(StructureType _type)
+    {
+        mCurWaxAmount = new GameResAmount(0f, GameResUnit.Microgram);
+        mBuildNeedWaxAmount = Mng.play.kHive.mWaxCosts[_type];
+
+        switch (_type)
+        {
+            case StructureType.None:
+                break;
+            case StructureType.Storage:
+                if(kStructureType != StructureType.None) 
+                {
+                    Mng.canvas.DisplayWarning("Must place on empty space");
+                    return false;
+                }
+                break;
+            case StructureType.Dryer:
+                if(kStructureType != StructureType.Storage) 
+                {
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
+                    return false;
+                }
+                break;
+			case StructureType.Coalgulate:
+				if(kStructureType != StructureType.Storage)
+				{
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
+					return false;
+				}
+				break;
+			case StructureType.Hatchtery:
+                if(kStructureType != StructureType.Storage)
+				{
+                    Mng.canvas.DisplayWarning("Must upgrade from storage");
+					return false;
+				}
+                break;
+        }
+
+        kBuildPanel.SetActive(true);
+        HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
+
+        mPrevStructureType = kStructureType;
+        kStructureType = StructureType.Building;
+        mTargetStructureType = _type;
+        
+        UpdateWaxAmount(new GameResAmount(0, GameResUnit.Microgram));
+        buildPanel.UpdateUI(mCurWaxAmount, mBuildNeedWaxAmount);
+
+        return true;
+    }
+
     public GameResAmount UpdateWaxAmount(GameResAmount _amount)
     {
         mCurWaxAmount = Mng.play.AddResourceAmounts(_amount, mCurWaxAmount);
         
         GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
-        if(Mng.play.CompareResourceAmounts(mBuildNeedWaxAmount, mCurWaxAmount))
+        HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
+        buildPanel.UpdateUI(mCurWaxAmount, mBuildNeedWaxAmount);
+
+        if(Mng.play.CompareResourceAmounts(mBuildNeedWaxAmount, mCurWaxAmount) || Mng.play.IsSameAmount(mBuildNeedWaxAmount, mCurWaxAmount))
         {
             retAmount = Mng.play.SubtractResourceAmounts(mCurWaxAmount, mBuildNeedWaxAmount);
             mCurWaxAmount = mBuildNeedWaxAmount;
 
-            switch (mTargetStructureType)
-            {
-                case StructureType.None:
-                    break;
-                case StructureType.Storage:
-                    SetAllChildrenActive(false);
-                    kStorageObj.SetActive(true);
-                    break;
-                case StructureType.Dryer:
-                    SetAllChildrenActive(false);
-                    kStorageObj.SetActive(true);
-                    kDryerObj.SetActive(true);
-                    break;
-                case StructureType.Coalgulate:
-                    SetAllChildrenActive(false);
-                    kStorageObj.SetActive(true);
-                    kCoalgulateObj.SetActive(true);
-                    break;
-                case StructureType.Hatchtery:
-                    SetAllChildrenActive(false);
-                    kHatchteryObj.SetActive(true);
-                    break;
-            }
-
-            kStructureType = mTargetStructureType;
+            SetStructure(mTargetStructureType, false);
         }
 
         return retAmount;
@@ -303,7 +327,6 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
-        
         int spriteNum = (int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1));
         if(spriteNum == 0 && amount.amount > 0) spriteNum = 1;
 
@@ -329,26 +352,6 @@ public class Honeycomb : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        /*
-        Vector3 top = transform.position + Vector3.up * 0.825f;
-        Vector3 topleft = transform.position + Vector3.up * 0.4125f + Vector3.left * 0.825f;
-        Vector3 bottomleft = transform.position + Vector3.down* 0.4125f + Vector3.left * 0.825f;
-        
-        Vector3 bottom = transform.position + Vector3.down * 0.825f;
-        Vector3 bottomright = transform.position + Vector3.down * 0.4125f + Vector3.right * 0.825f;
-        Vector3 topright = transform.position + Vector3.up * 0.4125f + Vector3.right * 0.825f;
-
-        Gizmos.DrawLine(top, topleft);
-        Gizmos.DrawLine(topleft, bottomleft);
-        Gizmos.DrawLine(bottomleft, bottom);
-
-        Gizmos.DrawLine(bottom, bottomright);
-        Gizmos.DrawLine(bottomright, topright);
-        Gizmos.DrawLine(topright, top);
-        */
-
-        //Gizmos.DrawSphere(transform.position, 0.825f);
-
     #if UNITY_EDITOR
         if (mHive != null)
         {
@@ -424,9 +427,14 @@ public class Honeycomb : MonoBehaviour
 
         Hive hive = Mng.play.kHive;
 
+        if(hive.mIsPlacingItem == true)
+        {
+            return;
+        }
+
         if(hive.mIsBuilding == true)
         {
-            if(SetStructure(hive.mStructureType, false) == true)
+            if(PrepareBuildStructure(hive.mStructureType) == true)
             {
                 Mng.canvas.EndBuild();
             }
@@ -469,11 +477,49 @@ public class Honeycomb : MonoBehaviour
         }
     }
 
+    public void StoreItemInInven()
+    {
+        if(amount.amount == 0) 
+        {
+            return;
+        }
+
+        InventoryBarPanel inven = Mng.canvas.kInven;
+
+        int targetSlot = inven.GetAvailableSlot(type);
+
+        if(targetSlot == -1)
+        {
+            Mng.canvas.DisplayWarning("No available inventory slot");
+            return;
+        }
+
+        GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[targetSlot].amount, amount);
+
+        if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+        {
+            inven.UpdateSlotAmount(targetSlot, type, sumAmount);
+            UpdateAmount(new GameResAmount(0, GameResUnit.Microgram));
+        }
+        else
+        {
+            inven.UpdateSlotAmount(targetSlot, type, GetMaxAmount(type));
+            UpdateAmount(Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+        }
+        
+        return;
+    }
+
     private void OnMouseUp()
     {
         Hive hive = Mng.play.kHive;
 
         if(PopupBase.IsTherePopup())
+        {
+            return;
+        }
+
+        if(hive.mIsPlacingItem == true)
         {
             return;
         }
@@ -489,7 +535,7 @@ public class Honeycomb : MonoBehaviour
                 case StructureType.None:
                     break;
                 case StructureType.Storage:
-                    CreateItem();
+                    StoreItemInInven();
                     break;
                 case StructureType.Dryer:
                     break;
@@ -579,6 +625,11 @@ public class Honeycomb : MonoBehaviour
 		public GameResAmount amount;
 
 		public StructureType kStructureType;
+
+        public StructureType mTargetStructureType;
+        public StructureType mPrevStructureType;
+        public GameResAmount mBuildNeedWaxAmount;
+        public GameResAmount mCurWaxAmount;
 	}
 
     public void ExportTo(CSaveData savedata)
@@ -587,6 +638,11 @@ public class Honeycomb : MonoBehaviour
         savedata.type = type;
         savedata.amount = amount;
         savedata.kStructureType = kStructureType;
+
+        savedata.mTargetStructureType = mTargetStructureType;
+        savedata.mPrevStructureType = mPrevStructureType;
+        savedata.mBuildNeedWaxAmount = mBuildNeedWaxAmount;
+        savedata.mCurWaxAmount = mCurWaxAmount;
     }
 
     public void ImportFrom(CSaveData savedata)
@@ -595,6 +651,11 @@ public class Honeycomb : MonoBehaviour
         type = savedata.type;
         amount = savedata.amount;
         kStructureType = savedata.kStructureType;
+
+        mTargetStructureType = savedata.mTargetStructureType;
+        mPrevStructureType = savedata.mPrevStructureType;
+        mBuildNeedWaxAmount = savedata.mBuildNeedWaxAmount;
+        mCurWaxAmount = savedata.mCurWaxAmount;
 
         SetStructure(kStructureType, true);
         UpdateType(type);

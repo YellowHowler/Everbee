@@ -13,8 +13,6 @@ public class Item : MonoBehaviour
     [SerializeField] TMP_Text valueText;
     [SerializeField] Sprite[] itemSprites;
 
-    public Rigidbody2D rb;
-
     public GameResType type = GameResType.Honey;
     public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
     public float XPosition { get { return transform.localPosition.x; } set { Vector3 pos = transform.localPosition; pos.x = value; transform.localPosition = pos; } }
@@ -28,9 +26,14 @@ public class Item : MonoBehaviour
 
     [HideInInspector] public bool mCanMerge = true;
 
+    [HideInInspector] public int mPrevSlot = -1;
+
     private void Awake()
     {
         mTouchingObjs = new List<GameObject>();
+
+        Mng.play.kHive.mIsPlacingItem = true;
+        Mng.play.kHive.mPlaceItem = this;
     }
 
     private IEnumerator Start()
@@ -42,16 +45,14 @@ public class Item : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
         mIsDropped = true;
-
-        //StartCoroutine(DestroyCor());
     }
 
-    /*private IEnumerator DestroyCor()
+    private void Update()
     {
-        yield return new WaitForSeconds(300);
-        Destroy(gameObject);
-    }*/
+        transform.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+    }
 
+   
 	private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
 	private GameResAmount GetMaxNectarAmount() { return Mng.play.kHive.mMaxItemAmounts[1]; }
 	private GameResAmount GetMaxPollenAmount() { return Mng.play.kHive.mMaxItemAmounts[2]; }
@@ -109,12 +110,6 @@ public class Item : MonoBehaviour
         itemSprite.sprite = itemSprites[(int)_type];
     }
 
-    private void OnMouseDown()
-    {
-        rb.velocity = Vector3.zero;
-        rb.gravityScale = 0;
-    }
-
     private GameObject GetTopTouchingObj()
     {
         int queenInd = -1;
@@ -148,15 +143,13 @@ public class Item : MonoBehaviour
 
     private void OnMouseUp()
     {
-        rb.velocity = Vector3.zero;
-        rb.gravityScale = 1;
-
         if(mIsDropped == false)
         {
             return;
         }
 
         InventoryBarPanel inven = Mng.canvas.kInven;
+
         if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
         {
             GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[inven.mHoveredNum].amount, amount);
@@ -174,6 +167,7 @@ public class Item : MonoBehaviour
             return;
         }
 
+        /*
         if(GetTopTouchingObj() != null)
         {
             GameObject mTouchingObj = GetTopTouchingObj();
@@ -194,47 +188,96 @@ public class Item : MonoBehaviour
                     }
                     UpdateAmount(type, mTouchingObj.GetComponent<Bee>().AddResource(type, amount));
                     break;
+                default:
+                    break;
             }
         }
-
-        if(transform.position.y < Mng.play.kHive.mFloorY)
-        {
-            transform.position = new Vector3(transform.position.x, Mng.play.kHive.mFloorY, 0);
-        }
+        */
 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
 
-        Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
-
-        if(storeHoneycomb == null)
+        Bee storeBee = Mng.play.kBees.GetBeeFromPos(mousePos);
+        if(storeBee != null)
         {
-            return;
+            if(storeBee.mCurStage == BeeStage.Egg || storeBee.mCurStage == BeeStage.Pupa)
+            {
+                return;
+            }
+            UpdateAmount(type, storeBee.AddResource(type, amount));
+            CancelPlace();
         }
 
-        switch(storeHoneycomb.kStructureType)
+        Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
+        if(storeHoneycomb != null)
         {
-            case StructureType.Storage:
-                if(storeHoneycomb.IsUsable(type) == false)
-                {
-                    return;
-                }
-                UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
-                break;
+            switch(storeHoneycomb.kStructureType)
+            {
+                case StructureType.Storage:
+                    if(storeHoneycomb.IsUsable(type) == false)
+                    {
+                        CancelPlace();
+                        return;
+                    }
+                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                    break;
 
-            case StructureType.Dryer:
-			case StructureType.Coalgulate:
-				if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
-                {
+                case StructureType.Dryer:
+                    if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
+                    {
+                        CancelPlace();
+                        return;
+                    }
+                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                    break;
+                case StructureType.Coalgulate:
+                    if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
+                    {
+                        CancelPlace();
+                        return;
+                    }
+                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                    break;
+                default:
+                    CancelPlace();
                     return;
-                }
-                UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
-                break;
-		}
+            }
+        }
+
+        CancelPlace();
 	}
 
-    private void OnMouseDrag()
+    public void CancelPlace()
     {
-        rb.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+        int placeSlot = mPrevSlot;
+
+        InventoryBarPanel inven = Mng.canvas.kInven;
+
+        if(placeSlot == -1 || (inven.CheckIfSlotUsable(mPrevSlot, type)))
+        {
+            placeSlot = Mng.canvas.kInven.GetAvailableSlot(type);
+            
+            if(placeSlot == -1)
+            {
+                Mng.play.kHive.mIsPlacingItem = false;
+                Destroy(gameObject);
+            }
+        }
+
+        GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[mPrevSlot].amount, amount);
+
+        if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+        {
+            inven.UpdateSlotAmount(mPrevSlot, type, sumAmount);
+            UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
+        }
+        else
+        {
+            inven.UpdateSlotAmount(mPrevSlot, type, GetMaxAmount(type));
+            UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+        }
+        
+        Mng.play.kHive.mIsPlacingItem = false;
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -288,6 +331,7 @@ public class Item : MonoBehaviour
             return;
         }
 
+        print(col.gameObject.name);
         mTouchingObjs.Add(col.gameObject);
     }
 

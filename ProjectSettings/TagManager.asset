@@ -61,12 +61,6 @@ TagManager:
   - name: Larvae
     uniqueID: 2598367839
     locked: 0
-  - name: CancelCanvas
-    uniqueID: 1323653163
-    locked: 0
-  - name: Hover
-    uniqueID: 442783851
-    locked: 0
   - name: Bee
     uniqueID: 2177007449
     locked: 0
@@ -78,6 +72,12 @@ TagManager:
     locked: 0
   - name: HoneycombVisual
     uniqueID: 771723435
+    locked: 0
+  - name: CancelCanvas
+    uniqueID: 1323653163
+    locked: 0
+  - name: Hover
+    uniqueID: 442783851
     locked: 0
   - name: Canvas
     uniqueID: 646869065
