@@ -50,6 +50,84 @@ public class Item : MonoBehaviour
     private void Update()
     {
         transform.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+
+        if(Input.GetMouseButtonUp(0))
+        {
+            if(mIsDropped == false)
+            {
+                return;
+            }
+
+            InventoryBarPanel inven = Mng.canvas.kInven;
+
+            if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
+            {
+                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[inven.mHoveredNum].amount, amount);
+                if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+                {
+                    inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
+                    UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
+                }
+                else
+                {
+                    inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
+                    UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+                }
+                
+                return;
+            }
+
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+
+            Bee storeBee = Mng.play.kBees.GetBeeFromPos(mousePos);
+            if(storeBee != null)
+            {
+                if(storeBee.mCurStage == BeeStage.Egg || storeBee.mCurStage == BeeStage.Pupa)
+                {
+                    return;
+                }
+                UpdateAmount(type, storeBee.AddResource(type, amount));
+                CancelPlace();
+            }
+
+            Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
+            if(storeHoneycomb != null)
+            {
+                switch(storeHoneycomb.kStructureType)
+                {
+                    case StructureType.Storage:
+                        if(storeHoneycomb.IsUsable(type) == false)
+                        {
+                            CancelPlace();
+                            return;
+                        }
+                        UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                        break;
+
+                    case StructureType.Dryer:
+                        if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
+                        {
+                            CancelPlace();
+                            return;
+                        }
+                        UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                        break;
+                    case StructureType.Coalgulate:
+                        if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
+                        {
+                            CancelPlace();
+                            return;
+                        }
+                        UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
+                        break;
+                    default:
+                        CancelPlace();
+                        return;
+                }
+            }
+
+            CancelPlace();
+        }
     }
 
    
@@ -90,6 +168,7 @@ public class Item : MonoBehaviour
 
         if(amount.amount == 0)
         {
+            Mng.play.kHive.mIsPlacingItem = false;
             Mng.play.kInventory.RemoveItem(this);
         }
         
@@ -143,107 +222,7 @@ public class Item : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if(mIsDropped == false)
-        {
-            return;
-        }
-
-        InventoryBarPanel inven = Mng.canvas.kInven;
-
-        if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
-        {
-            GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[inven.mHoveredNum].amount, amount);
-            if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
-            {
-                inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
-                UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
-            }
-            else
-            {
-                inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
-                UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
-            }
-            
-            return;
-        }
-
-        /*
-        if(GetTopTouchingObj() != null)
-        {
-            GameObject mTouchingObj = GetTopTouchingObj();
-
-            switch(mTouchingObj.tag)
-            {
-                case "QueenBee":
-                    if(type == GameResType.Pollen || type == GameResType.Honey)
-                    {
-                        mTouchingObj.GetComponent<QueenBee>().AddResource(type, amount);
-                        Mng.play.kInventory.RemoveItem(this);
-                    }
-                    break;
-                case "Bee":
-                    if(mTouchingObj.GetComponent<Bee>().mCurStage == BeeStage.Egg || mTouchingObj.GetComponent<Bee>().mCurStage == BeeStage.Pupa)
-                    {
-                        return;
-                    }
-                    UpdateAmount(type, mTouchingObj.GetComponent<Bee>().AddResource(type, amount));
-                    break;
-                default:
-                    break;
-            }
-        }
-        */
-
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
-
-        Bee storeBee = Mng.play.kBees.GetBeeFromPos(mousePos);
-        if(storeBee != null)
-        {
-            if(storeBee.mCurStage == BeeStage.Egg || storeBee.mCurStage == BeeStage.Pupa)
-            {
-                return;
-            }
-            UpdateAmount(type, storeBee.AddResource(type, amount));
-            CancelPlace();
-        }
-
-        Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
-        if(storeHoneycomb != null)
-        {
-            switch(storeHoneycomb.kStructureType)
-            {
-                case StructureType.Storage:
-                    if(storeHoneycomb.IsUsable(type) == false)
-                    {
-                        CancelPlace();
-                        return;
-                    }
-                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
-                    break;
-
-                case StructureType.Dryer:
-                    if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
-                    {
-                        CancelPlace();
-                        return;
-                    }
-                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
-                    break;
-                case StructureType.Coalgulate:
-                    if(storeHoneycomb.IsUsable(type) == false || storeHoneycomb.mIsOpen == false)
-                    {
-                        CancelPlace();
-                        return;
-                    }
-                    UpdateAmount(type, storeHoneycomb.StoreResource(type, amount));
-                    break;
-                default:
-                    CancelPlace();
-                    return;
-            }
-        }
-
-        CancelPlace();
+        
 	}
 
     public void CancelPlace()

@@ -57,6 +57,8 @@ public class Bee : MonoBehaviour
     private bool mAtTarget = false; // 목적지에 다다랐는가.
     public BeeThinking Thinking = BeeThinking.None;
 
+    public SpriteOutline kOutline;
+
     // UpdateJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
 
     private void Awake()
@@ -64,6 +66,8 @@ public class Bee : MonoBehaviour
         mTargetFlowerSpot = new CTargetLink<Bee, FlowerSpot>(this);
         mTargetHoneycomb = new CTargetLink<Bee, Honeycomb>(this);
         mTargetBee = new CTargetLink<Bee, Bee>(this);
+
+        kOutline = GetComponent<SpriteOutline>();
     }
 
     void Update()
@@ -99,15 +103,19 @@ public class Bee : MonoBehaviour
 
         switch (_stage)
         {
-            case BeeStage.Egg:
+            case BeeStage.Egg: 
+                kOutline.sr = mEggObj.GetComponent<SpriteRenderer>();
                 StartCoroutine(EggHatchCor());
                 break;
             case BeeStage.Larvae:
+                kOutline.sr = mLarvaeObj.GetComponent<SpriteRenderer>();
                 break;
             case BeeStage.Pupa:
+                kOutline.sr = mPupaObj.GetComponent<SpriteRenderer>();
                 StartCoroutine(PupaConvertCor());
                 break;
             case BeeStage.Bee:
+                kOutline.sr = mBeeObj.GetComponent<SpriteRenderer>();
                 mCanWork = false;
                 DoJob();
                 break;
@@ -195,9 +203,37 @@ public class Bee : MonoBehaviour
 
     public void Feed()
     {
-        mCurrentHoney = Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount);
-        mCurrentPollen = Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount);
+        UpdateResourceAmount(GameResType.Honey, Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount));
+        UpdateResourceAmount(GameResType.Pollen, Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount));
         UpdateExp(0.25f);
+    }
+
+    public void Feed(Bee _feeder)
+    {
+        _feeder.UpdateResourceAmount(GameResType.Honey, Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount));
+        _feeder.UpdateResourceAmount(GameResType.Pollen, Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount));
+        UpdateExp(0.25f);
+    }
+
+    public void UpdateResourceAmount(GameResType _type, GameResAmount _amount)
+    {
+        switch(_type)
+        {
+            case GameResType.Honey:
+                mCurrentHoney = _amount;
+                break;
+            case GameResType.Nectar:
+                mCurrentNectar = _amount;
+                break;
+            case GameResType.Pollen:
+                mCurrentPollen = _amount;
+                break;
+            case GameResType.Wax:
+                mCurrentWax = _amount;
+                break;
+        }
+
+        Mng.canvas.kBeeInfo.UpdateStat(this);
     }
 
     private void OnMouseDown()
@@ -218,6 +254,19 @@ public class Bee : MonoBehaviour
             Mng.play.kCamera.SetFollow(transform);
             Mng.canvas.kBeeInfo.SetBee(this);
         }
+    }
+
+    private void OnMouseOver()
+    {
+        if(Mng.play.kHive.mIsPlacingItem == true)
+        {
+            kOutline.enabled = true;
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        kOutline.enabled = false;
     }
 
     private IEnumerator CallDoJob()
@@ -317,9 +366,8 @@ public class Bee : MonoBehaviour
                     return;
                 }
 
-                mCurrentPollen = targetHoneyComb.StoreResource(GameResType.Pollen, mCurrentPollen);
-                
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Pollen, targetHoneyComb.StoreResource(GameResType.Pollen, mCurrentPollen));
+
                 mAtTarget = false;
                 mTargetHoneycomb.Unlink();
                 StartCoroutine(CallDoJob());
@@ -342,8 +390,8 @@ public class Bee : MonoBehaviour
                     return;
                 }
 
-                mCurrentNectar = targetHoneyComb.StoreResource(GameResType.Nectar, mCurrentNectar);
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Nectar, targetHoneyComb.StoreResource(GameResType.Nectar, mCurrentNectar));
+
                 mAtTarget = false; 
                 mTargetHoneycomb.Unlink();
                 StartCoroutine(CallDoJob());
@@ -359,8 +407,65 @@ public class Bee : MonoBehaviour
         }
         else if(kCurrentJob == Job.Build)
         {
-            mCanWork = false;
-            StartCoroutine(CallDoJob());
+            if (mAtTarget == false && mCurrentWax.amount == 0)
+            {
+                FetchWax();
+                return;
+            }
+            else if (mCurrentWax.amount == 0 && mAtTarget == true && mTargetHoneycomb.IsLinked())
+            {
+                Honeycomb targetHoneyComb = mTargetHoneycomb.GetObject();
+
+                if(!(targetHoneyComb.type == GameResType.Wax && targetHoneyComb.amount.amount > 0 && targetHoneyComb.kStructureType == StructureType.Storage))
+                {   
+                    Thinking = BeeThinking.NoWaxInThisStorage;
+                    mAtTarget = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                UpdateResourceAmount(GameResType.Wax, targetHoneyComb.FetchResource(GameResType.Wax, mCurrentWax, mMaxWax));
+
+                mAtTarget = false; 
+                mTargetHoneycomb.Unlink();
+                StartCoroutine(CallDoJob());
+                return;
+            }
+            else if(mCurrentWax.amount > 0 && mAtTarget == false)
+            {
+                LinkTo(PlayManager.Instance.kHive.FindBuildingHoneycomb());
+
+                if(!mTargetHoneycomb.IsLinked()) 
+                {
+                    Thinking = BeeThinking.NoBuildingStructure;
+                    mCanWork = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                Thinking = BeeThinking.MovingToBuild;
+                StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
+                return;
+            }
+            else if(mCurrentWax.amount > 0 && mAtTarget == true)
+            {
+                if(!mTargetHoneycomb.IsLinked() || mTargetHoneycomb.GetObject().kStructureType != StructureType.Building || Vector3.Distance(mTargetHoneycomb.GetObject().pos, transform.position) > 0.1f)
+                {
+                    mCanWork = false;
+                    StartCoroutine(CallDoJob());
+                    return;
+                }
+
+                StartCoroutine(BuildStructure());
+                return;
+            }
+            else
+            {
+                Thinking = BeeThinking.None;
+                mCanWork = false;
+                StartCoroutine(CallDoJob());
+                return;
+            }
             return;
         }
         else if(kCurrentJob == Job.Feed)
@@ -384,8 +489,8 @@ public class Bee : MonoBehaviour
                     return;
                 }
 
-                mCurrentPollen = targetHoneyComb.FetchResource(GameResType.Pollen, mCurrentPollen, mMaxPollen);
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Pollen, targetHoneyComb.FetchResource(GameResType.Pollen, mCurrentPollen, mMaxPollen));
+
                 mAtTarget = false; 
                 mTargetHoneycomb.Unlink();
                 StartCoroutine(CallDoJob());
@@ -407,8 +512,8 @@ public class Bee : MonoBehaviour
                     return;
                 }
 
-                mCurrentHoney = targetHoneyComb.FetchResource(GameResType.Honey, mCurrentHoney, mMaxHoney);
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Honey, targetHoneyComb.FetchResource(GameResType.Honey, mCurrentHoney, mMaxHoney));
+
                 mAtTarget = false; 
                 mTargetHoneycomb.Unlink();
                 StartCoroutine(CallDoJob());
@@ -512,13 +617,28 @@ public class Bee : MonoBehaviour
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
+    private void FetchWax()
+    {
+        LinkTo(PlayManager.Instance.kHive.GetFetchableStorage(GameResType.Wax));
+
+        if (!mTargetHoneycomb.IsLinked())
+        {
+            Thinking = BeeThinking.NoAvailableWaxStorage;
+            mCanWork = false;
+            StartCoroutine(CallDoJob());
+            return;
+        }
+
+        Thinking = BeeThinking.MovingToStorage;
+        StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
+    }
+
     private IEnumerator CollectFromFlower()
     {
         Thinking = BeeThinking.CollectingFromFlower;
         yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
         mAtTarget = false;
         AddResource(mTargetFlowerSpot.GetObject().pollenAmount, mTargetFlowerSpot.GetObject().nectarAmount);
-        Mng.canvas.kBeeInfo.UpdateStat(this);
 
         mTargetFlowerSpot.Unlink();
 
@@ -532,19 +652,43 @@ public class Bee : MonoBehaviour
 
         var targetBee = mTargetBee.GetObject();
 
-        mCurrentHoney = targetBee.AddResource(GameResType.Honey, mCurrentHoney);
-        mCurrentPollen = targetBee.AddResource(GameResType.Pollen, mCurrentPollen);
-        Mng.canvas.kBeeInfo.UpdateStat(this);
+        UpdateResourceAmount(GameResType.Honey, targetBee.AddResource(GameResType.Honey, mCurrentHoney));
+        UpdateResourceAmount(GameResType.Pollen, targetBee.AddResource(GameResType.Pollen, mCurrentPollen));
 
         yield return new WaitForSeconds(0.5f); 
 
-        if(Mng.play.CompareResourceAmounts(targetBee.mPollenFeedAmount, targetBee.mCurrentPollen) == true && Mng.play.CompareResourceAmounts(targetBee.mHoneyFeedAmount, targetBee.mCurrentHoney) == true)
+        if(targetBee != null
+        && Mng.play.CompareResourceAmounts(targetBee.mPollenFeedAmount, targetBee.mCurrentPollen) == true 
+        && Mng.play.CompareResourceAmounts(targetBee.mHoneyFeedAmount, targetBee.mCurrentHoney) == true
+        && targetBee.mCurStage == BeeStage.Larvae)
         {
             targetBee.Feed();
         }
 
         Thinking = BeeThinking.None;
         mTargetBee.Unlink();
+        mAtTarget = false;
+
+        StartCoroutine(CallDoJob());
+    }
+
+    private IEnumerator BuildStructure()
+    {
+        Thinking = BeeThinking.Building;
+
+        yield return new WaitForSeconds(0.5f);
+
+        var targetHoneycomb = mTargetHoneycomb.GetObject();
+
+        if(targetHoneycomb != null
+        && targetHoneycomb.kStructureType == StructureType.Building)
+        {
+            UpdateResourceAmount(GameResType.Wax, targetHoneycomb.UpdateWaxAmount(mCurrentWax));
+            targetHoneycomb.PlayParticles();
+        }
+
+        Thinking = BeeThinking.None;
+        mTargetHoneycomb.Unlink();
         mAtTarget = false;
 
         StartCoroutine(CallDoJob());
@@ -557,21 +701,17 @@ public class Bee : MonoBehaviour
 
         if(PlayManager.Instance.CompareResourceAmounts(mMaxPollen, newPollenAmount) == true)
         {
-            mCurrentPollen = mMaxPollen;
-            Mng.canvas.kBeeInfo.UpdateStat(this);
+            UpdateResourceAmount(GameResType.Pollen, mMaxPollen);
             return Mng.play.SubtractResourceAmounts(newPollenAmount, mMaxPollen);
         }
         if (PlayManager.Instance.CompareResourceAmounts(mMaxNectar, newNectarAmount) == true)
         {
-            mCurrentNectar = mMaxNectar;
-            Mng.canvas.kBeeInfo.UpdateStat(this);
+            UpdateResourceAmount(GameResType.Nectar, mMaxNectar);
             return Mng.play.SubtractResourceAmounts(newNectarAmount, mMaxNectar);
         }
 
-        mCurrentPollen = newPollenAmount;
-        mCurrentNectar = newNectarAmount;
-
-        Mng.canvas.kBeeInfo.UpdateStat(this);
+        UpdateResourceAmount(GameResType.Pollen, newPollenAmount);
+        UpdateResourceAmount(GameResType.Nectar, newNectarAmount);
 
         return new GameResAmount(0f, GameResUnit.Microgram);
     }
@@ -584,45 +724,40 @@ public class Bee : MonoBehaviour
                 GameResAmount newPollenAmount = PlayManager.Instance.AddResourceAmounts(mCurrentPollen, _amount);
                 if(PlayManager.Instance.CompareResourceAmounts(mMaxPollen, newPollenAmount) == true)
                 {
-                    mCurrentPollen = mMaxPollen;
-                    Mng.canvas.kBeeInfo.UpdateStat(this);
+                    UpdateResourceAmount(GameResType.Pollen, mMaxPollen);
                     return Mng.play.SubtractResourceAmounts(newPollenAmount, mMaxPollen);
                 }
-                mCurrentPollen = newPollenAmount;
+                UpdateResourceAmount(GameResType.Pollen, newPollenAmount);
                 break;
             case GameResType.Nectar:
                 GameResAmount newNectarAmount = PlayManager.Instance.AddResourceAmounts(mCurrentNectar, _amount);
                 if(PlayManager.Instance.CompareResourceAmounts(mMaxNectar, newNectarAmount) == true)
                 {
-                    mCurrentNectar = mMaxNectar;
+                    UpdateResourceAmount(GameResType.Nectar, mMaxNectar);
                     return Mng.play.SubtractResourceAmounts(newNectarAmount, mMaxNectar);
                 }
-                mCurrentNectar = newNectarAmount;
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Nectar, newNectarAmount);
                 break;
             case GameResType.Honey:
                 GameResAmount newHoneyAmount = PlayManager.Instance.AddResourceAmounts(mCurrentHoney, _amount);
                 if(PlayManager.Instance.CompareResourceAmounts(mMaxHoney, newHoneyAmount) == true)
                 {
-                    mCurrentHoney = mMaxNectar;
+                    UpdateResourceAmount(GameResType.Honey, mMaxHoney);
                     return Mng.play.SubtractResourceAmounts(newHoneyAmount, mMaxHoney);
                 }
-                mCurrentHoney = newHoneyAmount;
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Honey, newHoneyAmount);
                 break;
             case GameResType.Wax:
                 GameResAmount newWaxAmount = PlayManager.Instance.AddResourceAmounts(mCurrentWax, _amount);
                 if(PlayManager.Instance.CompareResourceAmounts(mMaxHoney, newWaxAmount) == true)
                 {
-                    mCurrentWax = mMaxWax;
+                    UpdateResourceAmount(GameResType.Wax, mMaxWax);
                     return Mng.play.SubtractResourceAmounts(newWaxAmount, mMaxWax);
                 }
-                mCurrentWax = newWaxAmount;
-                Mng.canvas.kBeeInfo.UpdateStat(this);
+                UpdateResourceAmount(GameResType.Wax, newWaxAmount);
                 break;
         }
 
-        Mng.canvas.kBeeInfo.UpdateStat(this);
         return new GameResAmount(0f, GameResUnit.Microgram);
     }
 
@@ -708,10 +843,10 @@ public class Bee : MonoBehaviour
 		mHoneyFeedAmount = savedata.mHoneyFeedAmount;
 		mPollenFeedAmount = savedata.mPollenFeedAmount;
 
-		mCurrentPollen = savedata.mCurrentPollen;
-		mCurrentNectar = savedata.mCurrentNectar;
-		mCurrentHoney = savedata.mCurrentHoney;
-		mCurrentWax = savedata.mCurrentWax;
+		UpdateResourceAmount(GameResType.Pollen, savedata.mCurrentPollen);
+		UpdateResourceAmount(GameResType.Nectar, savedata.mCurrentNectar);
+		UpdateResourceAmount(GameResType.Honey, savedata.mCurrentHoney);
+		UpdateResourceAmount(GameResType.Wax, savedata.mCurrentWax);
 
 		UpdateStage(mCurStage, true);
 		UpdateLevel(kLevel);

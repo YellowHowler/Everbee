@@ -45,6 +45,8 @@ public class Honeycomb : MonoBehaviour
     public Sprite[] kDryerSprites;
     public Sprite[] kCoalgulateSprites;
 
+    public ParticleSystem kParticle;
+
 
     private void Awake()
     {
@@ -55,6 +57,8 @@ public class Honeycomb : MonoBehaviour
     {
 		kCanvas.SetActive(true);
 		kCanvas.GetComponent<Canvas>().worldCamera = Camera.main;
+
+        kParticle.Stop();
 	}
 
     private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
@@ -259,7 +263,7 @@ public class Honeycomb : MonoBehaviour
 
         if (type == GameResType.Empty || type == _type)
         {
-            type = _type;
+            UpdateType(_type);
         }
         else
         {
@@ -271,18 +275,14 @@ public class Honeycomb : MonoBehaviour
 
         if (Mng.play.CompareResourceAmounts(retAmount, maxAmount) == true) 
         {
-            amount = retAmount;
-            Mng.play.AddResourceToStorage(_type, _amount);
-            UpdateSprite();
+            UpdateAmount(retAmount);
 
             return new GameResAmount(0f, GameResUnit.Microgram);
         }
 
         retAmount = Mng.play.SubtractResourceAmounts(retAmount, maxAmount);
-        Mng.play.AddResourceToStorage(_type, Mng.play.SubtractResourceAmounts(maxAmount, amount));
-        amount = maxAmount;
-
-        UpdateSprite();
+        
+        UpdateAmount(_amount);
 
         return retAmount;
     }
@@ -291,22 +291,28 @@ public class Honeycomb : MonoBehaviour
     {
         if(Mng.play.CompareResourceAmounts(_maxAmount, amount) == true)
         {
-            amount = Mng.play.SubtractResourceAmounts(amount, _maxAmount);
-            Mng.play.SubtractResourceFromStorage(_type, _maxAmount);
-            UpdateSprite();
+            UpdateAmount(Mng.play.SubtractResourceAmounts(amount, _maxAmount));
 
             return _maxAmount;
         }
 
         Mng.play.SubtractResourceFromStorage(_type, amount);
-        amount = new GameResAmount(0f, GameResUnit.Microgram);
-        UpdateSprite();
+        UpdateAmount(new GameResAmount(0f, GameResUnit.Microgram));
 
         return amount;
     }
 
     public void UpdateAmount(GameResAmount _amount)
     {
+        if(Mng.play.CompareResourceAmounts(amount, _amount))
+        {
+            Mng.play.AddResourceToStorage(type, Mng.play.SubtractResourceAmounts(_amount, amount));
+        }
+        else
+        {
+            Mng.play.SubtractResourceFromStorage(type, Mng.play.SubtractResourceAmounts(amount, _amount));
+        }
+
         amount = _amount;
         UpdateSprite();
     }
@@ -346,6 +352,8 @@ public class Honeycomb : MonoBehaviour
                 break;
             case GameResType.Wax:
                 kSpriteRenderer.sprite = mHive.kHoneycombWaxSprites[spriteNum];
+                break;
+            default:
                 break;
         }
     }
@@ -589,6 +597,10 @@ public class Honeycomb : MonoBehaviour
 		}
 	}
 
+    public void PlayParticles()
+    {
+        StartCoroutine(PlayParticlesCor());
+    }
     private IEnumerator ConvertCor(int _time, GameResType _finType)
     {
         WaitForSeconds sec = new WaitForSeconds(1);
@@ -608,9 +620,16 @@ public class Honeycomb : MonoBehaviour
         mIsConverting = false;
     }   
 
+    private IEnumerator PlayParticlesCor()
+    {
+        kParticle.Play();
+        yield return new WaitForSeconds(0.5f);
+        kParticle.Stop();
+    }
+    
     public void PlaceEgg()
     {
-        type = GameResType.Egg;
+        UpdateType(GameResType.Egg);
         Mng.play.kBees.CreateBee(Mng.play.SetZ(transform.position, 0), 0, BeeStage.Egg);
     }
 
@@ -648,8 +667,8 @@ public class Honeycomb : MonoBehaviour
     public void ImportFrom(CSaveData savedata)
     {
         pos = savedata.pos;
-        type = savedata.type;
-        amount = savedata.amount;
+        UpdateType(savedata.type);
+        UpdateAmount(savedata.amount);
         kStructureType = savedata.kStructureType;
 
         mTargetStructureType = savedata.mTargetStructureType;
@@ -658,6 +677,5 @@ public class Honeycomb : MonoBehaviour
         mCurWaxAmount = savedata.mCurWaxAmount;
 
         SetStructure(kStructureType, true);
-        UpdateType(type);
     }
 }

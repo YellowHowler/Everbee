@@ -58,6 +58,12 @@ TagManager:
   - name: HoneycombDryer
     uniqueID: 2693784153
     locked: 0
+  - name: Hover
+    uniqueID: 442783851
+    locked: 0
+  - name: Particle
+    uniqueID: 2528346771
+    locked: 0
   - name: Larvae
     uniqueID: 2598367839
     locked: 0
@@ -76,8 +82,8 @@ TagManager:
   - name: CancelCanvas
     uniqueID: 1323653163
     locked: 0
-  - name: Hover
-    uniqueID: 442783851
+  - name: CancelHover
+    uniqueID: 2553590881
     locked: 0
   - name: Canvas
     uniqueID: 646869065

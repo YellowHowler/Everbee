@@ -124,6 +124,13 @@ public class InventoryBarPanel : MonoBehaviour
 
     public void SetSelected(int _num)
     {
+        StartCoroutine(SetSelectedCor(_num));
+    }
+
+    private IEnumerator SetSelectedCor(int _num)
+    {
+        yield return new WaitForSeconds(0.1f);
+
         mSelectedNum = _num;
 
         for(int i = 0; i < kSelectedObjs.Length; i++)

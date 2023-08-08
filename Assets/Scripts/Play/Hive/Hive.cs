@@ -168,6 +168,23 @@ public class Hive : MonoBehaviour
         }
     }*/
 
+    public Honeycomb FindBuildingHoneycomb()
+    {
+        int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+        for(int i=0; i<mHoneycombList.Count; ++i)
+        {
+            int index = (i + offset) % mHoneycombList.Count;
+            var comb = mHoneycombList[index];
+
+            if (comb.kStructureType == StructureType.Building)
+            {
+                return comb;
+            }
+        }
+
+        return null;
+    }
+
     public Honeycomb AddNewHoneycomb()
     {
         GameObject newHoneycomb = Instantiate(kHoneycombObj, Vector3.zero, Quaternion.identity, transform.GetChild(0));

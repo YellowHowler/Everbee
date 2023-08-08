@@ -9,9 +9,35 @@ public class Flower:MonoBehaviour
 	public FlowerSpot[] mFlowerSpots;
 	public float XPosition { get { return transform.localPosition.x; } set { transform.localPosition = new Vector3(value, 0, 0); } }
 
+	private ParticleSystem mParticle;
+
+	private void Start()
+	{
+		mParticle = GetComponentInChildren<ParticleSystem>();
+		mParticle.Stop();
+	}
+
+	private void OnMouseDown()
+	{
+		
+		PlayParticles();
+	}
+
+	public void PlayParticles()
+    {
+        StartCoroutine(PlayParticlesCor());
+    }
+
+	private IEnumerator PlayParticlesCor()
+    {
+        mParticle.Play();
+        yield return new WaitForSeconds(0.5f);
+        mParticle.Stop();
+    }
 
 	// 세이브/로드 관련
 	[Serializable]
+
 	public class CSaveData
 	{
 		public string FlowerName;

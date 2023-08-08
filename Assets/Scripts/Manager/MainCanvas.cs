@@ -114,20 +114,30 @@ public class MainCanvas : MonoBehaviour
     {
         switch(_thinking)
         {
-            case BeeThinking.None:                  return  ""; 
-            case BeeThinking.MovingToFlower:        return  "Moving to flower"; 
-            case BeeThinking.MovingToStorage:       return  "Moving to storage"; 
-            case BeeThinking.MovingToLarvae:        return  "Moving to larvae"; 
-            case BeeThinking.CollectingFromFlower:  return  "Collecting from flower"; 
-            case BeeThinking.Feeding:               return  "Feeding"; 
-            case BeeThinking.NoAvailableFlower:     return  "No available flower"; 
-            case BeeThinking.NoAvailableNectarStorage:  return  "No available nectar storage"; 
-            case BeeThinking.NoAvailablePollenStorage:  return  "No available pollen storage"; 
-            case BeeThinking.NoAvailableHoneyStorage:   return  "No available horney storage"; 
-            case BeeThinking.NoAvailableLarvae:     return  "No available larvae"; 
-            case BeeThinking.NoPollenInThisStorage: return  "No pollen in target storage"; 
-            case BeeThinking.NoHoneyInThisStorage:  return  "No honey in target storage"; 
-            default: return "";
+            case BeeThinking.None:                       return  ""; 
+
+            case BeeThinking.MovingToFlower:             return  "Moving to flower"; 
+            case BeeThinking.MovingToStorage:            return  "Moving to storage"; 
+            case BeeThinking.MovingToLarvae:             return  "Moving to larvae"; 
+            case BeeThinking.MovingToBuild :             return  "Moving to build"; 
+
+            case BeeThinking.CollectingFromFlower:       return  "Collecting from flower"; 
+            case BeeThinking.Feeding:                    return  "Feeding"; 
+            case BeeThinking.Building:                   return  "Building"; 
+
+            case BeeThinking.NoAvailableFlower:          return  "No available flower"; 
+            case BeeThinking.NoAvailableNectarStorage:   return  "No available nectar storage"; 
+            case BeeThinking.NoAvailablePollenStorage:   return  "No available pollen storage"; 
+            case BeeThinking.NoAvailableHoneyStorage:    return  "No available honey storage"; 
+            case BeeThinking.NoAvailableLarvae:          return  "No available larvae"; 
+            case BeeThinking.NoBuildingStructure:        return  "No current build"; 
+
+
+            case BeeThinking.NoPollenInThisStorage:      return  "No pollen in target storage"; 
+            case BeeThinking.NoHoneyInThisStorage:       return  "No honey in target storage"; 
+            case BeeThinking.NoWaxInThisStorage:         return  "No wax in target storage"; 
+
+            default:                                     return "";
         }
 
         return "";
