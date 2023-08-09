@@ -95,7 +95,7 @@ public class Honeycomb : MonoBehaviour
 
     public bool IsUsable(GameResType _type)
     {
-        if(amount.amount == 0f)
+        if(amount.amount < 0.1f)
         {
             type = GameResType.Empty;
         }
@@ -114,12 +114,47 @@ public class Honeycomb : MonoBehaviour
 
     private void SetAllChildrenActive(bool _setActive)
     {
-        for (int i = 0; i < transform.childCount-1; i++)
+        for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).gameObject.SetActive(_setActive);
         }
 
         kEmptyObj.gameObject.SetActive(true);
+        kParticle.gameObject.SetActive(true);
+        kCanvas.SetActive(true);
+    }
+
+    public void ChangeColorOfStructure(StructureType _type, Color _color)
+    {
+        GameObject model = null;
+
+        switch (_type)
+        {
+            case StructureType.None:
+                model = null;
+                break;
+            case StructureType.Storage:
+                model = kStorageObj;
+                break;
+            case StructureType.Dryer:
+                model = kDryerObj;
+                break;
+			case StructureType.Coalgulate:
+				model = kCoalgulateObj;
+                break;
+			case StructureType.Hatchtery:
+                model = kHatchteryObj;
+                break;
+            default:
+                model = null;
+                break;
+        }
+
+        if(model != null)
+        {
+            model.SetActive(true);
+            model.GetComponent<SpriteRenderer>().color = Color.white;
+        }
     }
 
     public bool SetStructure(StructureType _type, bool forced) //true if build successful
@@ -155,8 +190,8 @@ public class Honeycomb : MonoBehaviour
                 break;
         }
 
-
         kStructureType = _type;
+
         return true;
     }
 
@@ -199,7 +234,11 @@ public class Honeycomb : MonoBehaviour
                 break;
         }
 
+        kCanvas.SetActive(true);
         kBuildPanel.SetActive(true);
+
+        
+
         HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
 
         mPrevStructureType = kStructureType;
@@ -282,7 +321,7 @@ public class Honeycomb : MonoBehaviour
 
         retAmount = Mng.play.SubtractResourceAmounts(retAmount, maxAmount);
         
-        UpdateAmount(_amount);
+        UpdateAmount(maxAmount);
 
         return retAmount;
     }
@@ -314,6 +353,12 @@ public class Honeycomb : MonoBehaviour
         }
 
         amount = _amount;
+
+        if(amount.amount < 0.1f) 
+        {
+            UpdateType(GameResType.Empty);
+        }
+        
         UpdateSprite();
     }
 
@@ -333,8 +378,7 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
-        int spriteNum = (int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1));
-        if(spriteNum == 0 && amount.amount > 0) spriteNum = 1;
+        int spriteNum = Mathf.Clamp((int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1)), 1, mHive.kHoneycombNectarSprites.Length - 1);
 
         switch(type)
         {
@@ -391,7 +435,6 @@ public class Honeycomb : MonoBehaviour
 
 			kCanvas.SetActive(true);
             kButtonPanel.SetActive(true);
-
             kTimerPanel.SetActive(false);
         }
         else
@@ -418,11 +461,16 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
+        Mng.play.kHive.mHoveredHoneycomb = this;
         kHoverObj.SetActive(true);
     }
 
     private void OnMouseExit()
     {
+        if(Mng.play.kHive.mHoveredHoneycomb == this)
+        {
+            Mng.play.kHive.mHoveredHoneycomb = null;
+        }
         kHoverObj.SetActive(false);
     }
 

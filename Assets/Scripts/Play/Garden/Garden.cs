@@ -11,11 +11,18 @@ public class Garden : MonoBehaviour
     public static Garden Instance { get; private set; }
 
     public List<Flower> mFlowerTemplates;   // 이것을 가지고 생성함
-	public GameObject BoundaryObject;
 
 	private List<Flower> mFlowers = new List<Flower>();
     private List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
     private float flowerY = 0.4f; // 꽃들의 y 좌표값
+
+    public GameObject kBackground;
+
+    public GameObject kGrassBG;
+    private float grassY = 0f;
+    private float grassDist = 1.36f;
+
+    [HideInInspector] public Flower mHoveredFlower;
 
     public FlowerSpot GetUsableFlowerSpot()
     {
@@ -41,9 +48,9 @@ public class Garden : MonoBehaviour
                 mFlowerSpotList.Add(spot);
     }
 
-    public Flower AddNewFlower(Flower _flower, float x)
+    public Flower AddNewFlower(Flower _flower, float _xPos, bool _isImport)
     {
-        var newFlower = Instantiate(_flower.gameObject, new Vector3(x, flowerY, 0), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
+        var newFlower = Instantiate(_flower.gameObject, new Vector3(_xPos, flowerY, 0.01f), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
 
         newFlower.mFlowerSpots = newFlower.GetComponentsInChildren<FlowerSpot>();
 
@@ -53,7 +60,42 @@ public class Garden : MonoBehaviour
 
         mFlowers.Add(newFlower);
 
+        if(_isImport == false)
+        {
+            SetFlowerPosition(newFlower, _xPos);
+        }
+
         return newFlower;
+    }
+
+    public void SetFlowerPosition(Flower _flower, float _xPos)
+    {
+        _flower.XPosition = _xPos;
+        _flower.gameObject.transform.position = new Vector3(_xPos, flowerY, 0.01f);
+
+        PlayManager.Instance.kGardenXBound.start = Mathf.Min(_xPos - 3f,PlayManager.Instance.kGardenXBound.start);
+		PlayManager.Instance.kGardenXBound.end = Mathf.Max(_xPos + 3f,PlayManager.Instance.kGardenXBound.end);
+
+		PlayManager.Instance.kGardenYBound.start = flowerY + 0.6f;
+		PlayManager.Instance.kGardenYBound.end = flowerY + 2;
+
+        Mng.play.UpdateBackground();
+    }
+
+    public void SetGrassBG(float _xMin, float _xMax)
+    {
+        foreach (Transform child in kBackground.transform) 
+        {
+			if(child.gameObject.tag == "GrassBG") 
+            {
+                Destroy(child.gameObject);
+            }
+		}
+
+        for(float x = _xMin - 5; x <= _xMax + 5; x+=grassDist)
+        {
+            Instantiate(kGrassBG, new Vector3(x, grassY, 0), Quaternion.identity, kBackground.transform);
+        }
     }
 
     private void Awake()
@@ -68,9 +110,9 @@ public class Garden : MonoBehaviour
 
 	public void InitDefault()
     {
-        AddNewFlower(mFlowerTemplates[0], 0);
-        AddNewFlower(mFlowerTemplates[1], 2);
-        AddNewFlower(mFlowerTemplates[2], 3.7f);
+        AddNewFlower(mFlowerTemplates[0], 0, false);
+        AddNewFlower(mFlowerTemplates[1], 2, false);
+        AddNewFlower(mFlowerTemplates[2], 3.7f, false);
 
         GetAllFlowerSpots();
     }
@@ -82,13 +124,10 @@ public class Garden : MonoBehaviour
 
 	public Rect ComputeWorldBoundary(Rect rect)
 	{
-        var boundaryPos = BoundaryObject.transform.position;
-        var boundaryScale = BoundaryObject.transform.localScale;
-
-		rect.xMin = Mathf.Min(rect.xMin, boundaryPos.x - boundaryScale.x / 2);
-		rect.xMax = Mathf.Max(rect.xMax, boundaryPos.x + boundaryScale.x / 2);
-		rect.yMin = Mathf.Min(rect.yMin, boundaryPos.y - boundaryScale.y / 2);
-		rect.yMax = Mathf.Max(rect.yMax, boundaryPos.y + boundaryScale.y / 2);
+		rect.xMin = Mathf.Min(rect.xMin, PlayManager.Instance.kGardenXBound.start);
+		rect.xMax = Mathf.Max(rect.xMax, PlayManager.Instance.kGardenXBound.end);
+		rect.yMin = Mathf.Min(rect.yMin, PlayManager.Instance.kGardenYBound.start);
+		rect.yMax = Mathf.Max(rect.yMax, PlayManager.Instance.kGardenYBound.end);
 
 		return rect;
 	}
@@ -125,8 +164,9 @@ public class Garden : MonoBehaviour
             {
                 if (templ.FlowerName == flowersavedata.FlowerName)
                 {
-                    var flower = AddNewFlower(templ, flowersavedata.XPosition);
+                    var flower = AddNewFlower(templ, flowersavedata.XPosition, true);
                     flower.ImportFrom(flowersavedata);
+                    SetFlowerPosition(flower, flower.XPosition);
                     break;
                 }
             }

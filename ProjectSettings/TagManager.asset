@@ -9,6 +9,7 @@ TagManager:
   - Item
   - QueenBee
   - Bee
+  - GrassBG
   layers:
   - Default
   - TransparentFX
@@ -46,6 +47,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Flower
+    uniqueID: 3835664201
+    locked: 0
   - name: Ground
     uniqueID: 2252425679
     locked: 0
@@ -67,11 +71,11 @@ TagManager:
   - name: Larvae
     uniqueID: 2598367839
     locked: 0
-  - name: Bee
-    uniqueID: 2177007449
-    locked: 0
   - name: QueenBee
     uniqueID: 1467922107
+    locked: 0
+  - name: Bee
+    uniqueID: 2177007449
     locked: 0
   - name: Item
     uniqueID: 4020775763

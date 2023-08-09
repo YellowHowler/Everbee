@@ -13,6 +13,7 @@ public class QueenBee : MonoBehaviour
     private float mSpeed = 2f;
 
     private Animator mAnimator;
+    public SpriteOutline kOutline;
 
     public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
     [HideInInspector] public GameResAmount mCurHoney = new GameResAmount(0f, GameResUnit.Microgram);
@@ -36,6 +37,8 @@ public class QueenBee : MonoBehaviour
         //kSlider.gameObject.SetActive(false);
 
         // DoJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
+
+        kOutline.DisableOutline();
         
         StartCoroutine(Wander());
     }
@@ -43,6 +46,20 @@ public class QueenBee : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnMouseEnter()
+    {
+        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
+        {
+            return;
+        }
+
+        kOutline.EnableOutline();
+    }
+    private void OnMouseExit()
+    {
+        kOutline.DisableOutline();
     }
 
     private IEnumerator CallDoJob()

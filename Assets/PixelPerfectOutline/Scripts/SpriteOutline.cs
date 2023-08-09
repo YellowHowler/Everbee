@@ -66,6 +66,26 @@ public class SpriteOutline : MonoBehaviour
         UpdateProperties();
     }
 
+    public void EnableOutline()
+    {
+        directions.top = true;
+        directions.bottom = true;
+        directions.left = true;
+        directions.right = true;
+
+        UpdateProperties();
+    }
+
+    public void DisableOutline()
+    {
+        directions.top = false;
+        directions.bottom = false;
+        directions.left = false;
+        directions.right = false;
+
+        UpdateProperties();
+    }
+
     void UpdateProperties()
     {
         Rect spriteRect = sr.sprite.rect;

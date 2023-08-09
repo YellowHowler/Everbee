@@ -67,19 +67,19 @@ public class Item : MonoBehaviour
                 {
                     inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
                     UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
+                    CancelPlace();
                 }
                 else
                 {
                     inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
                     UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+                    CancelPlace();
                 }
-                
-                return;
             }
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
 
-            Bee storeBee = Mng.play.kBees.GetBeeFromPos(mousePos);
+            Bee storeBee = Mng.play.kHive.mHoveredBee;
             if(storeBee != null)
             {
                 if(storeBee.mCurStage == BeeStage.Egg || storeBee.mCurStage == BeeStage.Pupa)
@@ -90,7 +90,7 @@ public class Item : MonoBehaviour
                 CancelPlace();
             }
 
-            Honeycomb storeHoneycomb = Mng.play.kHive.GetHoneycombFromPos(mousePos);
+            Honeycomb storeHoneycomb = Mng.play.kHive.mHoveredHoneycomb;
             if(storeHoneycomb != null)
             {
                 switch(storeHoneycomb.kStructureType)
@@ -125,7 +125,7 @@ public class Item : MonoBehaviour
                         return;
                 }
             }
-
+            print("store");
             CancelPlace();
         }
     }

@@ -61,6 +61,14 @@ public class InventoryBarPanel : MonoBehaviour
     {
         for(int i = 0; i < mSlotNum; i++)
         {
+            if(CheckIfSameType(i, _type))
+            {
+                return i;
+            }
+        }
+
+        for(int i = 0; i < mSlotNum; i++)
+        {
             if(CheckIfSlotUsable(i, _type))
             {
                 return i;
@@ -68,6 +76,19 @@ public class InventoryBarPanel : MonoBehaviour
         }
 
         return -1;
+    }
+
+    public bool CheckIfSameType(int _num, GameResType _type)
+    {
+        var inventory = Mng.play.kInventory;
+        var slot = inventory.mItemSlots[_num];
+        
+        if(slot.amount.amount >= 0.1f && slot.type == _type && Mng.play.CompareResourceAmounts(slot.amount, GetMaxAmount(_type)) == true)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public bool CheckIfSlotUsable(int _num, GameResType _type)
@@ -120,6 +141,11 @@ public class InventoryBarPanel : MonoBehaviour
 		slot.amount = _amount;
 
         UpdateSlots();
+    }
+
+    public void AddSlotAmount(int _num, GameResType _type, GameResAmount _amount)
+    {
+        UpdateSlotAmount(_num, _type, Mng.play.AddResourceAmounts(_amount, Mng.play.kInventory.mItemSlots[_num].amount));
     }
 
     public void SetSelected(int _num)

@@ -58,6 +58,7 @@ public class Bee : MonoBehaviour
     public BeeThinking Thinking = BeeThinking.None;
 
     public SpriteOutline kOutline;
+    public ParticleSystem kPollenParticle;
 
     // UpdateJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
 
@@ -68,11 +69,47 @@ public class Bee : MonoBehaviour
         mTargetBee = new CTargetLink<Bee, Bee>(this);
 
         kOutline = GetComponent<SpriteOutline>();
+        kOutline.DisableOutline();
+        kPollenParticle.Stop();
     }
 
     void Update()
     {
-        kBeeAnimator.SetBool("hasPollen", mCurrentPollen.amount > 0.1f);
+        
+    }
+
+    public GameResAmount GetCurAmount(GameResType _type)
+    {
+        switch(_type)
+        {
+            case GameResType.Honey:
+                return mCurrentHoney;
+            case GameResType.Nectar:
+                return mCurrentNectar;
+            case GameResType.Pollen:
+                return mCurrentPollen;
+            case GameResType.Wax:
+                return mCurrentWax;
+            default:
+                return new GameResAmount(0f, GameResUnit.Microgram);
+        }
+    }
+
+    public GameResAmount GetMaxAmount(GameResType _type)
+    {
+        switch(_type)
+        {
+            case GameResType.Honey:
+                return mMaxHoney;
+            case GameResType.Nectar:
+                return mMaxNectar;
+            case GameResType.Pollen:
+                return mMaxPollen;
+            case GameResType.Wax:
+                return mMaxWax;
+            default:
+                return new GameResAmount(0f, GameResUnit.Microgram);
+        }
     }
 
     public void UpdateJob(Job _job)
@@ -132,6 +169,7 @@ public class Bee : MonoBehaviour
         mPupaObj.SetActive(false);
         mBeeObj.SetActive(false);
 
+        kOutline.sr = GetCurrentStageObject().GetComponent<SpriteRenderer>();
         GetCurrentStageObject().SetActive(true);
     }
 
@@ -233,6 +271,17 @@ public class Bee : MonoBehaviour
                 break;
         }
 
+        if(mCurrentPollen.amount > 0.1f)
+        {
+            kBeeAnimator.SetBool("hasPollen", true);
+            kPollenParticle.Play();
+        }
+        else
+        {
+            kBeeAnimator.SetBool("hasPollen", false);
+            kPollenParticle.Stop();
+        }
+
         Mng.canvas.kBeeInfo.UpdateStat(this);
     }
 
@@ -258,15 +307,23 @@ public class Bee : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if(Mng.play.kHive.mIsPlacingItem == true)
+        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
         {
-            kOutline.enabled = true;
+            return;
         }
+
+        Mng.play.kHive.mHoveredBee = this;
+        kOutline.EnableOutline();
     }
 
     private void OnMouseExit()
     {
-        kOutline.enabled = false;
+        if(Mng.play.kHive.mHoveredBee == this)
+        {
+            Mng.play.kHive.mHoveredBee = null;
+        }
+
+        kOutline.DisableOutline();
     }
 
     private IEnumerator CallDoJob()
@@ -559,7 +616,7 @@ public class Bee : MonoBehaviour
 
     private void StorePollen()
     {
-        LinkTo(PlayManager.Instance.kHive.GetUsableStorage(GameResType.Pollen));
+        LinkTo(PlayManager.Instance.kHive.GetUsableStorage(GameResType.Pollen, false));
 
         if (!mTargetHoneycomb.IsLinked())
         {
@@ -573,7 +630,7 @@ public class Bee : MonoBehaviour
 
     private void StoreNectar()
     {
-        LinkTo(PlayManager.Instance.kHive.GetUsableStorage(GameResType.Nectar));
+        LinkTo(PlayManager.Instance.kHive.GetUsableStorage(GameResType.Nectar, false));
 
         if (!mTargetHoneycomb.IsLinked())
         {
@@ -694,6 +751,11 @@ public class Bee : MonoBehaviour
         StartCoroutine(CallDoJob());
     }
 
+    public bool IsStorageFull(GameResType _type)
+    {
+        return Mng.play.IsSameAmount(GetCurAmount(_type), GetMaxAmount(_type));
+    }
+
     public GameResAmount AddResource(GameResAmount _pollenAmount, GameResAmount _nectarAmount) //벌 저장공간에 이만큼 더하기
     {
         GameResAmount newPollenAmount = PlayManager.Instance.AddResourceAmounts(mCurrentPollen, _pollenAmount);
@@ -718,6 +780,11 @@ public class Bee : MonoBehaviour
 
     public GameResAmount AddResource(GameResType _type, GameResAmount _amount) 
     {
+        if(IsStorageFull(_type))
+        {
+            Mng.canvas.DisplayWarning("Bee's " + Mng.canvas.GetResourceTypeText(_type, false) + " storage is full");
+        }
+
         switch(_type)
         {
             case GameResType.Pollen:

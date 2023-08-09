@@ -80,6 +80,42 @@ public class MainCanvas : MonoBehaviour
         }
     }
 
+    public string GetResourceTypeText(GameResType _type, bool _isStart)
+    {
+        if(_isStart == false)
+        {
+            switch(_type)
+            {
+                case GameResType.Honey:
+                    return "honey";
+                case GameResType.Nectar:
+                    return "nectar";
+                case GameResType.Pollen:
+                    return "pollen";
+                case GameResType.Wax:
+                    return "wax";
+                default:
+                    return "";
+            }
+        }
+        else
+        {
+            switch(_type)
+            {
+                case GameResType.Honey:
+                    return "Honey";
+                case GameResType.Nectar:
+                    return "Nectar";
+                case GameResType.Pollen:
+                    return "Pollen";
+                case GameResType.Wax:
+                    return "Wax";
+                default:
+                    return "";
+            }
+        }
+    }
+
     public string GetUnitText(GameResUnit _unit)
     {
         if(_unit == GameResUnit.Microgram)
@@ -157,6 +193,7 @@ public class MainCanvas : MonoBehaviour
     {
         kInven.gameObject.SetActive(true);
         Mng.play.kHive.mIsBuilding = false;
+        Mng.play.kHive.mMouseOverBuildCancel = false;
     }
 
     public void DisplayWarning(string _warning)

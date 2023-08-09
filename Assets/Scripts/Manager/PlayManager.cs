@@ -25,6 +25,9 @@ public class PlayManager : MonoBehaviour
     public VectorBound kHiveXBound = new VectorBound(10000, -10000);
     public VectorBound kHiveYBound = new VectorBound(10000, -10000);
 
+    public VectorBound kGardenXBound = new VectorBound(10000, -10000);
+    public VectorBound kGardenYBound = new VectorBound(10000, -10000);
+
 	public EventFuncDispatcher EscapeKeyDispatcher = new EventFuncDispatcher();
 	public Rect WorldBoundary { get; private set; }
 
@@ -80,6 +83,12 @@ public class PlayManager : MonoBehaviour
 
     public void GameStart()
     {
+    }
+
+    public void UpdateBackground()
+    {
+        ComputeWorldBoundary();
+        kGarden.SetGrassBG(WorldBoundary.xMin, WorldBoundary.xMax);
     }
 
 	// Update is called once per frame

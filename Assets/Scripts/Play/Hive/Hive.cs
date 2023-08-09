@@ -40,6 +40,9 @@ public class Hive : MonoBehaviour
     [Header("Honeycomb 모양 보기")]
     public bool kIsDrawHoneycombShape = true;
 
+    [HideInInspector] public Honeycomb mHoveredHoneycomb;
+    [HideInInspector] public Bee mHoveredBee;
+
     [HideInInspector] public bool mIsPlacingItem = false;
     [HideInInspector] public Item mPlaceItem;
 
@@ -94,16 +97,29 @@ public class Hive : MonoBehaviour
 	}
 
 	/// <summary> 벌이 자원을 어디에 저장해야 하는지 </summary>
-	public Honeycomb GetUsableStorage(GameResType _type)
+	public Honeycomb GetUsableStorage(GameResType _type, bool _notBee)
     {
         // 랜덤으로 고른다.
         int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+
+        //이미 해당 자원이 들어있는 거 우선으로 고른다
         for(int i=0; i<mHoneycombList.Count; ++i)
         {
             int index = (i + offset) % mHoneycombList.Count;
             var comb = mHoneycombList[index];
 
-            if (comb.kStructureType == StructureType.Storage && (comb.type == GameResType.Empty || (comb.type == _type && comb.IsFull() == false)) && !comb.mTargetBee.IsLinked())
+            if (comb.kStructureType == StructureType.Storage && (comb.type == _type && comb.IsFull() == false) && (_notBee || !comb.mTargetBee.IsLinked()))
+            {
+                return comb;
+            }
+        }
+
+        for(int i=0; i<mHoneycombList.Count; ++i)
+        {
+            int index = (i + offset) % mHoneycombList.Count;
+            var comb = mHoneycombList[index];
+
+            if (comb.kStructureType == StructureType.Storage && (comb.type == GameResType.Empty || (comb.type == _type && comb.IsFull() == false)) && (_notBee || !comb.mTargetBee.IsLinked()))
             {
                 return comb;
             }
@@ -148,25 +164,26 @@ public class Hive : MonoBehaviour
         return null;
     }
 
-    /*public void GetAllHoneycombs() //현재 씬에 있는 모든 Honeycomb 다 가져온다
+    public bool FlowerClick(GameResType _type, GameResAmount _amount)
     {
-        mHoneycombList.Clear();
+        int storeInvenSlot = Mng.canvas.kInven.GetAvailableSlot(_type);
 
-        GameObject[] honeycombs = GameObject.FindGameObjectsWithTag("Honeycomb");
-
-        foreach (GameObject h in honeycombs)
+        if(storeInvenSlot != -1)
         {
-            Honeycomb honeycomb = h.GetComponent<Honeycomb>();
-            mHoneycombList.Add(honeycomb); //임시
-            honeycomb.mHive = this;
-
-            PlayManager.Instance.kHiveXBound.start = Mathf.Min(honeycomb.pos.x - 0.5f, PlayManager.Instance.kHiveXBound.start);
-            PlayManager.Instance.kHiveXBound.end = Mathf.Max(honeycomb.pos.x + 0.5f, PlayManager.Instance.kHiveXBound.end);
-
-            PlayManager.Instance.kHiveYBound.start = Mathf.Min(honeycomb.pos.y - 0.5f, PlayManager.Instance.kHiveYBound.start);
-            PlayManager.Instance.kHiveYBound.end = Mathf.Max(honeycomb.pos.y + 0.5f, PlayManager.Instance.kHiveYBound.end);
+            Mng.canvas.kInven.AddSlotAmount(storeInvenSlot, _type, _amount);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+            return true;
         }
-    }*/
+
+        Honeycomb storeHoneycomb = GetUsableStorage(_type, true);
+
+        if(storeHoneycomb != null)
+        {
+            storeHoneycomb.StoreResource(_type, _amount);
+            return true;
+        }
+
+        return false;
+    }
 
     public Honeycomb FindBuildingHoneycomb()
     {
@@ -185,13 +202,18 @@ public class Hive : MonoBehaviour
         return null;
     }
 
-    public Honeycomb AddNewHoneycomb()
+    public Honeycomb AddNewHoneycomb(Vector3 _pos, bool _isImport)
     {
-        GameObject newHoneycomb = Instantiate(kHoneycombObj, Vector3.zero, Quaternion.identity, transform.GetChild(0));
+        GameObject newHoneycomb = Instantiate(kHoneycombObj, _pos, Quaternion.identity, transform.GetChild(0));
         Honeycomb honeycomb = newHoneycomb.GetComponent<Honeycomb>();
         honeycomb.mHive = this;
 
         mHoneycombList.Add(honeycomb);
+
+        if(_isImport == false)
+        {
+            SetHoneycombPosition(honeycomb, _pos);
+        }
 
         return honeycomb;
     }
@@ -200,11 +222,13 @@ public class Hive : MonoBehaviour
     {
         comb.pos = _pos;
 
-		PlayManager.Instance.kHiveXBound.start = Mathf.Min(_pos.x - 0.5f,PlayManager.Instance.kHiveXBound.start);
-		PlayManager.Instance.kHiveXBound.end = Mathf.Max(_pos.x + 0.5f,PlayManager.Instance.kHiveXBound.end);
+		PlayManager.Instance.kHiveXBound.start = Mathf.Min(_pos.x + 0.5f,PlayManager.Instance.kHiveXBound.start);
+		PlayManager.Instance.kHiveXBound.end = Mathf.Max(_pos.x - 0.5f,PlayManager.Instance.kHiveXBound.end);
 
-		PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y - 0.5f,PlayManager.Instance.kHiveYBound.start);
-		PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y + 0.5f,PlayManager.Instance.kHiveYBound.end);
+		PlayManager.Instance.kHiveYBound.start = Mathf.Min(_pos.y + 0.2f,PlayManager.Instance.kHiveYBound.start);
+		PlayManager.Instance.kHiveYBound.end = Mathf.Max(_pos.y - 0.2f,PlayManager.Instance.kHiveYBound.end);
+
+        Mng.play.UpdateBackground();
 	}
 
 	public Honeycomb GetRandomHoneycomb()
@@ -269,8 +293,7 @@ public class Hive : MonoBehaviour
         {
             for(int j = 0; j < 10; j++)
             {
-                var comb = AddNewHoneycomb();
-                SetHoneycombPosition(comb, newPos);
+                var comb = AddNewHoneycomb(newPos, false);
 
                 comb.amount = new GameResAmount(0f, GameResUnit.Microgram);
 
@@ -300,7 +323,7 @@ public class Hive : MonoBehaviour
         mQueenPollenNeed = new GameResAmount(100, GameResUnit.Milligram);
 
         mWaxCosts.Add(StructureType.Storage, new GameResAmount(0, GameResUnit.Microgram));
-
+        mWaxCosts.Add(StructureType.Dryer, new GameResAmount(10, GameResUnit.Microgram));
     }
 
 	private void Update()
@@ -496,7 +519,7 @@ public class Hive : MonoBehaviour
 
         for(int i=0; i<savedata.mHoneycombList.Count; ++i)
         {
-            var comb = AddNewHoneycomb();
+            var comb = AddNewHoneycomb(Vector3.zero, true);
             comb.ImportFrom(savedata.mHoneycombList[i]);
             SetHoneycombPosition(comb, comb.pos);
         }
