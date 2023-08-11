@@ -19,6 +19,7 @@ public class MainCanvas : MonoBehaviour
     public InventoryBarPanel kInven;
     public QueenResourcePanel kQueen;
     public BeeInfoPanel kBeeInfo;
+    public MenuTogglePanel kMenuToggle;
     public LHS.CLHSDialogUI kDialoguePopup;
 
     public Button[] kToggleButtons;
@@ -43,6 +44,7 @@ public class MainCanvas : MonoBehaviour
         kInven = GetComponentInChildren<InventoryBarPanel>(true);
         kQueen = GetComponentInChildren<QueenResourcePanel>(true);
         kBeeInfo = GetComponentInChildren<BeeInfoPanel>(true);
+        kMenuToggle = GetComponentInChildren<MenuTogglePanel>(true);
 
         kResource.gameObject.SetActive(true);
         kInven.gameObject.SetActive(true);
@@ -165,6 +167,7 @@ public class MainCanvas : MonoBehaviour
             case BeeThinking.NoAvailableNectarStorage:   return  "No available nectar storage"; 
             case BeeThinking.NoAvailablePollenStorage:   return  "No available pollen storage"; 
             case BeeThinking.NoAvailableHoneyStorage:    return  "No available honey storage"; 
+            case BeeThinking.NoAvailableWaxStorage:      return  "No available wax storage"; 
             case BeeThinking.NoAvailableLarvae:          return  "No available larvae"; 
             case BeeThinking.NoBuildingStructure:        return  "No current build"; 
 

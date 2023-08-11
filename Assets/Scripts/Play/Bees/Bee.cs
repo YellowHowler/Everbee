@@ -119,6 +119,12 @@ public class Bee : MonoBehaviour
         Mng.canvas.kBeeInfo.UpdateStat(this);
     }
 
+    public void UpdateThinking(BeeThinking _thinking)
+    {
+        Thinking = _thinking;
+        Mng.canvas.kBeeInfo.UpdateStat(this);
+    }
+
     private GameObject GetCurrentStageObject()
     {
         switch(mCurStage)
@@ -230,20 +236,41 @@ public class Bee : MonoBehaviour
     public void UpdateExp(float _exp)
     {
         kExp += _exp;
-        Mng.canvas.kBeeInfo.UpdateStat(this);
-
+    
         while(kExp >= 1)
         {
             kExp -= 1;
             UpdateLevel(kLevel + 1);
         }
+
+        Mng.canvas.kBeeInfo.UpdateStat(this);
     }
 
+    
+    
     public void Feed()
     {
-        UpdateResourceAmount(GameResType.Honey, Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount));
-        UpdateResourceAmount(GameResType.Pollen, Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount));
-        UpdateExp(0.25f);
+        bool isInvenEnough = Mng.play.kInventory.CheckIfEnoughResource(GameResType.Honey, mHoneyFeedAmount) && Mng.play.kInventory.CheckIfEnoughResource(GameResType.Pollen, mPollenFeedAmount);
+        bool isBeeInvenEnough = Mng.play.CompareResourceAmounts(mCurrentHoney, mHoneyFeedAmount) && Mng.play.CompareResourceAmounts(mCurrentPollen, mPollenFeedAmount);
+
+        if(isInvenEnough)
+        {
+            Mng.play.kInventory.SubtractFromInven(GameResType.Honey, mHoneyFeedAmount);
+            Mng.play.kInventory.SubtractFromInven(GameResType.Pollen, mPollenFeedAmount);
+            UpdateExp(0.25f);
+        }
+        else if(isBeeInvenEnough)
+        {
+            UpdateResourceAmount(GameResType.Honey, Mng.play.SubtractResourceAmounts(mCurrentHoney, mHoneyFeedAmount));
+            UpdateResourceAmount(GameResType.Pollen, Mng.play.SubtractResourceAmounts(mCurrentPollen, mPollenFeedAmount));
+            UpdateExp(0.25f);
+        }
+        else
+        {
+            Mng.canvas.DisplayWarning("Not enough food");
+        }
+        
+        Mng.canvas.kBeeInfo.UpdateStat(this);
     }
 
     public void Feed(Bee _feeder)
@@ -299,7 +326,8 @@ public class Bee : MonoBehaviour
 
         if(Mng.canvas.kBeeInfo.gameObject.activeSelf || !PopupBase.IsTherePopup())
         {
-            Mng.canvas.kBeeInfo.Show();
+            //Mng.canvas.kBeeInfo.Show();
+            Mng.canvas.kBeeInfo.gameObject.SetActive(true);
             Mng.play.kCamera.SetFollow(transform);
             Mng.canvas.kBeeInfo.SetBee(this);
         }
@@ -367,11 +395,12 @@ public class Bee : MonoBehaviour
             var randomHoneycomb = Mng.play.kHive.GetRandomHoneycomb();
             if (randomHoneycomb == null)
             {
+                mCanWork = true;
                 StartCoroutine(CallDoJob());
                 return;
             }
 
-			Vector3 randomPos = randomHoneycomb.transform.position;
+			Vector3 randomPos = randomHoneycomb.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle*5;
 			if(mFirst)
             {
                 // 처음에는 즉시 이동
@@ -391,13 +420,13 @@ public class Bee : MonoBehaviour
 
                 if(!mTargetFlowerSpot.IsLinked()) 
                 {
-                    Thinking = BeeThinking.NoAvailableFlower;
+                    UpdateThinking(BeeThinking.NoAvailableFlower);
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
                     return;
                 }
 
-                Thinking = BeeThinking.MovingToFlower;
+                UpdateThinking(BeeThinking.MovingToFlower);
                 StartCoroutine(GoToPos(mTargetFlowerSpot.GetObject().pos));
                 return;
             }
@@ -417,7 +446,7 @@ public class Bee : MonoBehaviour
 
                 if(!(targetHoneyComb.IsUsable(GameResType.Pollen) == true && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
-                    Thinking = BeeThinking.NoAvailablePollenStorage;
+                    UpdateThinking(BeeThinking.NoAvailablePollenStorage);
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -441,7 +470,7 @@ public class Bee : MonoBehaviour
 
                 if(!(targetHoneyComb.IsUsable(GameResType.Nectar) == true && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
-                    Thinking = BeeThinking.NoAvailableNectarStorage;
+                    UpdateThinking(BeeThinking.NoAvailableNectarStorage);
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -456,7 +485,7 @@ public class Bee : MonoBehaviour
             }
             else
             {
-                Thinking = BeeThinking.None;
+                UpdateThinking(BeeThinking.None);
                 mCanWork = false;
                 StartCoroutine(CallDoJob());
                 return;
@@ -475,7 +504,7 @@ public class Bee : MonoBehaviour
 
                 if(!(targetHoneyComb.type == GameResType.Wax && targetHoneyComb.amount.amount > 0 && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
-                    Thinking = BeeThinking.NoWaxInThisStorage;
+                    UpdateThinking(BeeThinking.NoWaxInThisStorage);
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -494,13 +523,13 @@ public class Bee : MonoBehaviour
 
                 if(!mTargetHoneycomb.IsLinked()) 
                 {
-                    Thinking = BeeThinking.NoBuildingStructure;
+                    UpdateThinking(BeeThinking.NoBuildingStructure);
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
                     return;
                 }
 
-                Thinking = BeeThinking.MovingToBuild;
+                UpdateThinking(BeeThinking.MovingToBuild);
                 StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
                 return;
             }
@@ -518,7 +547,7 @@ public class Bee : MonoBehaviour
             }
             else
             {
-                Thinking = BeeThinking.None;
+                UpdateThinking(BeeThinking.None);
                 mCanWork = false;
                 StartCoroutine(CallDoJob());
                 return;
@@ -540,7 +569,7 @@ public class Bee : MonoBehaviour
 
                 if(!((targetHoneyComb.type == GameResType.Pollen && targetHoneyComb.amount.amount > 0) && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
-                    Thinking = BeeThinking.NoPollenInThisStorage;
+                    UpdateThinking(BeeThinking.NoPollenInThisStorage);
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -563,7 +592,7 @@ public class Bee : MonoBehaviour
 
                 if(!((targetHoneyComb.type == GameResType.Honey && targetHoneyComb.amount.amount > 0) && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
-                    Thinking = BeeThinking.NoHoneyInThisStorage;
+                    UpdateThinking(BeeThinking.NoHoneyInThisStorage);
                     mAtTarget = false;
                     StartCoroutine(CallDoJob());
                     return;
@@ -582,13 +611,13 @@ public class Bee : MonoBehaviour
 
                 if(!mTargetBee.IsLinked()) 
                 {
-                    Thinking = BeeThinking.NoAvailableLarvae;
+                    UpdateThinking(BeeThinking.NoAvailableLarvae);
                     mCanWork = false;
                     StartCoroutine(CallDoJob());
                     return;
                 }
 
-                Thinking = BeeThinking.MovingToLarvae;
+                UpdateThinking(BeeThinking.MovingToLarvae);
                 StartCoroutine(GoToPos(mTargetBee.GetObject().gameObject.transform.position));
                 return;
             }
@@ -606,7 +635,7 @@ public class Bee : MonoBehaviour
             }
             else
             {
-                Thinking = BeeThinking.None;
+                UpdateThinking(BeeThinking.None);
                 mCanWork = false;
                 StartCoroutine(CallDoJob());
                 return;
@@ -624,7 +653,7 @@ public class Bee : MonoBehaviour
             return;
         }
 
-        Thinking = BeeThinking.MovingToStorage;
+        UpdateThinking(BeeThinking.MovingToStorage);
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
@@ -634,13 +663,13 @@ public class Bee : MonoBehaviour
 
         if (!mTargetHoneycomb.IsLinked())
         {
-            Thinking = BeeThinking.NoAvailableNectarStorage;
+            UpdateThinking(BeeThinking.NoAvailableNectarStorage);
             mCanWork = false;
             StartCoroutine(CallDoJob());
             return;
         }
 
-        Thinking = BeeThinking.MovingToStorage;
+        UpdateThinking(BeeThinking.MovingToStorage);
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
@@ -654,7 +683,7 @@ public class Bee : MonoBehaviour
             return;
         }
 
-        Thinking = BeeThinking.MovingToStorage;
+        UpdateThinking(BeeThinking.MovingToStorage);
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
@@ -664,13 +693,13 @@ public class Bee : MonoBehaviour
 
         if (!mTargetHoneycomb.IsLinked())
         {
-            Thinking = BeeThinking.NoAvailableHoneyStorage;
+            UpdateThinking(BeeThinking.NoAvailableHoneyStorage);
             mCanWork = false;
             StartCoroutine(CallDoJob());
             return;
         }
 
-        Thinking = BeeThinking.MovingToStorage;
+        UpdateThinking(BeeThinking.MovingToStorage);
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
@@ -680,19 +709,19 @@ public class Bee : MonoBehaviour
 
         if (!mTargetHoneycomb.IsLinked())
         {
-            Thinking = BeeThinking.NoAvailableWaxStorage;
+            UpdateThinking(BeeThinking.NoAvailableWaxStorage);
             mCanWork = false;
             StartCoroutine(CallDoJob());
             return;
         }
 
-        Thinking = BeeThinking.MovingToStorage;
+        UpdateThinking(BeeThinking.MovingToStorage);
         StartCoroutine(GoToPos(mTargetHoneycomb.GetObject().pos));
     }
 
     private IEnumerator CollectFromFlower()
     {
-        Thinking = BeeThinking.CollectingFromFlower;
+        UpdateThinking(BeeThinking.CollectingFromFlower);
         yield return new WaitForSeconds(mFlowerCollectTime); //이동안 ui 표시
         mAtTarget = false;
         AddResource(mTargetFlowerSpot.GetObject().pollenAmount, mTargetFlowerSpot.GetObject().nectarAmount);
@@ -704,25 +733,22 @@ public class Bee : MonoBehaviour
 
     private IEnumerator FeedLarvae()
     {
-        Thinking = BeeThinking.Feeding;
+        UpdateThinking(BeeThinking.Feeding);
         yield return new WaitForSeconds(0.5f); 
 
         var targetBee = mTargetBee.GetObject();
 
-        UpdateResourceAmount(GameResType.Honey, targetBee.AddResource(GameResType.Honey, mCurrentHoney));
-        UpdateResourceAmount(GameResType.Pollen, targetBee.AddResource(GameResType.Pollen, mCurrentPollen));
-
         yield return new WaitForSeconds(0.5f); 
 
         if(targetBee != null
-        && Mng.play.CompareResourceAmounts(targetBee.mPollenFeedAmount, targetBee.mCurrentPollen) == true 
-        && Mng.play.CompareResourceAmounts(targetBee.mHoneyFeedAmount, targetBee.mCurrentHoney) == true
+        && Mng.play.CompareResourceAmounts(targetBee.mPollenFeedAmount, mCurrentPollen) == true 
+        && Mng.play.CompareResourceAmounts(targetBee.mHoneyFeedAmount, mCurrentHoney) == true
         && targetBee.mCurStage == BeeStage.Larvae)
         {
-            targetBee.Feed();
+            targetBee.Feed(this);
         }
 
-        Thinking = BeeThinking.None;
+        UpdateThinking(BeeThinking.None);
         mTargetBee.Unlink();
         mAtTarget = false;
 
@@ -731,7 +757,7 @@ public class Bee : MonoBehaviour
 
     private IEnumerator BuildStructure()
     {
-        Thinking = BeeThinking.Building;
+        UpdateThinking(BeeThinking.Building);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -744,7 +770,7 @@ public class Bee : MonoBehaviour
             targetHoneycomb.PlayParticles();
         }
 
-        Thinking = BeeThinking.None;
+        UpdateThinking(BeeThinking.None);
         mTargetHoneycomb.Unlink();
         mAtTarget = false;
 

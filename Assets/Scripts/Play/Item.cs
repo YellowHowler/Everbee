@@ -58,20 +58,21 @@ public class Item : MonoBehaviour
                 return;
             }
 
-            InventoryBarPanel inven = Mng.canvas.kInven;
+            InventoryBarPanel invenPanel = Mng.canvas.kInven;
+            Inventory inven = Mng.play.kInventory;
 
-            if(inven.mHoveredNum != -1 && (inven.CheckIfSlotUsable(inven.mHoveredNum, type)))
+            if(invenPanel.mHoveredNum != -1 && (inven.CheckIfSlotUsable(invenPanel.mHoveredNum, type)))
             {
-                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[inven.mHoveredNum].amount, amount);
+                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[invenPanel.mHoveredNum].amount, amount);
                 if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
                 {
-                    inven.UpdateSlotAmount(inven.mHoveredNum, type, sumAmount);
+                    inven.UpdateSlotAmount(invenPanel.mHoveredNum, type, sumAmount);
                     UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
                     CancelPlace();
                 }
                 else
                 {
-                    inven.UpdateSlotAmount(inven.mHoveredNum, type, GetMaxAmount(type));
+                    Mng.play.kInventory.UpdateSlotAmount(invenPanel.mHoveredNum, type, GetMaxAmount(type));
                     UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
                     CancelPlace();
                 }
@@ -229,11 +230,11 @@ public class Item : MonoBehaviour
     {
         int placeSlot = mPrevSlot;
 
-        InventoryBarPanel inven = Mng.canvas.kInven;
+        Inventory inven = Mng.play.kInventory;
 
         if(placeSlot == -1 || (inven.CheckIfSlotUsable(mPrevSlot, type)))
         {
-            placeSlot = Mng.canvas.kInven.GetAvailableSlot(type);
+            placeSlot = inven.GetAvailableSlot(type);
             
             if(placeSlot == -1)
             {

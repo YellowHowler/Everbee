@@ -18,20 +18,27 @@ public class Garden : MonoBehaviour
 
     public GameObject kBackground;
 
+    private float xMin;
+    private float xMax;
+
     public GameObject kGrassBG;
     private float grassY = 0f;
     private float grassDist = 1.36f;
+
+    private GameResAmount mFlowerNeedPollen = new GameResAmount(1f, GameResUnit.Microgram);
 
     [HideInInspector] public Flower mHoveredFlower;
 
     public FlowerSpot GetUsableFlowerSpot()
     {
+        //GetAllFlowerSpots();
+
         int offset = UnityEngine.Random.Range(0, mFlowerSpotList.Count);
         for(int i=0; i<mFlowerSpotList.Count; ++i)
         {
             int index = (i + offset) % mFlowerSpotList.Count;
             var spot = mFlowerSpotList[index];
-            if (spot.occupied == false && !spot.mTargetBee.IsLinked()) 
+            if (spot.occupied == false && !spot.mTargetBee.IsLinked() && spot.mFlower.stage == FlowerStage.Flower) 
                 return spot;
         }
 
@@ -52,9 +59,8 @@ public class Garden : MonoBehaviour
     {
         var newFlower = Instantiate(_flower.gameObject, new Vector3(_xPos, flowerY, 0.01f), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
 
-        newFlower.mFlowerSpots = newFlower.GetComponentsInChildren<FlowerSpot>();
+        newFlower.SetValues(_flower, this, UnityEngine.Random.Range(0, 2) == 1, mFlowerNeedPollen);
 
-        newFlower.mGarden = this;
         foreach(var spot in newFlower.mFlowerSpots)
             spot.mGarden = this;
 
@@ -66,6 +72,47 @@ public class Garden : MonoBehaviour
         }
 
         return newFlower;
+    }
+
+    public Flower AddNewFlower(Flower _flower, float _xPos, bool _isImport, FlowerStage _stage)
+    {
+        var newFlower = Instantiate(_flower.gameObject, new Vector3(_xPos, flowerY, 0.01f), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
+
+        newFlower.SetValues(_flower, this, UnityEngine.Random.Range(0, 2) == 1, _stage, mFlowerNeedPollen);
+
+        foreach(var spot in newFlower.mFlowerSpots)
+            spot.mGarden = this;
+
+        mFlowers.Add(newFlower);
+
+        if(_isImport == false)
+        {
+            SetFlowerPosition(newFlower, _xPos);
+        }
+
+        return newFlower;
+    }
+
+    public Flower AddFlowerInRandomPos(Flower _flower, FlowerStage _stage)
+    {
+        bool isClose = true;
+        float randomX = 0;
+
+        while(isClose == true)
+        {
+            isClose = false;
+            randomX = UnityEngine.Random.Range(xMin, xMax);
+
+            foreach(var flower in mFlowers)
+            {
+                if(Mathf.Abs(flower.XPosition - randomX) < 0.8f)
+                {
+                    isClose = true;
+                }
+            }
+        }
+
+        return AddNewFlower(_flower, randomX, false, _stage);
     }
 
     public void SetFlowerPosition(Flower _flower, float _xPos)
@@ -82,6 +129,13 @@ public class Garden : MonoBehaviour
         Mng.play.UpdateBackground();
     }
 
+    public void SetBound(float _xMin, float _xMax)
+    {
+        xMin = _xMin - 13;
+        xMax = _xMax + 13;
+        SetGrassBG(xMin - 2, xMax + 2);
+    }
+
     public void SetGrassBG(float _xMin, float _xMax)
     {
         foreach (Transform child in kBackground.transform) 
@@ -92,7 +146,7 @@ public class Garden : MonoBehaviour
             }
 		}
 
-        for(float x = _xMin - 5; x <= _xMax + 5; x+=grassDist)
+        for(float x = _xMin; x <= _xMax; x+=grassDist)
         {
             Instantiate(kGrassBG, new Vector3(x, grassY, 0), Quaternion.identity, kBackground.transform);
         }
@@ -110,11 +164,9 @@ public class Garden : MonoBehaviour
 
 	public void InitDefault()
     {
-        AddNewFlower(mFlowerTemplates[0], 0, false);
-        AddNewFlower(mFlowerTemplates[1], 2, false);
-        AddNewFlower(mFlowerTemplates[2], 3.7f, false);
-
-        GetAllFlowerSpots();
+        AddFlowerInRandomPos(mFlowerTemplates[0], FlowerStage.Seedling);
+        AddFlowerInRandomPos(mFlowerTemplates[1], FlowerStage.Sprout);
+        AddFlowerInRandomPos(mFlowerTemplates[2], FlowerStage.Flower);
     }
 
     private void Update()

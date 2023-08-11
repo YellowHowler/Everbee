@@ -7,29 +7,126 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 
-public class Flower:MonoBehaviour
+public class Flower: MonoBehaviour
 {
 	[HideInInspector] public Garden mGarden;
+	[HideInInspector] public Flower type;
 	public string FlowerName;
 	public FlowerSpot[] mFlowerSpots;
-	public float XPosition { get { return transform.localPosition.x; } set { transform.localPosition = new Vector3(value, 0, 0); } }
 
+	public bool flipped;
+
+	public FlowerStage stage;
+	[HideInInspector] public GameResAmount mPollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
+	[HideInInspector] public GameResAmount mNeedPollenAmount;
+
+	public Sprite[] kStageSprites;
+	public Sprite[] kPollenSprites;
+	[HideInInspector] public float XPosition { get { return transform.localPosition.x; } set { transform.localPosition = new Vector3(value, 0, 0); } }
+
+	[HideInInspector] public bool mIsDoneInitializing = false;
+
+	private SpriteRenderer mSpriteRenderer;
+	private SpriteRenderer mPollenSpriteRenderer;
 	private ParticleSystem mParticle;
 	private SpriteOutline mOutline;
 
 	private int mClickNum = 0;
 
-	private void Start()
+	private IEnumerator Start()
 	{
 		mParticle = GetComponentInChildren<ParticleSystem>();
+		mFlowerSpots = GetComponentsInChildren<FlowerSpot>();
+		mSpriteRenderer = GetComponent<SpriteRenderer>();
+		mPollenSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
 		mParticle.Stop();
 
 		mOutline = GetComponent<SpriteOutline>();
 		mOutline.DisableOutline();
+
+		WaitForSeconds sec = new WaitForSeconds(0.1f);
+		while(mIsDoneInitializing == false) yield return sec;
+
+		InitDefault();
+	}
+
+	public void SetValues(Flower _type, Garden _garden, bool _flipped, GameResAmount _needPollenAmount)
+	{
+		type = _type;
+		mNeedPollenAmount = _needPollenAmount;
+		mGarden = _garden;
+		flipped = _flipped;
+
+		mIsDoneInitializing = true;
+	}
+
+	public void SetValues(Flower _type, Garden _garden, bool _flipped, FlowerStage _stage, GameResAmount _needPollenAmount)
+	{
+		type = _type;
+		stage = _stage;
+		mNeedPollenAmount = _needPollenAmount;
+		mGarden = _garden;
+		flipped = _flipped;
+
+		mIsDoneInitializing = true;
+	}
+
+	public void InitDefault()
+	{
+		transform.localRotation = Quaternion.Euler(0, flipped ? 0 : 180, 0);
+
+		UpdateStage(stage);
+		mGarden.GetAllFlowerSpots();
+	}
+
+	public void UpdateSprite()
+	{
+		mSpriteRenderer.sprite = kStageSprites[(int)stage];
+		print((int)stage);
+		mPollenSpriteRenderer.sprite = kPollenSprites[(int)((Mng.play.GetResourcePercent(mPollenAmount, mNeedPollenAmount)/100) * (kPollenSprites.Length - 1))];
+	}
+
+	public void UpdateStage(FlowerStage _stage)
+	{
+		stage = _stage;
+		UpdateSprite();
+	}
+
+	public GameResAmount UpdatePollenAmount(GameResAmount _pollenAmount)
+	{
+		mPollenAmount = _pollenAmount;
+
+		GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
+
+		if(Mng.play.CompareResourceAmounts(mNeedPollenAmount, mPollenAmount))
+		{
+			retAmount = Mng.play.SubtractResourceAmounts(mPollenAmount, mNeedPollenAmount);
+			mPollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
+
+			mGarden.AddFlowerInRandomPos(type, FlowerStage.Sprout);
+		}
+		else
+		{
+			mPollenAmount = _pollenAmount;	
+		}
+
+		UpdateSprite();
+
+		return retAmount;
+	}
+
+	public GameResAmount AddPollenAmount(GameResAmount _pollenAmount)
+	{
+		return UpdatePollenAmount(Mng.play.AddResourceAmounts(_pollenAmount, mPollenAmount));
 	}
 
 	private void OnMouseDown()
 	{
+		if(stage != FlowerStage.Flower)
+		{
+			return;
+		}
+		
 		if(mClickNum > 5)
 		{
 			return;
@@ -88,16 +185,28 @@ public class Flower:MonoBehaviour
 
 	public class CSaveData
 	{
+		public Flower type;
 		public string FlowerName;
 		public float XPosition;
+		public bool flipped;
+
+		public FlowerStage stage;
+		public GameResAmount mPollenAmount;
+		public GameResAmount mNeedPollenAmount;
 
 		public FlowerSpot.CSaveData[] FlowerSpots;
 	}
 
 	public void ExportTo(CSaveData savedata)
 	{
+		savedata.type = type;
 		savedata.FlowerName = FlowerName;
 		savedata.XPosition = XPosition;
+		savedata.flipped = flipped;
+
+		savedata.stage = stage;
+		savedata.mPollenAmount = mPollenAmount;
+		savedata.mNeedPollenAmount = mNeedPollenAmount;
 
 		if (mFlowerSpots == null)
 			savedata.FlowerSpots = null;
@@ -117,8 +226,14 @@ public class Flower:MonoBehaviour
 
 	public void ImportFrom(CSaveData savedata)
 	{
+		type = savedata.type;
 		FlowerName = savedata.FlowerName;
 		XPosition = savedata.XPosition;
+		flipped = savedata.flipped;
+
+		UpdateStage(savedata.stage);
+		mNeedPollenAmount = savedata.mNeedPollenAmount;
+		UpdatePollenAmount(savedata.mPollenAmount);
 
 		// mFlowerSpots 는 고정되어 있는 것이기 때문에 건들이지 않는다.
 		if ( (savedata.FlowerSpots != null) && (mFlowerSpots != null) && (savedata.FlowerSpots.Length == mFlowerSpots.Length) )
@@ -126,5 +241,7 @@ public class Flower:MonoBehaviour
 			for(int i=0; i<savedata.FlowerSpots.Length; ++i)
 				mFlowerSpots[i].ImportFrom(savedata.FlowerSpots[i]);
 		}
+
+		InitDefault();
 	}
 }

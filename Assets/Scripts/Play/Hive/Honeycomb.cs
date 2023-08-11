@@ -19,7 +19,9 @@ public class Honeycomb : MonoBehaviour
 
     public Hive mHive { get; set; }
 
-    public StructureType kStructureType = StructureType.None;
+    public StructureType kStructureType;
+
+    [HideInInspector] public StructureType mStartStructureType = StructureType.None;
 
     private StructureType mTargetStructureType = StructureType.None;
     private StructureType mPrevStructureType = StructureType.None;
@@ -32,6 +34,7 @@ public class Honeycomb : MonoBehaviour
     public GameObject kHatchteryObj;
     public GameObject kCoalgulateObj;
     public GameObject kHoverObj;
+    public GameObject kBuildObj;
 
     public GameObject kCanvas;
 
@@ -53,12 +56,17 @@ public class Honeycomb : MonoBehaviour
         mTargetBee = new CTargetLink<Honeycomb, Bee>(this);
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
 		kCanvas.SetActive(true);
 		kCanvas.GetComponent<Canvas>().worldCamera = Camera.main;
 
         kParticle.Stop();
+        HideObjects();
+
+        yield return new WaitForSeconds(1);
+
+        InitDefault();
 	}
 
     private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
@@ -68,15 +76,16 @@ public class Honeycomb : MonoBehaviour
 
 	public void InitDefault()
     {
-        SetStructure(StructureType.None, true);
-		HideObjects();
+        SetStructure(mStartStructureType, true);
 	}
 
 	private void HideObjects()
     {
+        kEmptyObj.SetActive(false);
         kHoverObj.SetActive(false);
         kTimerPanel.SetActive(false);
         kButtonPanel.SetActive(false);
+        kBuildObj.SetActive(false);
     }
 
     public bool IsFull() //�� ���� �� ���ִ��� Ȯ��
@@ -116,50 +125,47 @@ public class Honeycomb : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).gameObject.SetActive(_setActive);
+            GameObject child = transform.GetChild(i).gameObject;
+            if (child.tag == "HoneycombSprite") child.SetActive(_setActive);
         }
 
-        kEmptyObj.gameObject.SetActive(true);
         kParticle.gameObject.SetActive(true);
         kCanvas.SetActive(true);
     }
 
-    public void ChangeColorOfStructure(StructureType _type, Color _color)
+    public Sprite GetSpriteOfStructure(StructureType _type)
     {
-        GameObject model = null;
-
         switch (_type)
         {
             case StructureType.None:
-                model = null;
-                break;
+                return null;
             case StructureType.Storage:
-                model = kStorageObj;
-                break;
+                return kStorageObj.GetComponent<SpriteRenderer>().sprite;
             case StructureType.Dryer:
-                model = kDryerObj;
-                break;
+                return kDryerObj.GetComponent<SpriteRenderer>().sprite;
 			case StructureType.Coalgulate:
-				model = kCoalgulateObj;
-                break;
+				return kCoalgulateObj.GetComponent<SpriteRenderer>().sprite;
 			case StructureType.Hatchtery:
-                model = kHatchteryObj;
-                break;
+                return kHatchteryObj.GetComponent<SpriteRenderer>().sprite;
             default:
-                model = null;
-                break;
+                return null;
         }
+    }
 
-        if(model != null)
+    public void ExpandHoneycombs()
+    {
+        Hive hive = Mng.play.kHive;
+
+        for(int i = 1; i <= 6; i++)
         {
-            model.SetActive(true);
-            model.GetComponent<SpriteRenderer>().color = Color.white;
+            hive.AddNewHoneycomb(hive.GetHexagonPos(pos, (HoneycombDirection)i), false);
         }
     }
 
     public bool SetStructure(StructureType _type, bool forced) //true if build successful
     {
         kBuildPanel.SetActive(false);
+        kBuildObj.SetActive(false);
 
         switch (_type)
         {
@@ -173,6 +179,8 @@ public class Honeycomb : MonoBehaviour
             case StructureType.Storage:
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
+
+                ExpandHoneycombs();
                 break;
             case StructureType.Dryer:
                 SetAllChildrenActive(false);
@@ -236,8 +244,8 @@ public class Honeycomb : MonoBehaviour
 
         kCanvas.SetActive(true);
         kBuildPanel.SetActive(true);
-
-        
+        kBuildObj.SetActive(true);
+        kBuildObj.GetComponent<SpriteRenderer>().sprite = GetSpriteOfStructure(_type);
 
         HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
 
@@ -372,13 +380,7 @@ public class Honeycomb : MonoBehaviour
     {
         GameResAmount maxAmount = GetMaxAmount(type);
 
-        if((int)maxAmount.unit != (int)amount.unit)
-        {
-            kSpriteRenderer.sprite = mHive.kHoneycombHoneySprites[0];
-            return;
-        }
-
-        int spriteNum = Mathf.Clamp((int)((amount.amount / maxAmount.amount) * (mHive.kHoneycombNectarSprites.Length - 1)), 1, mHive.kHoneycombNectarSprites.Length - 1);
+        int spriteNum = Mathf.Clamp((int)(Mng.play.GetResourcePercent(amount, maxAmount)/100 * (mHive.kHoneycombNectarSprites.Length - 1)), 1, mHive.kHoneycombNectarSprites.Length - 1);
 
         switch(type)
         {
@@ -540,7 +542,7 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
-        InventoryBarPanel inven = Mng.canvas.kInven;
+        Inventory inven = Mng.play.kInventory;
 
         int targetSlot = inven.GetAvailableSlot(type);
 
@@ -550,7 +552,7 @@ public class Honeycomb : MonoBehaviour
             return;
         }
 
-        GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[targetSlot].amount, amount);
+        GameResAmount sumAmount = Mng.play.AddResourceAmounts(inven.mItemSlots[targetSlot].amount, amount);
 
         if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
         {

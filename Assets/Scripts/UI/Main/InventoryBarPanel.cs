@@ -34,80 +34,6 @@ public class InventoryBarPanel : MonoBehaviour
         
     }
 
-    public GameResAmount GetMaxAmount(GameResType _type)
-    {
-        GameResAmount maxAmount = new GameResAmount(0, GameResUnit.Microgram);
-
-        switch(_type)
-        {
-            case GameResType.Nectar:
-                maxAmount = Mng.play.kHive.mMaxItemAmounts[1];
-                break;
-            case GameResType.Pollen:
-                maxAmount = Mng.play.kHive.mMaxItemAmounts[2];
-                break;
-            case GameResType.Honey:
-                maxAmount = Mng.play.kHive.mMaxItemAmounts[0];
-                break;
-            case GameResType.Wax:
-                maxAmount = Mng.play.kHive.mMaxItemAmounts[3];
-                break;
-        }
-
-        return maxAmount;
-    }
-
-    public int GetAvailableSlot(GameResType _type)
-    {
-        for(int i = 0; i < mSlotNum; i++)
-        {
-            if(CheckIfSameType(i, _type))
-            {
-                return i;
-            }
-        }
-
-        for(int i = 0; i < mSlotNum; i++)
-        {
-            if(CheckIfSlotUsable(i, _type))
-            {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public bool CheckIfSameType(int _num, GameResType _type)
-    {
-        var inventory = Mng.play.kInventory;
-        var slot = inventory.mItemSlots[_num];
-        
-        if(slot.amount.amount >= 0.1f && slot.type == _type && Mng.play.CompareResourceAmounts(slot.amount, GetMaxAmount(_type)) == true)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool CheckIfSlotUsable(int _num, GameResType _type)
-    {
-        var inventory = Mng.play.kInventory;
-        var slot = inventory.mItemSlots[_num];
-
-        if(slot.type == GameResType.Empty || slot.amount.amount == 0)
-        {
-            return true;
-        }
-        if(slot.type == _type && Mng.play.CompareResourceAmounts(slot.amount, GetMaxAmount(_type)) == true)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     public void UpdateSlots()
     {
         var inventory = Mng.play.kInventory;
@@ -130,22 +56,6 @@ public class InventoryBarPanel : MonoBehaviour
                 kItemTexts[i].text = Mng.canvas.GetAmountText(slot.amount);
             }
         }
-    }
-
-    public void UpdateSlotAmount(int _num, GameResType _type, GameResAmount _amount)
-    {
-		var inventory = Mng.play.kInventory;
-		var slot = inventory.mItemSlots[_num];
-
-		slot.type = _type;
-		slot.amount = _amount;
-
-        UpdateSlots();
-    }
-
-    public void AddSlotAmount(int _num, GameResType _type, GameResAmount _amount)
-    {
-        UpdateSlotAmount(_num, _type, Mng.play.AddResourceAmounts(_amount, Mng.play.kInventory.mItemSlots[_num].amount));
     }
 
     public void SetSelected(int _num)

@@ -101,5 +101,6 @@ public class PlayerCamera : MonoBehaviour
         mFollowTarget = null;
 
         Mng.canvas.kBeeInfo.Hide();
+        Mng.canvas.kQueen.Hide();
     }
 }

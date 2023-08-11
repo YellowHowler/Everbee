@@ -25,6 +25,7 @@ public class BeeInfoPanel : PopupBase
     public TMP_Text kFeedTextHoney;
     public TMP_Text kFeedTextPollen;
     public Button kFeedButton;
+    public GameObject kFeedButtonCover;
 
     public Sprite[] kJobIcons;
     public Image kJobImage;
@@ -49,11 +50,13 @@ public class BeeInfoPanel : PopupBase
         }
     }
 
+/*
 	override public void ProcessEscapeKey()
 	{
 		PlayerCamera.Instance.StopFollow();
 		base.ProcessEscapeKey();
 	}
+    */
 
 	public void SetStat(Bee _bee)
     {
@@ -82,15 +85,20 @@ public class BeeInfoPanel : PopupBase
             kStoragePanel.SetActive(true);
 
             kFeedTextHoney.text = Mng.canvas.GetAmountText(mTargetBee.mHoneyFeedAmount);
-            kFeedTextHoney.text = Mng.canvas.GetAmountText(mTargetBee.mPollenFeedAmount);
+            kFeedTextPollen.text = Mng.canvas.GetAmountText(mTargetBee.mPollenFeedAmount);
 
-            if(Mng.play.CompareResourceAmounts(mTargetBee.mCurrentHoney, mTargetBee.mHoneyFeedAmount) == true && Mng.play.CompareResourceAmounts(mTargetBee.mCurrentPollen, mTargetBee.mPollenFeedAmount) == true)
+            bool isInvenEnough = Mng.play.kInventory.CheckIfEnoughResource(GameResType.Honey, mTargetBee.mHoneyFeedAmount) && Mng.play.kInventory.CheckIfEnoughResource(GameResType.Pollen, mTargetBee.mPollenFeedAmount);
+            bool isBeeInvenEnough = Mng.play.CompareResourceAmounts(mTargetBee.mHoneyFeedAmount, mTargetBee.mCurrentHoney) && Mng.play.CompareResourceAmounts(mTargetBee.mPollenFeedAmount, mTargetBee.mCurrentPollen);
+
+            if(isInvenEnough || isBeeInvenEnough)
             {
-                kFeedButton.enabled = false;
+                kFeedButtonCover.SetActive(false);
+                kFeedButton.enabled = true;
             }
             else
             {   
-                kFeedButton.enabled = true;
+                kFeedButtonCover.SetActive(true);
+                kFeedButton.enabled = false;
             }
         }
 

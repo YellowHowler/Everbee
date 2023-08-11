@@ -36,6 +36,16 @@ namespace EnumDef
     }
 
     [Serializable]
+    public enum FlowerStage
+    {
+        Seed = 0,
+        Sprout = 1,
+        Seedling = 2,
+        Adult = 3,
+        Flower = 4,
+    }
+
+    [Serializable]
     public enum BeeThinking
     {
         None=0,
@@ -106,11 +116,11 @@ namespace EnumDef
     public enum HoneycombDirection
     {
         None = 0,
-        TopLeft,
-        TopRight,
-        Left,
-        Right,
-        BottomLeft,
-        BottomRight,
+        TopLeft = 1,
+        TopRight = 2,
+        Left = 3,
+        Right = 4,
+        BottomLeft = 5,
+        BottomRight = 6,
     }
 }

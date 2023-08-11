@@ -12,6 +12,7 @@ public class QueenBee : MonoBehaviour
 {
     private float mSpeed = 2f;
 
+    private SpriteRenderer mSpriteRenderer;
     private Animator mAnimator;
     public SpriteOutline kOutline;
 
@@ -28,6 +29,7 @@ public class QueenBee : MonoBehaviour
     void Awake()
     {
         mAnimator = GetComponentInChildren<Animator>();
+        mSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -50,27 +52,27 @@ public class QueenBee : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
+        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding || mCurState != QueenState.Wander) 
         {
             return;
         }
 
+        Mng.play.kHive.mHoveredQueenBee = this;
         kOutline.EnableOutline();
     }
     private void OnMouseExit()
     {
+        if(Mng.play.kHive.mHoveredQueenBee == this)
+        {
+            Mng.play.kHive.mHoveredQueenBee = null;
+        }
+
         kOutline.DisableOutline();
     }
 
-    private IEnumerator CallDoJob()
+    public Sprite GetCurrentSprite()
     {
-        yield return new WaitForSeconds(0.3f);
-        DoJob();
-    }
-
-    private void DoJob()
-    {
-
+        return mSpriteRenderer.GetComponent<SpriteRenderer>().sprite;
     }
 
     public void AddResource(GameResType _type, GameResAmount _amount)
@@ -90,13 +92,12 @@ public class QueenBee : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(!PopupBase.IsTherePopup() && mCurState == QueenState.Wander && Mng.play.kHive.mIsBuilding == false)
+        if(PopupBase.IsTherePopup() || mCurState != QueenState.Wander || Mng.play.kHive.mIsBuilding == true || Mng.play.kHive.mIsPlacingItem == true)
         {
-            Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
-            Mng.canvas.kQueen.Show();
-            Mng.canvas.kQueen.mTargetQueen = this;
-            Mng.canvas.ShowMenu();
+            return;
         }
+
+        Mng.canvas.kMenuToggle.OnQueenMenuBtnClick();
     }
 
     private bool IsWandering() { return (mCurState == QueenState.Wander) || (mCurState == QueenState.WaitForTarget); }

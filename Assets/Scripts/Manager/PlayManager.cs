@@ -88,7 +88,7 @@ public class PlayManager : MonoBehaviour
     public void UpdateBackground()
     {
         ComputeWorldBoundary();
-        kGarden.SetGrassBG(WorldBoundary.xMin, WorldBoundary.xMax);
+        kGarden.SetBound(WorldBoundary.xMin, WorldBoundary.xMax);
     }
 
 	// Update is called once per frame
@@ -198,20 +198,6 @@ public class PlayManager : MonoBehaviour
         kMainCanvas.kResource.UpdateText();
     }
 
-    //private void OnTouch(Gesture gesture)
-    //{
-    //    if (gesture.pickedObject == null)
-    //        return;
-
-    //    //Mng.canvas.kResource.SetText("??");
-
-    //    /*
-    //    if( kHive.kQueenBee.gameObject == gesture.pickedObject )
-    //    {
-    //        PlayerCamera.Instance.SetFollow(kHive.kQueenBee.transform);
-    //    }
-    //    */
-    //}
 
     public GameResAmount AddResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
@@ -320,6 +306,8 @@ public class PlayManager : MonoBehaviour
     /// <summary> ù��°�� �� ũ�� false, �ι�°�� �� ũ�� true </summary>
     public bool CompareResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
+        if(IsSameAmount(_resAmountA, _resAmountB)) return true;
+
         if((int)_resAmountA.unit != (int) _resAmountB.unit)
         {
             return (int)_resAmountA.unit < (int)_resAmountB.unit;
@@ -330,7 +318,7 @@ public class PlayManager : MonoBehaviour
 
     public bool IsSameAmount(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
-        return _resAmountA.amount == _resAmountB.amount && _resAmountA.unit == _resAmountB.unit;
+        return Mathf.Abs(_resAmountA.amount - _resAmountB.amount) <= 0.01f && _resAmountA.unit == _resAmountB.unit;
     }
 
     public Vector3 SetZ(Vector3 _pos, float _z)

@@ -8,6 +8,7 @@ using UnityEngine;
 public class FlowerSpot : MonoBehaviour
 {
     [HideInInspector] public Garden mGarden;
+	[HideInInspector] public Flower mFlower;
 
     public Vector3 pos;
 	public CTargetLink<FlowerSpot, Bee> mTargetBee;
@@ -24,6 +25,7 @@ public class FlowerSpot : MonoBehaviour
 
     private void Awake()
     {
+		mFlower = transform.parent.gameObject.GetComponent<Flower>();
 		mTargetBee = new CTargetLink<FlowerSpot, Bee>(this);
 
         nectarAmount = new GameResAmount(nectar, nectarUnit);

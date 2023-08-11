@@ -15,6 +15,7 @@ public class Bees : MonoBehaviour
     private List<Bee> mBeeList = new List<Bee>();
     private QueenBee mQueenBee;
     
+    [HideInInspector] public float mBeeZ = -0.05f;
 
     public Bee CreateBee(Vector3 _pos)
     {
@@ -31,6 +32,8 @@ public class Bees : MonoBehaviour
 
     public Bee CreateBee(Vector3 _pos, int _level, BeeStage _stage)
     {
+        _pos = Mng.play.SetZ(_pos, mBeeZ);
+
         GameObject newBee = Instantiate(kBeeObj, _pos, Quaternion.identity);
         newBee.transform.parent = transform;
 
@@ -97,7 +100,7 @@ public class Bees : MonoBehaviour
             CreateBee(Vector3.zero, Bee.c_BeeLevel, BeeStage.Bee);
         }
 
-        CreateQueenBee(new Vector3(0, 15, 0));
+        Mng.play.kHive.mActiveQueenBee = CreateQueenBee(new Vector3(0, 15, 0));
     }  
 
     void Update()
@@ -146,11 +149,12 @@ public class Bees : MonoBehaviour
         if (savedata.mQueenBee == null)
         {
             // 그래도 한마리는 만들어 주어야 함.
-            CreateQueenBee(new Vector3(0, 15, 0));
+            Mng.play.kHive.mActiveQueenBee = CreateQueenBee(new Vector3(0, 15, 0));
         }
         else
         {
             var queenbee = CreateQueenBee(savedata.mQueenBee.Pos);
+            Mng.play.kHive.mActiveQueenBee = queenbee;
             queenbee.ImportFrom(savedata.mQueenBee);
         }
 	}

@@ -22,6 +22,8 @@ public class MenuTogglePanel : MonoBehaviour
 
     public void OnBuildMenuBtnClick()
     {
+        Mng.play.kCamera.StopFollow();
+
         kBuildBtn.interactable = false;
 
         Mng.canvas.ShowMenu();
@@ -33,6 +35,8 @@ public class MenuTogglePanel : MonoBehaviour
 
 	public void OnJobMenuBtnClick()
     {
+        Mng.play.kCamera.StopFollow();
+
         kJobBtn.interactable = false;
 
         Mng.canvas.ShowMenu();
@@ -45,11 +49,16 @@ public class MenuTogglePanel : MonoBehaviour
     public void OnQueenMenuBtnClick()
     {
         kQueenBtn.interactable = false;
-
-        Mng.canvas.ShowMenu();
         
         Mng.canvas.kQueen.Show();
         Mng.canvas.kBuild.Hide();
         Mng.canvas.kJob.Hide();
+
+        QueenBee targetQueen = Mng.play.kHive.mActiveQueenBee;
+
+        Mng.canvas.kQueen.mTargetQueen = targetQueen;
+        Mng.canvas.kQueen.UpdateSliders(targetQueen.mCurHoney, targetQueen.mCurPollen);
+
+        Mng.play.kCamera.SetFollow(targetQueen.gameObject.transform);
     }
 }

@@ -11,6 +11,8 @@ public class QueenResourcePanel : PopupBase
 {
     [HideInInspector] public QueenBee mTargetQueen;
 
+    public Image kImage;
+
     public Button kQueenBtn;
 
     public Slider kHoneySlider;
@@ -20,6 +22,7 @@ public class QueenResourcePanel : PopupBase
     public TMP_Text kPollenText;
 
     public Button kEggButton;
+    public GameObject kEggButtonCover;
     
     void Start()
     {
@@ -27,19 +30,25 @@ public class QueenResourcePanel : PopupBase
 
     void Update()
     {
-        
+        if(mTargetQueen)
+        {
+            kQueenBtn.interactable = false;
+            kImage.sprite = mTargetQueen.GetCurrentSprite();
+        }
     }
 
+/*
 	override public void ProcessEscapeKey()
 	{
 		OnQueenResourceBgClick();
 		base.ProcessEscapeKey();
 	}
+    */
 
 	public void QueenLayEgg()
     {
         mTargetQueen.WaitForTargetHoneycomb();
-        OnQueenResourceBgClick();
+        Hide();
     }
 
     public void UpdateSliders(GameResAmount _honeyAmount, GameResAmount _pollenAmount)
@@ -50,23 +59,27 @@ public class QueenResourcePanel : PopupBase
         kHoneySlider.value = Mng.play.GetResourcePercent(_honeyAmount, honeyNeed) / 100f;
         kPollenSlider.value = Mng.play.GetResourcePercent(_pollenAmount, pollenNeed) / 100f;
 
-        kHoneyText.text = Mng.canvas.GetAmountText(_honeyAmount) + "/" + Mng.canvas.GetAmountText(honeyNeed);
-        kPollenText.text = Mng.canvas.GetAmountText(_pollenAmount) + "/" + Mng.canvas.GetAmountText(pollenNeed);
+        kHoneyText.text = Mng.canvas.GetAmountText(_honeyAmount) + "\n/\n" + Mng.canvas.GetAmountText(honeyNeed);
+        kPollenText.text = Mng.canvas.GetAmountText(_pollenAmount) + "\n/\n" + Mng.canvas.GetAmountText(pollenNeed);
 
-        if(Mng.play.CompareResourceAmounts(honeyNeed, _honeyAmount) == true && Mng.play.CompareResourceAmounts(pollenNeed, _pollenAmount) == true)
+        bool isQueenInvenEnough = Mng.play.CompareResourceAmounts(honeyNeed, _honeyAmount) && Mng.play.CompareResourceAmounts(pollenNeed, _pollenAmount);
+
+        if(isQueenInvenEnough)
         {
             kEggButton.enabled = true;
+            kEggButtonCover.SetActive(false);
         }
         else
         {
             kEggButton.enabled = false;
+            kEggButtonCover.SetActive(true);
         }
     }
 
-    public void OnQueenResourceBgClick()
+    public void Hide()
     {
+        mTargetQueen = null;
         kQueenBtn.interactable = true;
-        Mng.canvas.HideMenu();
-        Hide();
+        base.Hide();        
     }
 }
