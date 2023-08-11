@@ -247,14 +247,7 @@ public class Hive : MonoBehaviour
 
 	public Honeycomb GetRandomHoneycomb()
     {
-        Honeycomb randHoneycomb = null;
-
-        while(randHoneycomb == null || randHoneycomb.kStructureType == StructureType.None)
-        {
-            randHoneycomb = mHoneycombList.Count > 0 ? mHoneycombList[UnityEngine.Random.Range(0, mHoneycombList.Count)] : null;
-        }
-        
-        return randHoneycomb;
+        return mHoneycombList.Count > 0 ? mHoneycombList[UnityEngine.Random.Range(0, mHoneycombList.Count)] : null;
     }
 
     public Vector3 GetHexagonPos(Vector3 _pos, HoneycombDirection _dir)
