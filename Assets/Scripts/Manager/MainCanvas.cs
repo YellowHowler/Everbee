@@ -11,6 +11,9 @@ public class MainCanvas : MonoBehaviour
 {
     static public MainCanvas Instance { get; private set; }
 
+    public Sprite[] kResourceSprites;
+    public Sprite kEmptySprite;
+
     public TMP_Text kWarningTxt;
 
     public UIResourceInfoPanel kResource;
@@ -20,6 +23,7 @@ public class MainCanvas : MonoBehaviour
     public QueenResourcePanel kQueen;
     public BeeInfoPanel kBeeInfo;
     public MenuTogglePanel kMenuToggle;
+    public ResourceConvertPanel kConvert;
     public LHS.CLHSDialogUI kDialoguePopup;
 
     public Button[] kToggleButtons;
@@ -45,6 +49,7 @@ public class MainCanvas : MonoBehaviour
         kQueen = GetComponentInChildren<QueenResourcePanel>(true);
         kBeeInfo = GetComponentInChildren<BeeInfoPanel>(true);
         kMenuToggle = GetComponentInChildren<MenuTogglePanel>(true);
+        kConvert = GetComponentInChildren<ResourceConvertPanel>(true);
 
         kResource.gameObject.SetActive(true);
         kInven.gameObject.SetActive(true);
@@ -80,6 +85,37 @@ public class MainCanvas : MonoBehaviour
         {
             kToggleButtons[i].interactable = true;
         }
+    }
+
+    public Sprite GetResourceTypeIcon(GameResType _type)
+    {
+        switch(_type)
+        {
+            case GameResType.Honey:
+                return kResourceSprites[0];
+            case GameResType.Nectar:
+                return kResourceSprites[1];
+            case GameResType.Pollen:
+                return kResourceSprites[2];
+            case GameResType.Wax:
+                return kResourceSprites[3];
+            case GameResType.Empty:
+                return kEmptySprite;
+            default:
+                return kEmptySprite;
+        }
+    }
+
+    public void SpawnItemAtMousePos(GameResType _type, GameResAmount _amount, ItemLoc _prevLoc, int _prevSlot)
+    {
+        Vector3 spawnPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
+
+        Item item = Instantiate(Mng.play.kHive.kItemObj, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
+        item.InitProperties(_type, _amount, _prevLoc, _prevSlot);
+
+        Mng.play.kHive.mPlaceItem = item;
+        Mng.play.kHive.mIsPlacingItem = true;
     }
 
     public string GetResourceTypeText(GameResType _type, bool _isStart)

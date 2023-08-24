@@ -27,6 +27,8 @@ public class Hive : MonoBehaviour
 	public GameObject kHoverObj;
     private SpriteRenderer kHoverObjSpriteRenderer;
 
+    public ParticleSystem kGiveParticle;
+
 	public Sprite[] kHoneycombNectarSprites;
     public Sprite[] kHoneycombPollenSprites;
     public Sprite[] kHoneycombHoneySprites;
@@ -466,6 +468,27 @@ public class Hive : MonoBehaviour
 
         return rect;
 	}
+
+    public void PlayGiveParticles(Transform _obj)
+    {
+		StartCoroutine(PlayParticlesCor(_obj, kGiveParticle, 0.3f));
+    }
+
+	private IEnumerator PlayParticlesCor(Transform _obj, ParticleSystem _ps, float _duration)
+    {
+        float timeLeft = _duration;
+
+        _ps.Play();
+
+        while(timeLeft >= 0)
+        {
+            timeLeft -= Time.deltaTime;
+            kGiveParticle.transform.position = _obj.position;
+            yield return null;
+        }
+
+        _ps.Stop();
+    }
 
     [Serializable]
 	// 세이브/로드 관련

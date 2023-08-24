@@ -36,6 +36,8 @@ public class Honeycomb : MonoBehaviour
     public GameObject kHoverObj;
     public GameObject kBuildObj;
 
+    public Animator kDryerAni;
+
     public GameObject kCanvas;
 
     public GameObject kTimerPanel;
@@ -64,7 +66,7 @@ public class Honeycomb : MonoBehaviour
         kParticle.Stop();
         HideObjects();
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.1f);
 
         InitDefault();
 	}
@@ -427,7 +429,7 @@ public class Honeycomb : MonoBehaviour
             switch(kStructureType)
             {
                 case StructureType.Dryer:
-					kDryerObj.GetComponent<SpriteRenderer>().sprite = kDryerSprites[1];
+					kDryerAni.SetBool("isOpen", mIsOpen);
                     break;
 
 				case StructureType.Coalgulate:
@@ -653,6 +655,8 @@ public class Honeycomb : MonoBehaviour
     }
     private IEnumerator ConvertCor(int _time, GameResType _finType)
     {
+        kDryerAni.SetBool("isConverting", true);
+
         WaitForSeconds sec = new WaitForSeconds(1);
 
         for(int i = _time; i >= 0; i--)
@@ -668,6 +672,7 @@ public class Honeycomb : MonoBehaviour
         Mng.play.kHive.RecountAllResources();
 
         mIsConverting = false;
+        kDryerAni.SetBool("isConverting", false);
     }   
 
     private IEnumerator PlayParticlesCor()

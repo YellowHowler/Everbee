@@ -28,18 +28,20 @@ public class Flower: MonoBehaviour
 
 	private SpriteRenderer mSpriteRenderer;
 	private SpriteRenderer mPollenSpriteRenderer;
-	private ParticleSystem mParticle;
+	private ParticleSystem mClickParticle;
+	private ParticleSystem mPollenReceiveParticle;
 	private SpriteOutline mOutline;
 
 	private int mClickNum = 0;
 
 	private IEnumerator Start()
 	{
-		mParticle = GetComponentInChildren<ParticleSystem>();
+		mClickParticle = transform.Find("BurstParticle").GetComponent<ParticleSystem>();
+		mPollenReceiveParticle = transform.Find("PollenReceiveParticle").GetComponent<ParticleSystem>();
 		mFlowerSpots = GetComponentsInChildren<FlowerSpot>();
 		mSpriteRenderer = GetComponent<SpriteRenderer>();
 		mPollenSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-		mParticle.Stop();
+		mClickParticle.Stop();
 
 		mOutline = GetComponent<SpriteOutline>();
 		mOutline.DisableOutline();
@@ -115,8 +117,13 @@ public class Flower: MonoBehaviour
 		return retAmount;
 	}
 
-	public GameResAmount AddPollenAmount(GameResAmount _pollenAmount)
+	public GameResAmount AddPollenAmount(GameResAmount _pollenAmount, bool _playParticle)
 	{
+		if(_playParticle)
+		{
+			StartCoroutine(PlayParticlesCor(mPollenReceiveParticle, 0.5f));
+		}
+
 		return UpdatePollenAmount(Mng.play.AddResourceAmounts(_pollenAmount, mPollenAmount));
 	}
 
@@ -132,12 +139,17 @@ public class Flower: MonoBehaviour
 			return;
 		}
 
+		if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding == true || Mng.play.kHive.mIsPlacingItem == true)
+        {
+            return;
+        }
+
 		bool playParticle = Mng.play.kHive.FlowerClick(GameResType.Nectar, new GameResAmount(mFlowerSpots[0].nectarAmount.amount / 20, mFlowerSpots[0].nectarAmount.unit));
 		playParticle = Mng.play.kHive.FlowerClick(GameResType.Pollen, new GameResAmount(mFlowerSpots[0].pollenAmount.amount / 20, mFlowerSpots[0].pollenAmount.unit)) || playParticle;
 		
 		if(playParticle)
 		{
-			PlayParticles();
+			PlayParticles(mClickParticle, 0.5f);
 		}
 		else
 		{
@@ -147,7 +159,7 @@ public class Flower: MonoBehaviour
 
 	private void OnMouseOver()
     {
-        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
+        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding || (stage != FlowerStage.Flower && Mng.play.kHive.mIsPlacingItem == false) )
         {
             return;
         }
@@ -166,18 +178,26 @@ public class Flower: MonoBehaviour
         mOutline.DisableOutline();
     }
 
-	public void PlayParticles()
+	public void PlayParticles(ParticleSystem _ps, float _duration)
     {
-		StartCoroutine(PlayParticlesCor());
+		StartCoroutine(PlayParticlesCor(_ps, _duration));
     }
 
-	private IEnumerator PlayParticlesCor()
+	private IEnumerator PlayParticlesCor(ParticleSystem _ps, float _duration)
     {
-		mClickNum++;
-        mParticle.Play();
-        yield return new WaitForSeconds(0.5f);
-        mParticle.Stop();
-		mClickNum--;
+		if(_ps == mClickParticle) 
+		{
+			mClickNum++;	
+		}
+
+        _ps.Play();
+        yield return new WaitForSeconds(_duration);
+        _ps.Stop();
+
+		if(_ps == mClickParticle) 
+		{
+			mClickNum--;	
+		}
     }
 
 	// 세이브/로드 관련

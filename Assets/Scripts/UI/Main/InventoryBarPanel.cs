@@ -119,18 +119,7 @@ public class InventoryBarPanel : MonoBehaviour
             return;
         }
 
-        Vector3 spawnPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
-
-        Item item = Instantiate(Mng.play.kHive.kItemObj, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
-        item.UpdateAmount(slot.type, slot.amount);
-        item.mPrevSlot = _num;
-        slot.type = GameResType.Empty;
-        slot.amount = new GameResAmount(0f, GameResUnit.Microgram);
-
-        Mng.play.kHive.mPlaceItem = item;
-        Mng.play.kHive.mIsPlacingItem = true;
-
-        UpdateSlots();
+        Mng.canvas.SpawnItemAtMousePos(slot.type, slot.amount, ItemLoc.InvenSlot, _num);
+        Mng.play.kInventory.UpdateSlotAmount(_num, GameResType.Empty, new GameResAmount(0f, GameResUnit.Microgram));
     }
 }

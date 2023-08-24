@@ -42,6 +42,14 @@ abstract public class PopupBase: MonoBehaviour
 			s_PopupStack.Add(this);
 	}
 
+	virtual public void Show(bool isPopup)
+	{
+		gameObject.SetActive(true);
+
+		if (isPopup && !s_PopupStack.Contains(this))
+			s_PopupStack.Add(this);
+	}
+
 	virtual public bool CanHide()
 	{
 		return true;	// 이것이 false 이면 Hide 못함

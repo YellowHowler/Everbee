@@ -123,4 +123,13 @@ namespace EnumDef
         BottomLeft = 5,
         BottomRight = 6,
     }
+
+    [Serializable]
+    public enum ItemLoc
+    {
+        None = 0,
+        InvenSlot = 1,
+        ConvertPrevSlot = 2,
+        ConvertResSlot = 3,
+    }
 }

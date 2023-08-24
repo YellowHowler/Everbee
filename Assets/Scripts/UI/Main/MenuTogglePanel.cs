@@ -50,7 +50,7 @@ public class MenuTogglePanel : MonoBehaviour
     {
         kQueenBtn.interactable = false;
         
-        Mng.canvas.kQueen.Show();
+        Mng.canvas.kQueen.Show(false);
         Mng.canvas.kBuild.Hide();
         Mng.canvas.kJob.Hide();
 

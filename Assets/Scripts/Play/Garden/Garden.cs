@@ -120,8 +120,8 @@ public class Garden : MonoBehaviour
         _flower.XPosition = _xPos;
         _flower.gameObject.transform.position = new Vector3(_xPos, flowerY, 0.01f);
 
-        PlayManager.Instance.kGardenXBound.start = Mathf.Min(_xPos - 3f,PlayManager.Instance.kGardenXBound.start);
-		PlayManager.Instance.kGardenXBound.end = Mathf.Max(_xPos + 3f,PlayManager.Instance.kGardenXBound.end);
+        PlayManager.Instance.kGardenXBound.start = Mathf.Min(_xPos - 2f,PlayManager.Instance.kGardenXBound.start);
+		PlayManager.Instance.kGardenXBound.end = Mathf.Max(_xPos + 2f,PlayManager.Instance.kGardenXBound.end);
 
 		PlayManager.Instance.kGardenYBound.start = flowerY + 0.6f;
 		PlayManager.Instance.kGardenYBound.end = flowerY + 2;
@@ -131,8 +131,8 @@ public class Garden : MonoBehaviour
 
     public void SetBound(float _xMin, float _xMax)
     {
-        xMin = _xMin - 13;
-        xMax = _xMax + 13;
+        xMin = _xMin - 6;
+        xMax = _xMax + 6;
         SetGrassBG(xMin - 2, xMax + 2);
     }
 

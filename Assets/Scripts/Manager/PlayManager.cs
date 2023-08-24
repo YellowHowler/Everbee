@@ -321,6 +321,11 @@ public class PlayManager : MonoBehaviour
         return Mathf.Abs(_resAmountA.amount - _resAmountB.amount) <= 0.01f && _resAmountA.unit == _resAmountB.unit;
     }
 
+    public bool IsAmountZero(GameResAmount _amount)
+    {
+        return IsSameAmount(_amount, new GameResAmount(0f, GameResUnit.Microgram));
+    }
+
     public Vector3 SetZ(Vector3 _pos, float _z)
     {
         return new Vector3(_pos.x, _pos.y, _z);

@@ -87,9 +87,6 @@ TagManager:
   - name: Bee
     uniqueID: 2177007449
     locked: 0
-  - name: Item
-    uniqueID: 4020775763
-    locked: 0
   - name: CancelCanvas
     uniqueID: 1323653163
     locked: 0
@@ -98,4 +95,7 @@ TagManager:
     locked: 0
   - name: Canvas
     uniqueID: 646869065
+    locked: 0
+  - name: Item
+    uniqueID: 4020775763
     locked: 0

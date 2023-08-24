@@ -16,7 +16,7 @@ public class HoneycombBuildPanel : MonoBehaviour
     public void UpdateUI(GameResAmount _curWax, GameResAmount _needWax)
     {
         kWaxSlider.value = Mng.play.GetResourcePercent(_curWax, _needWax)/100;
-        kWaxText.text = Mng.canvas.GetAmountRatioText(_curWax, _needWax);
+        kWaxText.text = Mng.canvas.GetAmountText(_needWax);
     }
 
     void Start()
