@@ -77,13 +77,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75f5bb7a9f75f41be8dc018c04fbbec8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mFlowerTemplates:
+  kFlowerTemplates:
   - {fileID: -1222915593253863993, guid: 21a5b35c1a46d8148b514fe5f4ec9417, type: 3}
   - {fileID: 5125129073862588286, guid: ba55f2247be35214485cca6aa9e049b3, type: 3}
   - {fileID: 4257690255040371055, guid: 7fecbd49096950741ab940321873c094, type: 3}
   - {fileID: 1228057888870816531, guid: 53500e0976b3c894eaca8fb0b0feb19a, type: 3}
   kBackground: {fileID: 3359108209598669645}
   kGrassBG: {fileID: 5347010761025288542, guid: b64b585f6e4ef4c48a15e6c378051e6b, type: 3}
+  mHoveredFlower: {fileID: 0}
 --- !u!1 &3359108211210525575
 GameObject:
   m_ObjectHideFlags: 0

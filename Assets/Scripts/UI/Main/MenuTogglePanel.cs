@@ -51,6 +51,7 @@ public class MenuTogglePanel : MonoBehaviour
         kQueenBtn.interactable = false;
         
         Mng.canvas.kQueen.Show(false);
+        Mng.canvas.kBeeInfo.gameObject.SetActive(false);
         Mng.canvas.kBuild.Hide();
         Mng.canvas.kJob.Hide();
 

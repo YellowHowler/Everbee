@@ -327,6 +327,7 @@ public class Bee : MonoBehaviour
         if(Mng.canvas.kBeeInfo.gameObject.activeSelf || !PopupBase.IsTherePopup())
         {
             //Mng.canvas.kBeeInfo.Show();
+            Mng.canvas.kQueen.Hide();
             Mng.canvas.kBeeInfo.gameObject.SetActive(true);
             Mng.play.kCamera.SetFollow(transform);
             Mng.canvas.kBeeInfo.SetBee(this);
@@ -393,6 +394,7 @@ public class Bee : MonoBehaviour
 			//print("idle");
 
             var randomHoneycomb = Mng.play.kHive.GetRandomHoneycomb();
+
             if (randomHoneycomb == null)
             {
                 mCanWork = true;
@@ -400,7 +402,7 @@ public class Bee : MonoBehaviour
                 return;
             }
 
-			Vector3 randomPos = randomHoneycomb.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle*5;
+			Vector3 randomPos = randomHoneycomb.transform.position + Mng.play.SetZ((Vector3)UnityEngine.Random.insideUnitCircle*0.5f, 0);
 			if(mFirst)
             {
                 // 처음에는 즉시 이동
@@ -502,7 +504,7 @@ public class Bee : MonoBehaviour
             {
                 Honeycomb targetHoneyComb = mTargetHoneycomb.GetObject();
 
-                if(!(targetHoneyComb.type == GameResType.Wax && targetHoneyComb.amount.amount > 0 && targetHoneyComb.kStructureType == StructureType.Storage))
+                if(!(targetHoneyComb.type == GameResType.Wax && Mng.play.IsAmountZero(targetHoneyComb.amount) == false && targetHoneyComb.kStructureType == StructureType.Storage))
                 {   
                     UpdateThinking(BeeThinking.NoWaxInThisStorage);
                     mAtTarget = false;
@@ -511,8 +513,8 @@ public class Bee : MonoBehaviour
                 }
 
                 UpdateResourceAmount(GameResType.Wax, targetHoneyComb.FetchResource(GameResType.Wax, mCurrentWax, mMaxWax));
-
                 mAtTarget = false; 
+
                 mTargetHoneycomb.Unlink();
                 StartCoroutine(CallDoJob());
                 return;

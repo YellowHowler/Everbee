@@ -17,8 +17,18 @@ public class Flower: MonoBehaviour
 	public bool flipped;
 
 	public FlowerStage stage;
+
+	[HideInInspector] public long age = 0;
+	[SerializeField] public long kSproutAge = 10;
+	[SerializeField] public long kSeedlingAge = 20;
+	[SerializeField] public long kAdultAge = 30;
+	[SerializeField] public long kFlowerAge = 40;
+
+	[HideInInspector] public long savedTime;
+	[HideInInspector] public long curTime;
+
 	[HideInInspector] public GameResAmount mPollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
-	[HideInInspector] public GameResAmount mNeedPollenAmount;
+	[SerializeField] public GameResAmount kNeedPollenAmount;
 
 	public Sprite[] kStageSprites;
 	public Sprite[] kPollenSprites;
@@ -55,7 +65,7 @@ public class Flower: MonoBehaviour
 	public void SetValues(Flower _type, Garden _garden, bool _flipped, GameResAmount _needPollenAmount)
 	{
 		type = _type;
-		mNeedPollenAmount = _needPollenAmount;
+		kNeedPollenAmount = _needPollenAmount;
 		mGarden = _garden;
 		flipped = _flipped;
 
@@ -66,11 +76,36 @@ public class Flower: MonoBehaviour
 	{
 		type = _type;
 		stage = _stage;
-		mNeedPollenAmount = _needPollenAmount;
+
+		switch(stage)
+		{
+			case FlowerStage.Seed:
+				age = 0;
+				break;
+			case FlowerStage.Sprout:
+				age = kSproutAge;
+				break;
+			case FlowerStage.Seedling:
+				age = kSeedlingAge;
+				break;
+			case FlowerStage.Adult:
+				age = kAdultAge;
+				break;
+			case FlowerStage.Flower:
+				age = kFlowerAge;
+				break;
+		}
+
+		kNeedPollenAmount = _needPollenAmount;
 		mGarden = _garden;
 		flipped = _flipped;
 
 		mIsDoneInitializing = true;
+	}
+
+	public void CalculateGrowth(long secondsPassed) 
+	{
+		UpdateAge(age + secondsPassed);
 	}
 
 	public void InitDefault()
@@ -79,13 +114,15 @@ public class Flower: MonoBehaviour
 
 		UpdateStage(stage);
 		mGarden.GetAllFlowerSpots();
+
+		StartCoroutine(GrowCor());
 	}
 
 	public void UpdateSprite()
 	{
 		mSpriteRenderer.sprite = kStageSprites[(int)stage];
 		print((int)stage);
-		mPollenSpriteRenderer.sprite = kPollenSprites[(int)((Mng.play.GetResourcePercent(mPollenAmount, mNeedPollenAmount)/100) * (kPollenSprites.Length - 1))];
+		mPollenSpriteRenderer.sprite = kPollenSprites[(int)((Mng.play.GetResourcePercent(mPollenAmount, kNeedPollenAmount)/100) * (kPollenSprites.Length - 1))];
 	}
 
 	public void UpdateStage(FlowerStage _stage)
@@ -94,18 +131,40 @@ public class Flower: MonoBehaviour
 		UpdateSprite();
 	}
 
+	public void UpdateAge(long _age)
+	{
+		age = _age;
+
+		if(_age >= kFlowerAge)
+		{
+			UpdateStage(FlowerStage.Flower);
+		}
+		else if(_age >= kAdultAge)
+		{
+			UpdateStage(FlowerStage.Adult);
+		}
+		else if(_age >= kSeedlingAge)
+		{
+			UpdateStage(FlowerStage.Seedling);
+		}
+		else if(_age >= kSproutAge)
+		{
+			UpdateStage(FlowerStage.Sprout);
+		}
+	}
+
 	public GameResAmount UpdatePollenAmount(GameResAmount _pollenAmount)
 	{
 		mPollenAmount = _pollenAmount;
 
 		GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
-		if(Mng.play.CompareResourceAmounts(mNeedPollenAmount, mPollenAmount))
+		if(Mng.play.CompareResourceAmounts(kNeedPollenAmount, mPollenAmount))
 		{
-			retAmount = Mng.play.SubtractResourceAmounts(mPollenAmount, mNeedPollenAmount);
+			retAmount = Mng.play.SubtractResourceAmounts(mPollenAmount, kNeedPollenAmount);
 			mPollenAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
-			mGarden.AddFlowerInRandomPos(type, FlowerStage.Sprout);
+			mGarden.AddFlowerInRandomPos(type, FlowerStage.Sprout, transform.position.x);
 		}
 		else
 		{
@@ -200,6 +259,17 @@ public class Flower: MonoBehaviour
 		}
     }
 
+	private IEnumerator GrowCor()
+	{
+		WaitForSeconds sec = new WaitForSeconds(1);
+
+		while(age < 1000000)
+		{
+			yield return sec;
+			CalculateGrowth(1);
+		}
+	}
+
 	// 세이브/로드 관련
 	[Serializable]
 
@@ -211,8 +281,12 @@ public class Flower: MonoBehaviour
 		public bool flipped;
 
 		public FlowerStage stage;
+		public long age;
+
+		public long savedTime;
+
 		public GameResAmount mPollenAmount;
-		public GameResAmount mNeedPollenAmount;
+		public GameResAmount kNeedPollenAmount;
 
 		public FlowerSpot.CSaveData[] FlowerSpots;
 	}
@@ -225,8 +299,12 @@ public class Flower: MonoBehaviour
 		savedata.flipped = flipped;
 
 		savedata.stage = stage;
+		savedata.age = age;
+
+		savedata.savedTime = savedTime;
+
 		savedata.mPollenAmount = mPollenAmount;
-		savedata.mNeedPollenAmount = mNeedPollenAmount;
+		savedata.kNeedPollenAmount = kNeedPollenAmount;
 
 		if (mFlowerSpots == null)
 			savedata.FlowerSpots = null;
@@ -252,7 +330,14 @@ public class Flower: MonoBehaviour
 		flipped = savedata.flipped;
 
 		UpdateStage(savedata.stage);
-		mNeedPollenAmount = savedata.mNeedPollenAmount;
+
+		savedTime = savedata.savedTime;
+		curTime = (long)(DateTime.Now.Ticks/10000000);
+
+		age = savedata.age;
+		CalculateGrowth(curTime - savedTime);
+
+		kNeedPollenAmount = savedata.kNeedPollenAmount;
 		UpdatePollenAmount(savedata.mPollenAmount);
 
 		// mFlowerSpots 는 고정되어 있는 것이기 때문에 건들이지 않는다.

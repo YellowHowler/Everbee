@@ -52,8 +52,16 @@ public class InventoryBarPanel : MonoBehaviour
                 kItemImages[i].gameObject.SetActive(true);
                 kItemTexts[i].gameObject.SetActive(true);
 
-                kItemImages[i].sprite = kResourceSprites[(int)slot.type];
-                kItemTexts[i].text = Mng.canvas.GetAmountText(slot.amount);
+                if(Mng.play.IsBaseResource(slot.type))
+                {
+                    kItemImages[i].sprite = kResourceSprites[(int)slot.type];
+                    kItemTexts[i].text = Mng.canvas.GetAmountText(slot.amount);
+                }
+                else if (slot.type == GameResType.Seed)
+                {
+                    kItemImages[i].sprite = Mng.canvas.kSeedSprites[slot.typeInt];
+                    kItemTexts[i].text = "";
+                }
             }
         }
     }

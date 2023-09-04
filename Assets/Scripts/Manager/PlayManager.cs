@@ -17,13 +17,14 @@ public class PlayManager : MonoBehaviour
     public MainCanvas kMainCanvas;
     public Bees kBees;
     public Inventory kInventory;
+    public Hummingbird kBird;
 
     public PlayerCamera kCamera;
 
     public GameResAmount[] kStorageResourceAmounts;
 
-    public VectorBound kHiveXBound = new VectorBound(10000, -10000);
-    public VectorBound kHiveYBound = new VectorBound(10000, -10000);
+    public VectorBound kHiveXBound = new VectorBound(-50, -10000);
+    public VectorBound kHiveYBound = new VectorBound(10000, 50);
 
     public VectorBound kGardenXBound = new VectorBound(10000, -10000);
     public VectorBound kGardenYBound = new VectorBound(10000, -10000);
@@ -40,6 +41,7 @@ public class PlayManager : MonoBehaviour
         kGarden = GameObject.Find("Stage/Garden").GetComponent<Garden>();
         kMainCanvas = GameObject.Find("Canvas").GetComponent<MainCanvas>();
         kInventory = GameObject.Find("Inventory").GetComponent<Inventory>();
+        kBird = GameObject.Find("Hummingbird").GetComponent<Hummingbird>();
 
         kCamera = Camera.main.GetComponent<PlayerCamera>();
 
@@ -257,6 +259,12 @@ public class PlayManager : MonoBehaviour
         return AddResourceAmounts(_resAmountA, _resAmountB);
     }
 
+    public GameResAmount MultiplyResourceAmountWithConstant(GameResAmount _amount, float _m)
+    {
+        GameResAmount retAmount = new GameResAmount(_amount.amount * _m, _amount.unit);
+        return UpdateUnit(retAmount);
+    }   
+
     public float GetResourcePercent(GameResAmount _amount, GameResAmount _maxAmount)
     {
         if(CompareResourceAmounts(_maxAmount, _amount) == true)
@@ -303,7 +311,12 @@ public class PlayManager : MonoBehaviour
         return _amount;
     }
 
+    public bool IsBaseResource(GameResType _type)
+    {
+        return _type == GameResType.Pollen || _type == GameResType.Honey || _type == GameResType.Nectar || _type == GameResType.Wax;
+    }
     /// <summary> ù��°�� �� ũ�� false, �ι�°�� �� ũ�� true </summary>
+    
     public bool CompareResourceAmounts(GameResAmount _resAmountA, GameResAmount _resAmountB)
     {
         if(IsSameAmount(_resAmountA, _resAmountB)) return true;
@@ -334,8 +347,10 @@ public class PlayManager : MonoBehaviour
 	public void ComputeWorldBoundary()
 	{
 		Rect rect = Rect.zero;
-		rect.xMin = rect.yMin = 10000000;
-		rect.xMax = rect.yMax = -10000000;
+		rect.xMin = -40;
+        rect.yMin = 10000000;
+		rect.xMax = 50;
+        rect.yMax = 60;
 
 		rect = kHive.ComputeWorldBoundary(rect);
 		rect = kGarden.ComputeWorldBoundary(rect);

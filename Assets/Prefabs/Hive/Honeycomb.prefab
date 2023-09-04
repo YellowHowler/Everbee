@@ -279,7 +279,7 @@ MonoBehaviour:
   kCoalgulateObj: {fileID: 6572307462420566565}
   kHoverObj: {fileID: 2299050847332184241}
   kBuildObj: {fileID: 2014355280191825897}
-  kDryerAni: {fileID: 0}
+  kDryerAni: {fileID: 5820684182028040427}
   kCanvas: {fileID: 3840296622615475970}
   kTimerPanel: {fileID: 1542627833421666720}
   kButtonPanel: {fileID: 4742136678756841837}
@@ -1532,7 +1532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   kWaxSlider: {fileID: 6492150447205376415}
-  kWaxText: {fileID: 776166571426634940}
+  kWaxText: {fileID: 721474826716958147}
 --- !u!114 &5452140976939905320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1960,14 +1960,14 @@ GameObject:
   m_Component:
   - component: {fileID: 8162888481029095885}
   - component: {fileID: 8724435845539623171}
-  - component: {fileID: 128464141336749476}
+  - component: {fileID: 5820684182028040427}
   m_Layer: 0
   m_Name: DryerSprite
   m_TagString: HoneycombSprite
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8162888481029095885
 Transform:
   m_ObjectHideFlags: 0
@@ -2035,7 +2035,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &128464141336749476
+--- !u!95 &5820684182028040427
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0

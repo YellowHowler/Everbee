@@ -13,9 +13,10 @@ public class Item : MonoBehaviour
     [SerializeField] TMP_Text valueText;
     [SerializeField] Sprite[] itemSprites;
 
-    public GameResType type = GameResType.Honey;
-    public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
-    public float XPosition { get { return transform.localPosition.x; } set { Vector3 pos = transform.localPosition; pos.x = value; transform.localPosition = pos; } }
+    [HideInInspector] public GameResType type = GameResType.Honey;
+    [HideInInspector] public int typeInt = 0;
+    [HideInInspector] public GameResAmount amount = new GameResAmount(0f, GameResUnit.Microgram);
+    [HideInInspector] public float XPosition { get { return transform.localPosition.x; } set { Vector3 pos = transform.localPosition; pos.x = value; transform.localPosition = pos; } }
 
     private bool mIsDropped = false;
 
@@ -55,9 +56,19 @@ public class Item : MonoBehaviour
         mPrevSlot = _prevSlot;
     }
 
+    public void InitProperties(GameResType _type, int _typeInt, GameResAmount _amount, ItemLoc _prevLoc, int _prevSlot)
+    {
+        typeInt = _typeInt;
+        UpdateAmount(_type, _amount);
+        mPrevLoc = _prevLoc;
+        mPrevSlot = _prevSlot;
+    }
+
     private void Update()
     {
         transform.position = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+        float size = Camera.main.orthographicSize / 10.5f;
+        transform.localScale = new Vector3(size, size, size);
 
         if(Input.GetMouseButtonUp(0))
         {
@@ -67,6 +78,13 @@ public class Item : MonoBehaviour
             }
 
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Mng.play.SetZ(Input.mousePosition, 0));
+
+            if(Mng.canvas.kItem.isTrashcanHovered == true)
+            {
+                Mng.canvas.EndItemPlace();
+                Destroy(this.gameObject);
+                return;
+            }
             
             if(PutInInven())
             {
@@ -81,6 +99,10 @@ public class Item : MonoBehaviour
                 return;
             }
             if(GiveToBee())
+            {
+                return;
+            }
+            if(GiveToHummingbird())
             {
                 return;
             }
@@ -99,10 +121,17 @@ public class Item : MonoBehaviour
 
     public bool PutInConvert()
     {
+        if(!(type == GameResType.Honey || type == GameResType.Nectar))
+        {
+            return false;
+        }
+
         ResourceConvertPanel convertPanel = Mng.canvas.kConvert;
 
         if(convertPanel.mIsPrevHover == false || convertPanel.IsPrevUsable(type) == false)
+        {
             return false;
+        }
         
         UpdateAmount(type, convertPanel.AddPrevAmount(type, amount));
         CancelPlace();
@@ -115,23 +144,36 @@ public class Item : MonoBehaviour
         InventoryBarPanel invenPanel = Mng.canvas.kInven;
         Inventory inven = Mng.play.kInventory;
 
-        if(invenPanel.mHoveredNum != -1 && (inven.CheckIfSlotUsable(invenPanel.mHoveredNum, type)))
+        if(Mng.play.IsBaseResource(type))
         {
-            GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[invenPanel.mHoveredNum].amount, amount);
-            if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+            if(invenPanel.mHoveredNum != -1 && (inven.CheckIfSlotUsable(invenPanel.mHoveredNum, type)))
             {
-                inven.UpdateSlotAmount(invenPanel.mHoveredNum, type, sumAmount);
-                UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
-                CancelPlace();
-            }
-            else
-            {
-                Mng.play.kInventory.UpdateSlotAmount(invenPanel.mHoveredNum, type, GetMaxAmount(type));
-                UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
-                CancelPlace();
-            }
+                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[invenPanel.mHoveredNum].amount, amount);
+                if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+                {
+                    inven.UpdateSlotAmount(invenPanel.mHoveredNum, type, sumAmount);
+                    UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
+                    CancelPlace();
+                }
+                else
+                {
+                    Mng.play.kInventory.UpdateSlotAmount(invenPanel.mHoveredNum, type, GetMaxAmount(type));
+                    UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+                    CancelPlace();
+                }
 
-            return true;
+                return true;
+            }
+        }
+        else if(type == GameResType.Seed)
+        {
+            if(invenPanel.mHoveredNum != -1 && (inven.CheckIfEmpty(invenPanel.mHoveredNum)))
+            {
+                inven.UpdateSlotAmount(invenPanel.mHoveredNum, type, typeInt, amount);
+                UpdateAmount(GameResType.Empty, new GameResAmount(0f, GameResUnit.Microgram));
+                CancelPlace();
+                return true;
+            }
         }
 
         return false;
@@ -139,6 +181,11 @@ public class Item : MonoBehaviour
 
     public bool GiveToBee()
     {
+        if(Mng.play.IsBaseResource(type) == false)
+        {
+            return false;
+        }
+
         Bee storeBee = Mng.play.kHive.mHoveredBee;
 
         if(storeBee != null)
@@ -176,8 +223,36 @@ public class Item : MonoBehaviour
         return false;
     }
 
+    public bool GiveToHummingbird()
+    {
+        if(type != GameResType.Nectar)
+        {
+            return false;
+        }
+
+        Hummingbird storeHummingBird = Mng.play.kHive.mHoveredHummingbird;
+        
+        if(storeHummingBird != null)
+        {
+            if(storeHummingBird.mReturnTime > 0)
+            {
+                return false;
+            }
+
+            UpdateAmount(type, storeHummingBird.GiveNectar(amount));
+            CancelPlace();
+            return true;
+        }
+
+        return false;
+    }
     public bool GiveToHoneycomb()
     {
+        if(Mng.play.IsBaseResource(type) == false)
+        {
+            return false;
+        }
+
         Honeycomb storeHoneycomb = Mng.play.kHive.mHoveredHoneycomb;
 
         if(storeHoneycomb != null)
@@ -256,6 +331,56 @@ public class Item : MonoBehaviour
     }
 
    
+    public void CancelPlace()
+    {
+        switch(mPrevLoc)
+        {
+            case ItemLoc.InvenSlot:
+                int placeSlot = mPrevSlot;
+
+                Inventory inven = Mng.play.kInventory;
+
+                if(placeSlot == -1 || (inven.CheckIfSlotUsable(mPrevSlot, type)))
+                {
+                    placeSlot = inven.GetAvailableSlot(type);
+                    
+                    if(placeSlot == -1)
+                    {
+                        Mng.canvas.EndItemPlace();
+                        Destroy(gameObject);
+                    }
+                }
+
+                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[mPrevSlot].amount, amount);
+
+                if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
+                {
+                    inven.UpdateSlotAmount(mPrevSlot, type, sumAmount);
+                    UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
+                }
+                else
+                {
+                    inven.UpdateSlotAmount(mPrevSlot, type, GetMaxAmount(type));
+                    UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
+                }
+
+                break;
+            case ItemLoc.ConvertPrevSlot:
+                Mng.canvas.kConvert.AddPrevAmount(type, amount);
+                break;
+            case ItemLoc.ConvertResSlot:
+                Mng.canvas.kConvert.AddResAmount(type, amount);
+                break;
+            case ItemLoc.Hummingbird:
+                Mng.play.kBird.UpdatePresent(type, typeInt);
+                Mng.play.kBird.ShowPresent();
+                break;
+        }
+        
+        Mng.canvas.EndItemPlace();
+        Destroy(gameObject);
+    }
+
 	private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
 	private GameResAmount GetMaxNectarAmount() { return Mng.play.kHive.mMaxItemAmounts[1]; }
 	private GameResAmount GetMaxPollenAmount() { return Mng.play.kHive.mMaxItemAmounts[2]; }
@@ -289,20 +414,27 @@ public class Item : MonoBehaviour
         UpdateType(_type);
 
         amount = _amount;
-        valueText.text = Mng.canvas.GetAmountText(amount);
 
-        if(amount.amount == 0)
+        if(Mng.play.IsBaseResource(type))
         {
-            Mng.play.kHive.mIsPlacingItem = false;
-            Mng.play.kInventory.RemoveItem(this);
+            valueText.text = Mng.canvas.GetAmountText(amount);
+            if(amount.amount == 0)
+            {
+                Mng.canvas.EndItemPlace();
+                Mng.play.kInventory.RemoveItem(this);
+            }
+
+            GameResAmount maxAmount = GetMaxAmount(type);
+
+            if(Mng.play.CompareResourceAmounts(maxAmount, _amount) == true)
+            {
+                amount = maxAmount;
+                return Mng.play.SubtractResourceAmounts(_amount, maxAmount);
+            }
         }
-        
-        GameResAmount maxAmount = GetMaxAmount(type);
-
-        if(Mng.play.CompareResourceAmounts(maxAmount, _amount) == true)
+        else if (type == GameResType.Seed)
         {
-            amount = maxAmount;
-            return Mng.play.SubtractResourceAmounts(_amount, maxAmount);
+            valueText.text = "";
         }
 
         return new GameResAmount(0, GameResUnit.Microgram);
@@ -311,7 +443,15 @@ public class Item : MonoBehaviour
     public void UpdateType(GameResType _type)
     {
         type = _type;
-        itemSprite.sprite = itemSprites[(int)_type];
+
+        if(Mng.play.IsBaseResource(type))
+        {
+            itemSprite.sprite = itemSprites[(int)_type];
+        }
+        else if (type == GameResType.Seed)
+        {
+            itemSprite.sprite = Mng.canvas.kSeedSprites[typeInt];
+        }
     }
 
     private GameObject GetTopTouchingObj()
@@ -350,49 +490,10 @@ public class Item : MonoBehaviour
         
 	}
 
-    public void CancelPlace()
+    private IEnumerator PlaceItemCor()
     {
-        switch(mPrevLoc)
-        {
-            case ItemLoc.InvenSlot:
-                int placeSlot = mPrevSlot;
-
-                Inventory inven = Mng.play.kInventory;
-
-                if(placeSlot == -1 || (inven.CheckIfSlotUsable(mPrevSlot, type)))
-                {
-                    placeSlot = inven.GetAvailableSlot(type);
-                    
-                    if(placeSlot == -1)
-                    {
-                        Mng.play.kHive.mIsPlacingItem = false;
-                        Destroy(gameObject);
-                    }
-                }
-
-                GameResAmount sumAmount = Mng.play.AddResourceAmounts(Mng.play.kInventory.mItemSlots[mPrevSlot].amount, amount);
-
-                if(Mng.play.CompareResourceAmounts(sumAmount, GetMaxAmount(type)) == true)
-                {
-                    inven.UpdateSlotAmount(mPrevSlot, type, sumAmount);
-                    UpdateAmount(type, new GameResAmount(0, GameResUnit.Microgram));
-                }
-                else
-                {
-                    inven.UpdateSlotAmount(mPrevSlot, type, GetMaxAmount(type));
-                    UpdateAmount(type, Mng.play.SubtractResourceAmounts(sumAmount, GetMaxAmount(type)));
-                }
-
-                break;
-            case ItemLoc.ConvertPrevSlot:
-                Mng.canvas.kConvert.AddPrevAmount(type, amount);
-                break;
-            case ItemLoc.ConvertResSlot:
-                Mng.canvas.kConvert.AddResAmount(type, amount);
-                break;
-        }
-        
-        Mng.play.kHive.mIsPlacingItem = false;
+        yield return new WaitForSeconds(0.3f);
+        Mng.canvas.EndItemPlace();
         Destroy(gameObject);
     }
 

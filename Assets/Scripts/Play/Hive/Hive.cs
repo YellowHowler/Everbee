@@ -36,7 +36,7 @@ public class Hive : MonoBehaviour
 
     public Sprite[] kBuildSprites;
 
-    private float mHoneycombYLimit = 16;
+    private float mHoneycombYLimit = 35;
 
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
 
@@ -50,6 +50,7 @@ public class Hive : MonoBehaviour
     [HideInInspector] public Honeycomb mHoveredHoneycomb;
     [HideInInspector] public Bee mHoveredBee;
     [HideInInspector] public QueenBee mHoveredQueenBee;
+    [HideInInspector] public Hummingbird mHoveredHummingbird;
 
     [HideInInspector] public bool mIsPlacingItem = false;
     [HideInInspector] public Item mPlaceItem;
@@ -72,6 +73,7 @@ public class Hive : MonoBehaviour
 	{
 		Instance = this;
 		mHoneycombOrigin = transform.position;
+        mHoneycombYLimit = transform.position.y + 0.5f;
 		kHoverObjSpriteRenderer = kHoverObj.GetComponent<SpriteRenderer>();
 	}
 
@@ -195,6 +197,7 @@ public class Hive : MonoBehaviour
     public Honeycomb FindBuildingHoneycomb()
     {
         int offset = UnityEngine.Random.Range(0, mHoneycombList.Count);
+
         for(int i=0; i<mHoneycombList.Count; ++i)
         {
             int index = (i + offset) % mHoneycombList.Count;
@@ -286,7 +289,7 @@ public class Hive : MonoBehaviour
     {
         //EasyTouch.On_TouchStart += OnTouch;
 
-        Vector3 newPos = new Vector3(transform.position.x, transform.position.y+5, 0.05f);
+        Vector3 newPos = new Vector3(transform.position.x, transform.position.y, mHoneycombZ);
 
         for(int i = 0; i < 6; i++)
         {

@@ -11,26 +11,39 @@ public class Inventory: MonoBehaviour
 	[Serializable]
 	public class ItemSlot
 	{
+		public int num;
 		public GameResType type = GameResType.Empty;
+		public int typeInt = 0;
 		public GameResAmount amount = new GameResAmount(0f,GameResUnit.Microgram);
+
+		public ItemSlot(int _num)
+		{
+			num = _num;
+		}
 
 		// 세이브/로드 관련
 		[Serializable]
 		public class CSaveData
 		{
+			public int num;
 			public GameResType type = GameResType.Empty;
+			public int typeInt = 0;
 			public GameResAmount amount = new GameResAmount(0f,GameResUnit.Microgram);
 		}
 
 		public void ExportTo(CSaveData savedata)
 		{
+			savedata.num = num;
 			savedata.type = type;
+			savedata.typeInt = typeInt;
 			savedata.amount = amount;
 		}
 
 		public void ImportFrom(CSaveData savedata)
 		{
+			num = savedata.num;
 			type = savedata.type;
+			typeInt = savedata.typeInt;
 			amount = savedata.amount;
 		}
 	}
@@ -45,7 +58,7 @@ public class Inventory: MonoBehaviour
 		mItemSlots.Clear();
 
 		for(int i=0; i<numSlots; ++i)
-			mItemSlots.Add(new ItemSlot());
+			mItemSlots.Add(new ItemSlot(i));
 	}
 
 	public void UpdateSlotAmount(int _num, GameResType _type, GameResAmount _amount)
@@ -53,6 +66,17 @@ public class Inventory: MonoBehaviour
 		var slot = mItemSlots[_num];
 
 		slot.type = _type;
+		slot.amount = _amount;
+
+        mPanel.UpdateSlots();
+    }
+
+	public void UpdateSlotAmount(int _num, GameResType _type, int _typeInt, GameResAmount _amount)
+    {
+		var slot = mItemSlots[_num];
+
+		slot.type = _type;
+		slot.typeInt = _typeInt;
 		slot.amount = _amount;
 
         mPanel.UpdateSlots();
@@ -156,6 +180,12 @@ public class Inventory: MonoBehaviour
 		return Mng.play.IsSameAmount(new GameResAmount(0f, GameResUnit.Microgram), subNeedAmount);
 	}
 
+	public bool CheckIfEmpty(int _num)
+	{
+		var slot = mItemSlots[_num];
+
+		return Mng.play.IsAmountZero(slot.amount);
+	}
     public bool CheckIfSameType(int _num, GameResType _type)
     {
         var slot = mItemSlots[_num];
@@ -246,11 +276,14 @@ public class Inventory: MonoBehaviour
 		}
 
 		mItemSlots.Clear();
+
+		int i = 0;
 		foreach(var slotsave in savedata.itemSlots)
 		{
-			var slot = new ItemSlot();
+			var slot = new ItemSlot(i);
 			slot.ImportFrom(slotsave);
 			mItemSlots.Add(slot);
+			i++;
 		}
 
 		var invenUI = MainCanvas.Instance.kInven;

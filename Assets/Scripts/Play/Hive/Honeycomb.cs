@@ -227,6 +227,11 @@ public class Honeycomb : MonoBehaviour
                     Mng.canvas.DisplayWarning("Must upgrade from storage");
                     return false;
                 }
+                if(Mng.play.IsAmountZero(amount) == false)
+                {
+                    Mng.canvas.DisplayWarning("Storage must be empty");
+                    return false;
+                }
                 break;
 			case StructureType.Coalgulate:
 				if(kStructureType != StructureType.Storage)
@@ -234,6 +239,11 @@ public class Honeycomb : MonoBehaviour
                     Mng.canvas.DisplayWarning("Must upgrade from storage");
 					return false;
 				}
+                if(Mng.play.IsAmountZero(amount) == false)
+                {
+                    Mng.canvas.DisplayWarning("Storage must be empty");
+                    return false;
+                }
 				break;
 			case StructureType.Hatchtery:
                 if(kStructureType != StructureType.Storage)
@@ -241,6 +251,11 @@ public class Honeycomb : MonoBehaviour
                     Mng.canvas.DisplayWarning("Must upgrade from storage");
 					return false;
 				}
+                if(Mng.play.IsAmountZero(amount) == false)
+                {
+                    Mng.canvas.DisplayWarning("Storage must be empty");
+                    return false;
+                }
                 break;
         }
 
@@ -267,9 +282,6 @@ public class Honeycomb : MonoBehaviour
         
         GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
 
-        HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
-        buildPanel.UpdateUI(mCurWaxAmount, mBuildNeedWaxAmount);
-
         if(Mng.play.CompareResourceAmounts(mBuildNeedWaxAmount, mCurWaxAmount) || Mng.play.IsSameAmount(mBuildNeedWaxAmount, mCurWaxAmount))
         {
             retAmount = Mng.play.SubtractResourceAmounts(mCurWaxAmount, mBuildNeedWaxAmount);
@@ -277,6 +289,9 @@ public class Honeycomb : MonoBehaviour
 
             SetStructure(mTargetStructureType, false);
         }
+
+        HoneycombBuildPanel buildPanel = kBuildPanel.GetComponent<HoneycombBuildPanel>();
+        buildPanel.UpdateUI(mCurWaxAmount, mBuildNeedWaxAmount);
 
         return retAmount;
     }
@@ -338,6 +353,8 @@ public class Honeycomb : MonoBehaviour
 
     public GameResAmount FetchResource(GameResType _type, GameResAmount _amount, GameResAmount _maxAmount)
     {
+        GameResAmount retAmount = new GameResAmount(0f, GameResUnit.Microgram);
+
         if(Mng.play.CompareResourceAmounts(_maxAmount, amount) == true)
         {
             UpdateAmount(Mng.play.SubtractResourceAmounts(amount, _maxAmount));
@@ -345,10 +362,12 @@ public class Honeycomb : MonoBehaviour
             return _maxAmount;
         }
 
+        retAmount = amount;
+
         Mng.play.SubtractResourceFromStorage(_type, amount);
         UpdateAmount(new GameResAmount(0f, GameResUnit.Microgram));
 
-        return amount;
+        return retAmount;
     }
 
     public void UpdateAmount(GameResAmount _amount)

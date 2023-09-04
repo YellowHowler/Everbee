@@ -12,6 +12,7 @@ public class MainCanvas : MonoBehaviour
     static public MainCanvas Instance { get; private set; }
 
     public Sprite[] kResourceSprites;
+    public Sprite[] kSeedSprites;
     public Sprite kEmptySprite;
 
     public TMP_Text kWarningTxt;
@@ -24,6 +25,7 @@ public class MainCanvas : MonoBehaviour
     public BeeInfoPanel kBeeInfo;
     public MenuTogglePanel kMenuToggle;
     public ResourceConvertPanel kConvert;
+    public ItemUIPanel kItem;
     public LHS.CLHSDialogUI kDialoguePopup;
 
     public Button[] kToggleButtons;
@@ -50,6 +52,7 @@ public class MainCanvas : MonoBehaviour
         kBeeInfo = GetComponentInChildren<BeeInfoPanel>(true);
         kMenuToggle = GetComponentInChildren<MenuTogglePanel>(true);
         kConvert = GetComponentInChildren<ResourceConvertPanel>(true);
+        kItem = GetComponentInChildren<ItemUIPanel>(true);
 
         kResource.gameObject.SetActive(true);
         kInven.gameObject.SetActive(true);
@@ -58,6 +61,7 @@ public class MainCanvas : MonoBehaviour
         kJob.gameObject.SetActive(false);
         kQueen.gameObject.SetActive(false);
         kBeeInfo.gameObject.SetActive(false);
+        kItem.gameObject.SetActive(false);
         
         EnableToggleButtons();
         kCancelBuildObj.SetActive(false);
@@ -114,8 +118,36 @@ public class MainCanvas : MonoBehaviour
         Item item = Instantiate(Mng.play.kHive.kItemObj, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
         item.InitProperties(_type, _amount, _prevLoc, _prevSlot);
 
-        Mng.play.kHive.mPlaceItem = item;
+        StartItemPlace(item);
+    }
+
+    public void SpawnItemAtMousePos(GameResType _type, int _typeInt, GameResAmount _amount, ItemLoc _prevLoc, int _prevSlot)
+    {
+        Vector3 spawnPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        spawnPos = new Vector3(spawnPos.x, spawnPos.y, 0);
+
+        Item item = Instantiate(Mng.play.kHive.kItemObj, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity, Mng.play.kHive.kItems).GetComponent<Item>();
+        item.InitProperties(_type, _typeInt, _amount, _prevLoc, _prevSlot);
+
+        StartItemPlace(item);
+    }
+
+    public void StartItemPlace(Item _item)
+    {
+        Mng.play.kHive.mPlaceItem = _item;
         Mng.play.kHive.mIsPlacingItem = true;
+
+        kItem.gameObject.SetActive(true);
+    }   
+
+    public void EndItemPlace()
+    {
+        Mng.play.kHive.mPlaceItem = null;
+        Mng.play.kHive.mIsPlacingItem = false;
+         
+        Mng.play.kBird.TookPresent();
+
+        kItem.gameObject.SetActive(false);
     }
 
     public string GetResourceTypeText(GameResType _type, bool _isStart)
@@ -218,6 +250,21 @@ public class MainCanvas : MonoBehaviour
         return "";
     }
 
+    public string GetSecondsText(int _sec)
+    {
+        int min = _sec / 60;
+        int sec = _sec % 60;
+
+        return GetZeroText(min) + ":" + GetZeroText(sec);
+    }
+    public string GetZeroText(int _num)
+    {
+        if(_num >= 10) 
+        {
+            return _num + "";
+        }
+        return "0"+_num;
+    }
     public void ShowBuildCancel()
     {
         kCancelBuildObj.SetActive(true);

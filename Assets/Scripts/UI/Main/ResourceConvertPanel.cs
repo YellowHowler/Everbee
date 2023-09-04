@@ -54,8 +54,6 @@ public class ResourceConvertPanel : MonoBehaviour
         if(Mng.play.kHive.mIsPlacingItem == true) 
             return;
 
-        EndConvert();
-
         if(Mng.play.IsAmountZero(mPrevAmount)) return;
 
         Mng.canvas.SpawnItemAtMousePos(mPrevType, mPrevAmount, ItemLoc.ConvertPrevSlot, -1);
@@ -160,10 +158,19 @@ public class ResourceConvertPanel : MonoBehaviour
             mPrevType = GameResType.Empty;
         }
 
-        mTotConvertTime = 20 * Mng.play.GetResourcePercent(mPrevAmount, GetMaxAmount(_type));
+        mTotConvertTime = 10 * Mng.play.GetResourcePercent(mPrevAmount, GetMaxAmount(_type))/100;
         mConvertStepSec = mTotConvertTime / mConvertSpriteLength;
 
-        StartConvert();
+         if(Mng.play.IsAmountZero(mPrevAmount))
+         {
+            EndConvert();
+         }
+         else
+         {
+            StartConvert();
+            print("start");
+         }
+
         UpdateImages();
     }
 
@@ -196,7 +203,11 @@ public class ResourceConvertPanel : MonoBehaviour
 
         mIsResFull = Mng.play.IsAmountZero(mResAmount) == false;
 
-        StartConvert();
+        if(Mng.play.IsAmountZero(mResAmount))
+         {
+            StartConvert();
+         }
+
         UpdateImages();
     }
 
@@ -227,7 +238,7 @@ public class ResourceConvertPanel : MonoBehaviour
     {
         if(mPrevType != GameResType.Nectar && mPrevType != GameResType.Honey)
             return;
-        if(!(mResType == GameResType.Empty || Mng.play.IsAmountZero(mResAmount)))
+        if(!(Mng.play.IsAmountZero(mResAmount)))
             return;
         
         if(mIsConverting == false)

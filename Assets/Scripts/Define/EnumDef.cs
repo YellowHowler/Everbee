@@ -23,7 +23,17 @@ namespace EnumDef
         Pollen = 2,
         Wax = 3,
         Egg = 4,
-        Larvae = 5
+        Larvae = 5,
+        Seed = 6,
+    }
+
+    [Serializable]
+    public enum FlowerType
+    {
+        CaliforniaPoppy = 0,
+        Cosmos = 1,
+        Lavender = 2,
+        OxeyeDaisy = 3,
     }
 
     [Serializable]
@@ -43,6 +53,15 @@ namespace EnumDef
         Seedling = 2,
         Adult = 3,
         Flower = 4,
+    }
+
+    [Serializable]
+    public enum BirdState
+    {
+        Need = 0,
+        Happy,
+        Absent,
+        Present
     }
 
     [Serializable]
@@ -131,5 +150,6 @@ namespace EnumDef
         InvenSlot = 1,
         ConvertPrevSlot = 2,
         ConvertResSlot = 3,
+        Hummingbird = 4,
     }
 }

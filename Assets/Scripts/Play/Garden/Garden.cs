@@ -10,7 +10,7 @@ public class Garden : MonoBehaviour
 {
     public static Garden Instance { get; private set; }
 
-    public List<Flower> mFlowerTemplates;   // 이것을 가지고 생성함
+    public List<Flower> kFlowerTemplates;   // 이것을 가지고 생성함
 
 	private List<Flower> mFlowers = new List<Flower>();
     private List<FlowerSpot> mFlowerSpotList = new List<FlowerSpot>();
@@ -25,7 +25,7 @@ public class Garden : MonoBehaviour
     private float grassY = 0f;
     private float grassDist = 1.36f;
 
-    private GameResAmount mFlowerNeedPollen = new GameResAmount(1f, GameResUnit.Microgram);
+    private GameResAmount mFlowerNeedPollen = new GameResAmount(1f, GameResUnit.Milligram);
 
     [HideInInspector] public Flower mHoveredFlower;
 
@@ -58,7 +58,6 @@ public class Garden : MonoBehaviour
     public Flower AddNewFlower(Flower _flower, float _xPos, bool _isImport)
     {
         var newFlower = Instantiate(_flower.gameObject, new Vector3(_xPos, flowerY, 0.01f), Quaternion.identity, transform.GetChild(0)).GetComponent<Flower>();
-
         newFlower.SetValues(_flower, this, UnityEngine.Random.Range(0, 2) == 1, mFlowerNeedPollen);
 
         foreach(var spot in newFlower.mFlowerSpots)
@@ -102,6 +101,28 @@ public class Garden : MonoBehaviour
         {
             isClose = false;
             randomX = UnityEngine.Random.Range(xMin, xMax);
+
+            foreach(var flower in mFlowers)
+            {
+                if(Mathf.Abs(flower.XPosition - randomX) < 0.8f)
+                {
+                    isClose = true;
+                }
+            }
+        }
+
+        return AddNewFlower(_flower, randomX, false, _stage);
+    }
+
+    public Flower AddFlowerInRandomPos(Flower _flower, FlowerStage _stage, float _pos)
+    {
+        bool isClose = true;
+        float randomX = 0;
+
+        while(isClose == true)
+        {
+            isClose = false;
+            randomX = UnityEngine.Random.Range(_pos - 5, _pos + 5);
 
             foreach(var flower in mFlowers)
             {
@@ -164,9 +185,9 @@ public class Garden : MonoBehaviour
 
 	public void InitDefault()
     {
-        AddFlowerInRandomPos(mFlowerTemplates[0], FlowerStage.Seedling);
-        AddFlowerInRandomPos(mFlowerTemplates[1], FlowerStage.Sprout);
-        AddFlowerInRandomPos(mFlowerTemplates[2], FlowerStage.Flower);
+        AddFlowerInRandomPos(kFlowerTemplates[0], FlowerStage.Seedling);
+        AddFlowerInRandomPos(kFlowerTemplates[1], FlowerStage.Sprout);
+        AddFlowerInRandomPos(kFlowerTemplates[2], FlowerStage.Flower);
     }
 
     private void Update()
@@ -212,7 +233,7 @@ public class Garden : MonoBehaviour
         {
             var flowersavedata = savedata.Flowers[i];
 
-            foreach(var templ in mFlowerTemplates)
+            foreach(var templ in kFlowerTemplates)
             {
                 if (templ.FlowerName == flowersavedata.FlowerName)
                 {

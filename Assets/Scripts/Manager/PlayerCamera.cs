@@ -10,6 +10,8 @@ public class PlayerCamera : MonoBehaviour
     private float mScrollSpeed = 7.5f;
     private float mScrollBound = 0.98f;
 
+    private float mCurScrollDelta = 6;
+
     private Transform mFollowTarget;
     private bool mIsFollowing = false;
 
@@ -29,6 +31,8 @@ public class PlayerCamera : MonoBehaviour
 	// Update is called once per frame
 	void LateUpdate()
     {   
+        Zoom();
+
         if (mFirst)
         {
             Vector3 startPos = mCamera.transform.position;
@@ -88,6 +92,19 @@ public class PlayerCamera : MonoBehaviour
 
         mCamera.transform.position = pos;
 	}
+
+    void Zoom()
+    {
+        if(PopupBase.IsTherePopup())
+        {
+            return;
+        }
+        
+        mCurScrollDelta -= Input.mouseScrollDelta.y;
+        mCurScrollDelta = Mathf.Clamp(mCurScrollDelta, 5, 25);
+        mScrollSpeed = mCurScrollDelta*2;
+        Camera.main.orthographicSize = mCurScrollDelta;
+    }
 
 	public void SetFollow(Transform _target)
     {
