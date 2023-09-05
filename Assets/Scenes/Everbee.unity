@@ -2407,6 +2407,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1961139909}
+  - {fileID: 1797083135}
   - {fileID: 830673869}
   - {fileID: 1951064103}
   - {fileID: 1548583568}
@@ -2415,8 +2417,6 @@ RectTransform:
   - {fileID: 1983129145}
   - {fileID: 1049435953}
   - {fileID: 980193423}
-  - {fileID: 1961139909}
-  - {fileID: 1797083135}
   - {fileID: 1377708274}
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -10014,7 +10014,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'structure for converting honey to wax
 
-    upgrade from storage'
+    can upgrade from storage'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
   m_sharedMaterial: {fileID: -3117597323557240487, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
@@ -14517,9 +14517,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1346252974}
+  - {fileID: 1819566993}
   - {fileID: 403854440}
   - {fileID: 480729744}
-  - {fileID: 1819566993}
   m_Father: {fileID: 1329892077}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15858,7 +15858,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'structure for converting nectar to honey
 
-    upgrade from storage'
+    can upgrade from storage'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
   m_sharedMaterial: {fileID: -3117597323557240487, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
@@ -16911,7 +16911,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'structure for '
+  m_text: 'structure for raising new bees from egg
+
+    can upgrade from storage'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
   m_sharedMaterial: {fileID: -3117597323557240487, guid: 38b15a6679d4846298fa05cfe3002676, type: 2}
