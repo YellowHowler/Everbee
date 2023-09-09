@@ -36,6 +36,7 @@ public class Hive : MonoBehaviour
 
     public Sprite[] kBuildSprites;
 
+    public Collider2D kHiveLimitCol;
     private float mHoneycombYLimit = 35;
 
     private List<Honeycomb> mHoneycombList = new List<Honeycomb>();
@@ -217,7 +218,7 @@ public class Hive : MonoBehaviour
         _pos = Mng.play.SetZ(_pos, mHoneycombZ);
         var dupCheck = GetHoneycombFromPos(_pos);
 
-        if(dupCheck != null || _pos.y > mHoneycombYLimit)
+        if(dupCheck != null || !Mng.play.IsWithinCollider(kHiveLimitCol, Mng.play.SetZ(_pos, transform.position.z)))
         {
             return null;
         }

@@ -99,6 +99,12 @@ TagManager:
   - name: Bee
     uniqueID: 2177007449
     locked: 0
+  - name: BeeChat
+    uniqueID: 4250567463
+    locked: 0
+  - name: Hive
+    uniqueID: 2233217691
+    locked: 0
   - name: CancelCanvas
     uniqueID: 1323653163
     locked: 0

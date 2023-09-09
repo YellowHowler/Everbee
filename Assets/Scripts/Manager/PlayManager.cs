@@ -339,6 +339,11 @@ public class PlayManager : MonoBehaviour
         return IsSameAmount(_amount, new GameResAmount(0f, GameResUnit.Microgram));
     }
 
+    public bool IsWithinCollider(Collider2D _col, Vector3 _point)
+    {
+        return _col.OverlapPoint(Mng.play.SetZ(_point, _col.gameObject.transform.position.z));
+    }
+
     public Vector3 SetZ(Vector3 _pos, float _z)
     {
         return new Vector3(_pos.x, _pos.y, _z);

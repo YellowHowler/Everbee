@@ -37,7 +37,7 @@ public class QueenResourcePanel : PopupBase
         }
     }
 
-/*
+    /*
 	override public void ProcessEscapeKey()
 	{
 		OnQueenResourceBgClick();
@@ -64,7 +64,7 @@ public class QueenResourcePanel : PopupBase
 
         bool isQueenInvenEnough = Mng.play.CompareResourceAmounts(honeyNeed, _honeyAmount) && Mng.play.CompareResourceAmounts(pollenNeed, _pollenAmount);
 
-        if(isQueenInvenEnough)
+        if(isQueenInvenEnough && Mng.play.kHive.mActiveQueenBee.mCurState == QueenState.Wander)
         {
             kEggButton.enabled = true;
             kEggButtonCover.SetActive(false);

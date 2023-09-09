@@ -12,8 +12,10 @@ public class QueenBee : MonoBehaviour
 {
     private float mSpeed = 2f;
 
-    private SpriteRenderer mSpriteRenderer;
-    private Animator mAnimator;
+    public SpriteRenderer mSpriteRenderer;
+    public Animator mAnimator;
+    public Animator kChatAnimator;
+    public TMP_Text kChatText;
     public SpriteOutline kOutline;
 
     public Vector3 pos { get { return transform.position; } set { transform.position = value; } }
@@ -21,6 +23,7 @@ public class QueenBee : MonoBehaviour
     [HideInInspector] public GameResAmount mCurPollen = new GameResAmount(0f, GameResUnit.Microgram);
 
     [HideInInspector] public QueenState mCurState = QueenState.Wander;
+    private Honeycomb mTargetHoneycomb;
 
     public Slider kSlider;
     private float mEggTime = 5f;
@@ -28,8 +31,6 @@ public class QueenBee : MonoBehaviour
 
     void Awake()
     {
-        mAnimator = GetComponentInChildren<Animator>();
-        mSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     private void Start()
@@ -41,6 +42,8 @@ public class QueenBee : MonoBehaviour
         // DoJob 이 Start 보다 먼저 불리기도 하기 때문에 Start 에서 mFirst = true 를 해주면 안된다.
 
         kOutline.DisableOutline();
+        kChatAnimator.SetBool("isIdle", false);
+        ChatHover(false, "");
         
         StartCoroutine(Wander());
     }
@@ -52,7 +55,14 @@ public class QueenBee : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding || mCurState != QueenState.Wander) 
+        if(PopupBase.IsTherePopup() || Mng.play.kHive.mIsBuilding) 
+        {
+            return;
+        }
+
+        ChatHover(true, "Waiting for hatchtery");
+
+        if(mCurState != QueenState.Wander)
         {
             return;
         }
@@ -62,6 +72,8 @@ public class QueenBee : MonoBehaviour
     }
     private void OnMouseExit()
     {
+        ChatHover(false, "");
+
         if(Mng.play.kHive.mHoveredQueenBee == this)
         {
             Mng.play.kHive.mHoveredQueenBee = null;
@@ -73,6 +85,13 @@ public class QueenBee : MonoBehaviour
     public Sprite GetCurrentSprite()
     {
         return mSpriteRenderer.GetComponent<SpriteRenderer>().sprite;
+    }
+
+    private void ChatHover(bool _hovered, string _text)
+    {
+        kChatAnimator.SetBool("isHover", _hovered);
+        kChatText.gameObject.SetActive(_hovered && kChatAnimator.GetBool("isIdle"));
+        kChatText.text = _text;
     }
 
     public void AddResource(GameResType _type, GameResAmount _amount)
@@ -123,7 +142,7 @@ public class QueenBee : MonoBehaviour
                 {
                     while(IsWandering() && Vector3.Distance(transform.position, randomPos) > 0.005f)
                     {
-                        transform.rotation = Mng.play.GetPointingRotation(transform.position, randomPos, transform.rotation);
+                        mSpriteRenderer.gameObject.transform.rotation = Mng.play.GetPointingRotation(transform.position, randomPos, transform.rotation);
                         
                         mAnimator.SetBool("isMoving", true);
                         transform.position = Vector3.MoveTowards(transform.position, randomPos, waitSec * mSpeed);
@@ -140,24 +159,14 @@ public class QueenBee : MonoBehaviour
                 waitTime -= 0.5f;
                 yield return new WaitForSeconds(0.5f);
             }
-
-            if (mCurState == QueenState.WaitForTarget)
-            {
-                // 비어있는 부화실을 찾는다.
-                var comb = Mng.play.kHive.GetUsableHoneyCombOfStructure(StructureType.Hatchtery);
-                if (comb != null)
-                {
-                    mCurState = QueenState.GoToTarget;
-                    StartCoroutine(GoToTarget(comb));
-                }
-            }
         }
     }
-
     private IEnumerator GoToTarget(Honeycomb _target)
     {
         float waitSec = 0.05f;
         WaitForSeconds sec = new WaitForSeconds(waitSec);
+
+        mCurState = QueenState.GoToTarget;
 
         transform.rotation = Mng.play.GetPointingRotation(transform.position, _target.pos, transform.rotation);
 
@@ -172,10 +181,18 @@ public class QueenBee : MonoBehaviour
         StartCoroutine(LayEgg(_target));
     }
 
+    private void StopMoving()
+    {
+        StopAllCoroutines();
+        mAnimator.SetBool("isMoving", false);
+    }
+
     public void WaitForTargetHoneycomb()
     {
         mCurState = QueenState.WaitForTarget;
-        StopCoroutine(Wander());
+        StopMoving();
+
+        StartCoroutine(WaitHoneycomb());
     }
 
     public void SetTarget(Honeycomb _target)
@@ -185,8 +202,34 @@ public class QueenBee : MonoBehaviour
         StartCoroutine(GoToTarget(_target));
     }
 
+    private IEnumerator WaitHoneycomb()
+    {
+        WaitForSeconds sec = new WaitForSeconds(0.5f);
+
+        kChatAnimator.SetBool("isIdle", true);
+
+        Mng.canvas.kQueen.kEggButton.enabled = false;
+
+        while(true)
+        {
+            var comb = Mng.play.kHive.GetUsableHoneyCombOfStructure(StructureType.Hatchtery);
+            if (comb != null)
+            {
+                mCurState = QueenState.GoToTarget;
+                StartCoroutine(GoToTarget(comb));
+                yield break;
+            }
+
+            yield return sec;
+        }
+
+        kChatAnimator.SetBool("isIdle", false);
+    }
+
     private IEnumerator LayEgg(Honeycomb _target)
     {
+        mTargetHoneycomb = _target;
+        mCurState = QueenState.LayEgg;
         mCurHoney = Mng.play.SubtractResourceAmounts(mCurHoney, Mng.play.kHive.mQueenHoneyNeed);
         mCurPollen = Mng.play.SubtractResourceAmounts(mCurPollen, Mng.play.kHive.mQueenPollenNeed);
         Mng.canvas.kQueen.UpdateSliders(mCurHoney, mCurPollen);
@@ -197,6 +240,7 @@ public class QueenBee : MonoBehaviour
         _target.PlaceEgg();
         
         mCurState = QueenState.Wander;
+        mTargetHoneycomb = null;
         StartCoroutine(Wander());
     }
 
@@ -209,6 +253,7 @@ public class QueenBee : MonoBehaviour
 		public GameResAmount mCurHoney = new GameResAmount(0f,GameResUnit.Microgram);
 		public GameResAmount mCurPollen = new GameResAmount(0f,GameResUnit.Microgram);
 		public QueenState mCurState = QueenState.Wander;
+        public Honeycomb mTargetHoneycomb;
 	}
 
 	public void ExportTo(CSaveData savedata)
@@ -217,6 +262,7 @@ public class QueenBee : MonoBehaviour
 		savedata.mCurHoney = mCurHoney;
 		savedata.mCurPollen = mCurPollen;
 		savedata.mCurState = mCurState;
+        savedata.mTargetHoneycomb = mTargetHoneycomb;
 	}
 
 	public void ImportFrom(CSaveData savedata)
@@ -225,8 +271,16 @@ public class QueenBee : MonoBehaviour
 		mCurHoney = savedata.mCurHoney;
 		mCurPollen = savedata.mCurPollen;
 		mCurState = savedata.mCurState;
+        mTargetHoneycomb = savedata.mTargetHoneycomb;
 
         if (mCurState == QueenState.WaitForTarget)
+        {
             WaitForTargetHoneycomb();
+        }
+        else if (mCurState == QueenState.WaitForTarget) //나중에 수정하기
+        {
+            StopMoving();
+            StartCoroutine(LayEgg(mTargetHoneycomb));
+        }
 	}
 }
