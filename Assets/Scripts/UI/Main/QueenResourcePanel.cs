@@ -79,7 +79,9 @@ public class QueenResourcePanel : PopupBase
     public void Hide()
     {
         mTargetQueen = null;
-        kQueenBtn.interactable = true;
+
+        if(Mng.play.kHive.mIsBuilding == false)
+            kQueenBtn.interactable = true;
         base.Hide();        
     }
 }

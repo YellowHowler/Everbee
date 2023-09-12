@@ -448,7 +448,7 @@ public class Hive : MonoBehaviour
 						break;
 
 					case StructureType.Hatchtery:
-						hoverEnabled = (found.kStructureType == StructureType.None);
+						hoverEnabled = (found.kStructureType == StructureType.Storage);
 						break;
 				}
 			}
