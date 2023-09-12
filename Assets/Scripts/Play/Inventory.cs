@@ -51,10 +51,14 @@ public class Inventory: MonoBehaviour
 	private InventoryBarPanel mPanel;
 	public List<ItemSlot> mItemSlots { get; private set; } = new List<ItemSlot>();
 
-	public void Init(int numSlots)
+
+	private void Start()
 	{
 		mPanel = Mng.canvas.kInven;
+	}
 
+	public void Init(int numSlots)
+	{
 		mItemSlots.Clear();
 
 		for(int i=0; i<numSlots; ++i)
@@ -288,7 +292,6 @@ public class Inventory: MonoBehaviour
 
 		var invenUI = MainCanvas.Instance.kInven;
 
-		invenUI.SetSelected(1);
-		invenUI.UpdateSlots();
+		invenUI.Init();
 	}
 }

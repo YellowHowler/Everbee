@@ -185,9 +185,9 @@ public class Garden : MonoBehaviour
 
 	public void InitDefault()
     {
-        AddFlowerInRandomPos(kFlowerTemplates[0], FlowerStage.Seedling);
-        AddFlowerInRandomPos(kFlowerTemplates[1], FlowerStage.Sprout);
-        AddFlowerInRandomPos(kFlowerTemplates[2], FlowerStage.Flower);
+        AddFlowerInRandomPos(kFlowerTemplates[0], FlowerStage.Seedling).InitDefault();
+        AddFlowerInRandomPos(kFlowerTemplates[1], FlowerStage.Sprout).InitDefault();
+        AddFlowerInRandomPos(kFlowerTemplates[2], FlowerStage.Flower).InitDefault();
     }
 
     private void Update()
