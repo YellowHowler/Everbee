@@ -213,12 +213,12 @@ public class Hive : MonoBehaviour
         return null;
     }
 
-    public Honeycomb AddNewHoneycomb(Vector3 _pos, bool _isImport)
+    public Honeycomb AddNewHoneycomb(Vector3 _pos, bool _isImport, bool forced = false)
     {
         _pos = Mng.play.SetZ(_pos, mHoneycombZ);
         var dupCheck = GetHoneycombFromPos(_pos);
 
-        if(dupCheck != null || !Mng.play.IsWithinCollider(kHiveLimitCol, Mng.play.SetZ(_pos, transform.position.z)))
+        if(!forced && (dupCheck != null || !Mng.play.IsWithinCollider(kHiveLimitCol, Mng.play.SetZ(_pos, transform.position.z))))
         {
             return null;
         }
@@ -234,7 +234,7 @@ public class Hive : MonoBehaviour
             SetHoneycombPosition(honeycomb, _pos);
         }
 
-        honeycomb.SetStructure(StructureType.None, true);
+        honeycomb.SetStructure(StructureType.None, forced);
         return honeycomb;
     }
 
@@ -550,7 +550,7 @@ public class Hive : MonoBehaviour
 
         for(int i=0; i<savedata.mHoneycombList.Count; ++i)
         {
-            var comb = AddNewHoneycomb(Vector3.zero, true);
+            var comb = AddNewHoneycomb(Vector3.zero, true, true);
             comb.ImportFrom(savedata.mHoneycombList[i]);
             SetHoneycombPosition(comb, comb.pos);
         }

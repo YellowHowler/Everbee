@@ -34,8 +34,6 @@ public class Flower: MonoBehaviour
 	public Sprite[] kPollenSprites;
 	[HideInInspector] public float XPosition { get { return transform.localPosition.x; } set { transform.localPosition = new Vector3(value, 0, 0); } }
 
-	[HideInInspector] public bool mIsDoneInitializing = false;
-
 	private SpriteRenderer mSpriteRenderer;
 	private SpriteRenderer mPollenSpriteRenderer;
 	private ParticleSystem mClickParticle;
@@ -44,7 +42,7 @@ public class Flower: MonoBehaviour
 
 	private int mClickNum = 0;
 
-	private IEnumerator Start()
+	private void Awake()
 	{
 		mClickParticle = transform.Find("BurstParticle").GetComponent<ParticleSystem>();
 		mPollenReceiveParticle = transform.Find("PollenReceiveParticle").GetComponent<ParticleSystem>();
@@ -55,11 +53,6 @@ public class Flower: MonoBehaviour
 
 		mOutline = GetComponent<SpriteOutline>();
 		mOutline.DisableOutline();
-
-		WaitForSeconds sec = new WaitForSeconds(0.1f);
-		while(mIsDoneInitializing == false) yield return sec;
-
-		InitDefault();
 	}
 
 	public void SetValues(Flower _type, Garden _garden, bool _flipped, GameResAmount _needPollenAmount)
@@ -68,8 +61,6 @@ public class Flower: MonoBehaviour
 		kNeedPollenAmount = _needPollenAmount;
 		mGarden = _garden;
 		flipped = _flipped;
-
-		mIsDoneInitializing = true;
 	}
 
 	public void SetValues(Flower _type, Garden _garden, bool _flipped, FlowerStage _stage, GameResAmount _needPollenAmount)
@@ -99,8 +90,6 @@ public class Flower: MonoBehaviour
 		kNeedPollenAmount = _needPollenAmount;
 		mGarden = _garden;
 		flipped = _flipped;
-
-		mIsDoneInitializing = true;
 	}
 
 	public void CalculateGrowth(long secondsPassed) 

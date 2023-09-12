@@ -56,20 +56,13 @@ public class Honeycomb : MonoBehaviour
     private void Awake()
     {
         mTargetBee = new CTargetLink<Honeycomb, Bee>(this);
-    }
 
-    private IEnumerator Start()
-    {
 		kCanvas.SetActive(true);
 		kCanvas.GetComponent<Canvas>().worldCamera = Camera.main;
 
         kParticle.Stop();
         HideObjects();
-
-        yield return new WaitForSeconds(0.1f);
-
-        InitDefault();
-	}
+    }
 
     private GameResAmount GetMaxHoneyAmount() { return Mng.play.kHive.mMaxItemAmounts[0]; }
     private GameResAmount GetMaxNectarAmount() { return Mng.play.kHive.mMaxItemAmounts[1]; }
@@ -175,14 +168,15 @@ public class Honeycomb : MonoBehaviour
                 SetAllChildrenActive(false);
                 break;
             case StructureType.Building:
-                SetStructure(mPrevStructureType, true);
+                SetStructure(mPrevStructureType, forced);
                 PrepareBuildStructure(mTargetStructureType);
                 break;
             case StructureType.Storage:
                 SetAllChildrenActive(false);
                 kStorageObj.SetActive(true);
 
-                ExpandHoneycombs();
+                if (!forced)    // forced 는 첫 시작할 때 및 로딩할 때이므로 forced == true 이면 expand 하지 않음
+                    ExpandHoneycombs();
                 break;
             case StructureType.Dryer:
                 SetAllChildrenActive(false);
