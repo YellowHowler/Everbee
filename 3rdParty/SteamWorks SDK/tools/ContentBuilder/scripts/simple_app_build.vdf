@@ -1,12 +1,12 @@
 "appbuild"
 {
-	"appid"	"2537950"
+	"appid"	"2537150"
 	"desc"	"0.3"
 	"contentroot"	"..\content\Everbee\Windows"
 	"buildoutput"	"..\output\Everbee\Windows"
 	"depots"
 	{
-		"2537951"
+		"2537151"
 		{
 			"FileMapping"
 			{

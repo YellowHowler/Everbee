@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCamera : MonoBehaviour
 {
@@ -21,6 +22,17 @@ public class PlayerCamera : MonoBehaviour
     {
         Instance = this;
         mCamera = gameObject.GetComponent<Camera>();
+
+        var scaler = GameObject.Find("Canvas").GetComponent<CanvasScaler>();
+
+        // 비율이 16:9 가 아닐 경우 비율을 맞춘다.
+        if (Screen.width * 9 != Screen.height * 16)
+        {
+            if (Screen.width * 9 > Screen.height * 16)
+                scaler.matchWidthOrHeight = 1;
+            else
+                scaler.matchWidthOrHeight = 0;
+        }
     }
 
 	private void OnDestroy()
